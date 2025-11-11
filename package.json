@@ -1,20 +1,22 @@
 {
   "name": "rikskollen.se",
+  "private": true,
   "version": "1.0.0",
-  "description": "Öppen data från riksdagen",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm -r dev",
+    "dev:web": "pnpm --filter @rikskollen.se/website dev",
+    "dev:api": "pnpm --filter @rikskollen.se/api dev",
+    "dev:db": "pnpm --filter @rikskollen.se/db dev",
+    "sync:worker": "pnpm --filter @rikskollen.se/worker sync",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test"
   },
-  "author": "Lars",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/dotenv": "^6.1.1",
-    "@types/express": "^5.0.5",
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
     "@types/node": "^24.10.0",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "mongodb": "^7.0.0",
+    "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   }
 }

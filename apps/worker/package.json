@@ -1,0 +1,14 @@
+{
+  "name": "@rikskollen.se/worker",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "sync": "ts-node src/fetch-latest.ts"
+  },
+  "dependencies": {
+    "undici": "^7.16.0",
+    "@rikskollen.se/db": "workspace:*",
+    "@rikskollen.se/shared-types": "workspace:*"
+  }
+}

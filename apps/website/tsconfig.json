@@ -1,0 +1,19 @@
+{
+  "extends":"../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "nodenext",
+    "target": "esnext",
+    "types": [],
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+        "@rikskollen.se/shared-types": ["../../packages/shared-types/src"] 
+      }
+  },
+  "include": ["src"],
+}
