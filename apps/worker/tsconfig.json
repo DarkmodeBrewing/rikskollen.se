@@ -2,13 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
-    "module": "nodenext",
-    "target": "esnext",
-    "types": [],
-    "baseUrl": ".",
-    "paths": {
-      "@rikskollen.se/db": ["../../packages/db/src"]
-    }
-  }
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist"]
 }
