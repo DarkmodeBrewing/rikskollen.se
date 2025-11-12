@@ -1,0 +1,244 @@
+{
+  "hangar_guid": "29f92606-54cf-4d58-b25a-f0ca269b509d",
+  "sourceid": "8403346f-0f0c-4d48-bbd0-f6b43b368873",
+  "intressent_id": "0327372175911",
+  "hangar_id": "2369471",
+  "fodd_ar": "1968",
+  "kon": "man",
+  "efternamn": "Ahlstedt",
+  "tilltalsnamn": "Fredrik",
+  "sorteringsnamn": "Ahlstedt,Fredrik",
+  "iort": "",
+  "parti": "M",
+  "valkrets": "Uppsala län",
+  "status": "Tjänstgörande riksdagsledamot",
+  "person_url_xml": "https://data.riksdagen.se/person/8403346f-0f0c-4d48-bbd0-f6b43b368873",
+  "bild_url_80": "https://data.riksdagen.se/filarkiv/bilder/ledamot/8403346f-0f0c-4d48-bbd0-f6b43b368873_80.jpg",
+  "bild_url_192": "https://data.riksdagen.se/filarkiv/bilder/ledamot/8403346f-0f0c-4d48-bbd0-f6b43b368873_192.jpg",
+  "bild_url_max": "https://data.riksdagen.se/filarkiv/bilder/ledamot/8403346f-0f0c-4d48-bbd0-f6b43b368873_max.jpg",
+  "personuppdrag": {
+    "uppdrag": [
+      {
+        "organ_kod": "kam",
+        "roll_kod": "Riksdagsledamot",
+        "ordningsnummer": "146",
+        "status": "Tjänstgörande",
+        "typ": "kammaruppdrag",
+        "from": "2024-08-29 12:01:00",
+        "tom": "2026-09-28 10:59:00",
+        "uppgift": [{}],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "10",
+        "organ_sortering": "10",
+        "uppdrag_rollsortering": "60",
+        "uppdrag_statussortering": "10"
+      },
+      {
+        "organ_kod": "kam",
+        "roll_kod": "Statsrådsersättare",
+        "ordningsnummer": "146",
+        "status": "Ersättare",
+        "typ": "kammaruppdrag",
+        "from": "2022-10-18 13:00:00",
+        "tom": "2024-08-28 23:59:00",
+        "uppgift": ["Jessika Roswall"],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "",
+        "organ_sortering": "10",
+        "uppdrag_rollsortering": "60",
+        "uppdrag_statussortering": "20"
+      },
+      {
+        "organ_kod": "UU",
+        "roll_kod": "Ledamot",
+        "ordningsnummer": "3",
+        "status": "",
+        "typ": "uppdrag",
+        "from": "2025-10-24 09:01:00",
+        "tom": "2026-09-28 10:59:00",
+        "uppgift": ["Utrikesutskottet"],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "30",
+        "organ_sortering": "150",
+        "uppdrag_rollsortering": "90",
+        "uppdrag_statussortering": "90"
+      },
+      {
+        "organ_kod": "NU",
+        "roll_kod": "Suppleant",
+        "ordningsnummer": "7",
+        "status": "",
+        "typ": "uppdrag",
+        "from": "2023-06-02 09:01:00",
+        "tom": "2026-09-28 10:59:00",
+        "uppgift": ["Näringsutskottet"],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "50",
+        "organ_sortering": "150",
+        "uppdrag_rollsortering": "90",
+        "uppdrag_statussortering": "90"
+      },
+      {
+        "organ_kod": "SkU",
+        "roll_kod": "Ledamot",
+        "ordningsnummer": "7",
+        "status": "",
+        "typ": "uppdrag",
+        "from": "2022-10-27 15:31:00",
+        "tom": "2025-10-24 09:00:00",
+        "uppgift": ["Skatteutskottet"],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "30",
+        "organ_sortering": "150",
+        "uppdrag_rollsortering": "90",
+        "uppdrag_statussortering": "90"
+      },
+      {
+        "organ_kod": "NU",
+        "roll_kod": "Suppleant",
+        "ordningsnummer": "11",
+        "status": "",
+        "typ": "uppdrag",
+        "from": "2022-11-29 13:01:00",
+        "tom": "2023-06-02 09:00:00",
+        "uppgift": ["Näringsutskottet"],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "50",
+        "organ_sortering": "150",
+        "uppdrag_rollsortering": "90",
+        "uppdrag_statussortering": "90"
+      },
+      {
+        "organ_kod": "UFöU",
+        "roll_kod": "Deputerad",
+        "ordningsnummer": "3",
+        "status": "",
+        "typ": "uppdrag",
+        "from": "2025-11-04 14:01:00",
+        "tom": "2025-12-10 23:59:00",
+        "uppgift": ["Sammansatta utrikes- och försvarsutskottet"],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "40",
+        "organ_sortering": "160",
+        "uppdrag_rollsortering": "90",
+        "uppdrag_statussortering": "90"
+      },
+      {
+        "organ_kod": "EUN",
+        "roll_kod": "Suppleant",
+        "ordningsnummer": "89",
+        "status": "",
+        "typ": "uppdrag",
+        "from": "2024-11-21 12:01:00",
+        "tom": "2026-09-28 10:59:00",
+        "uppgift": ["EU-nämnden"],
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471",
+        "sortering": "50",
+        "organ_sortering": "170",
+        "uppdrag_rollsortering": "90",
+        "uppdrag_statussortering": "90"
+      }
+    ]
+  },
+  "personuppgift": {
+    "uppgift": [
+      {
+        "kod": "HarBild",
+        "uppgift": ["true"],
+        "typ": "bilder",
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Uppdrag inom statliga myndigheter m.m.",
+        "uppgift": ["Ledamot insynsrådet, SCB 23–. "],
+        "typ": "biografi",
+        "intressent_id": "",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Uppdrag inom förenings- och näringsliv",
+        "uppgift": [
+          "1:e vice ordförande och ledamot, förbundsstyrelsen, Moderaterna i Uppsala län 89–."
+        ],
+        "typ": "biografi",
+        "intressent_id": "",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Uppdrag inom riksdag och regering",
+        "uppgift": [
+          "Riksdagsledamot 22– (statsrådsersättare 221018–). Ledamot skatteutskottet 22–. Suppleant näringsutskottet 22–."
+        ],
+        "typ": "biografi",
+        "intressent_id": "",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Föräldrar",
+        "uppgift": [
+          "Personalchefen Håkan Ahlstedt och sjuksköterskan Monica Ahlstedt, f. Carlsson."
+        ],
+        "typ": "biografi",
+        "intressent_id": "",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Utbildning",
+        "uppgift": [
+          "Gymnasieskola, samhällsvetenskaplig linje, Westerlundska gymnasiet, Enköping, slutår 87. Studier på samhällsvetarprogrammet, Uppsala universitet 92–95. IT-utbildningar med certifieringar under perioden 89–12."
+        ],
+        "typ": "biografi",
+        "intressent_id": "",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Anställningar",
+        "uppgift": [
+          "Chefsbefattningar och vd, WM-Data AB 89–12. Kommunalråd, Enköpings kommun 99–02. Kommunalråd, Uppsala kommun 12–22."
+        ],
+        "typ": "biografi",
+        "intressent_id": "",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Kommunala uppdrag",
+        "uppgift": [
+          "Kommunfullmäktig, Enköpings kommun 91–03. Kommunfullmäktig, Uppsala kommun 06–22. Kommunstyrelsens ordförande, Uppsala, 12–14 och vice ordförande 14–22. Landstingsfullmäktig, Uppsala läns landsting 98–06. Ordförande och styrelseledamot, Upplands lokaltrafik 02–12. Ordförande, Svensk kommunförsäkring AB 12–."
+        ],
+        "typ": "biografi",
+        "intressent_id": "",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "Officiell e-postadress",
+        "uppgift": ["fredrik.ahlstedt[på]riksdagen.se"],
+        "typ": "eadress",
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "sv",
+        "uppgift": ["VD."],
+        "typ": "titlar",
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471"
+      },
+      {
+        "kod": "KandiderarINastaVal",
+        "uppgift": ["true"],
+        "typ": "val",
+        "intressent_id": "0327372175911",
+        "hangar_id": "2369471"
+      }
+    ]
+  }
+}

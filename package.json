@@ -1,14 +1,15 @@
 {
-  "name": "rikskollen.se",
+  "name": "rikskollen",
   "private": true,
   "version": "1.0.0",
   "scripts": {
     "dev": "pnpm -r dev",
-    "dev:web": "pnpm --filter @rikskollen.se/website dev",
-    "dev:api": "pnpm --filter @rikskollen.se/api dev",
-    "dev:db": "pnpm --filter @rikskollen.se/db dev",
-    "sync:worker": "pnpm --filter @rikskollen.se/worker sync",
+    "dev:web": "pnpm --filter @rikskollen/website dev",
+    "dev:api": "pnpm --filter @rikskollen/api dev",
+    "dev:db": "pnpm --filter @rikskollen/db dev",
     "build": "pnpm -r build",
+    "build:db": "pnpm --filter @rikskollen/db build",
+    "sync:worker": "pnpm --filter @rikskollen/worker sync",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test"
   },
@@ -16,8 +17,11 @@
   "dependencies": {
     "@types/node": "^24.10.0",
     "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.6",
+    "drizzle-orm": "^0.44.7",
     "prettier": "^3.6.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "zod": "^4.1.12"
   }
 }

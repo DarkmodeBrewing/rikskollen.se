@@ -1,15 +1,16 @@
 {
-  "name": "@rikskollen.se/worker",
+  "name": "@rikskollen/worker",
   "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "sync": "ts-node src/fetch-latest.ts",
+    "scrape:current-mandate": "ts-node src/fetch-latest.ts",
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "undici": "^7.16.0",
-    "@rikskollen.se/db": "workspace:*",
-    "@rikskollen.se/shared-types": "workspace:*"
+    "@rikskollen/db": "workspace:*",
+    "@rikskollen/shared-types": "workspace:*",
+    "@rikskollen/api": "workspace:*"
   }
 }

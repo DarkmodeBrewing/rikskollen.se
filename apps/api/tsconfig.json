@@ -2,8 +2,13 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*"],
-  "exclude": ["dist"]
+  "exclude": ["dist"],
+  "references": [{ "path": "../../packages/db" }]
 }

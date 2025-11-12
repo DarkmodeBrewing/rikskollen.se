@@ -1,5 +1,5 @@
 {
-  "name": "@rikskollen.se/website",
+  "name": "@rikskollen/website",
   "description": "Öppen data från riksdagen",
   "version": "1.0.0",
   "main": "dist/index.js",
@@ -10,6 +10,6 @@
   "author": "Lars",
   "license": "ISC",
   "dependencies": {
-    "@rikskollen.se/shared-types": "workspace:*"
+    "@rikskollen/shared-types": "workspace:*"
   }
 }

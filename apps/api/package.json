@@ -1,15 +1,22 @@
 {
-  "name": "@rikskollen.se/api",
+  "name": "@rikskollen/api",
   "version": "1.0.0",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "NODE_ENV=development pnpm -w build:db && tsx watch src/index.ts",
+    "build": "tsup src/index.ts --format esm --dts --minify --clean",
+    "start": "node dist/index.js"
   },
   "dependencies": {
+    "@rikskollen/db": "workspace:*",
+    "@rikskollen/shared-types": "workspace:*",
     "fastify": "^5.6.2",
-    "undici": "^7.16.0",
-    "@rikskollen.se/db": "workspace:*",
-    "@rikskollen.se/shared-types": "workspace:*"
+    "fastify-type-provider-zod": "^6.1.0",
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.1.2",
+    "tsup": "^8.5.0",
+    "undici": "^7.16.0"
   }
 }

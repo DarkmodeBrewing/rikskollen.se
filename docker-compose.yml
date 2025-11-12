@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:18
+    container_name: rikskollen-postgresql-db
+    environment:
+      POSTGRES_USER: rikskollen # externalize
+      POSTGRES_PASSWORD: rikskollen
+      POSTGRES_DB: rikskollen
+    volumes:
+      - rikskollen_db_data:/var/lib/postgresql/data
+    networks:
+      - rikskollen_net
+
+  api:
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+    container_name: rikskollen-api
+    env_file:
+      - ./env/api.local.env
+    depends_on:
+      - db
+    networks:
+      - rikskollen_net
+    ports:
+      - "3000:3000" # or whatever the api listens on
+
+  worker:
+    build:
+      context: ./packages/worker
+      dockerfile: Dockerfile
+    container_name: rikskollen-worker
+    env_file:
+      - ./env/worker.local.env
+    depends_on:
+      - db
+    networks:
+      - rikskollen_net
+    # no ports, it's just a job runner
+
+volumes:
+  rikskollen_db_data:
+
+networks:
+  rikskollen_net:
+    driver: bridge

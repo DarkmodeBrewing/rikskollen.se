@@ -1,20 +1,24 @@
 {
-  "name": "@rikskollen.se/db",
-  "type": "module",
+  "name": "@rikskollen/db",
   "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -b",
+    "migrate": "drizzle-kit migrate",
+    "generate": "drizzle-kit generate"
   },
   "dependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "better-sqlite3": "^12.4.1"
+    "@types/pg": "^8.15.6",
+    "pg": "^8.16.3"
   }
 }
