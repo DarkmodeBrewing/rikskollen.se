@@ -48,20 +48,6 @@ export const constituencies = pgTable('constituencies', {
 });
 
 // --- politicians ---
-export const politiciansScheme = z.object({
-  id: z.ZodUUID,
-  riksdagsId: z.ZodString,
-  firstName: z.ZodString,
-  lastName: z.ZodString,
-  fullName: z.ZodString,
-  partyId: z.ZodNumber,
-  constituencyId: z.ZodNumber,
-  activeFrom: z.ZodDate,
-  activeTo: z.ZodDate,
-});
-
-export type Politician = z.infer<typeof politiciansScheme>;
-
 export const politicians = pgTable('politicians', {
   id: uuid('id').defaultRandom().primaryKey(),
   riksdagId: text('riksdag_id').notNull().unique(),

@@ -5,13 +5,7 @@ import {
   serializerCompiler,
 } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import {
-  fetchPoliticiansForMandate,
-  politicianResponseSchema,
-} from './api/fetchPoliticiansForMandate';
-import { env } from './env';
-
-console.log(env);
+import { env, getPoliticans } from '@rikskollen/shared-types';
 
 const app = Fastify({
   logger:
@@ -45,20 +39,11 @@ app.get('/health', healthResponseSchema, async () => ({
   uptime: process.uptime(),
 }));
 
-app.get(
-  '/api/politicians',
-  {
-    schema: {
-      response: {
-        200: politicianResponseSchema,
-      },
-    },
-  },
-
-  async () => {
-    return await fetchPoliticiansForMandate();
-  },
-);
+app.get('/api/politicians', async () => {
+  const p = await getPoliticans();
+  console.log(p);
+  return p;
+});
 
 export const start = async () => {
   try {

@@ -18,5 +18,3 @@ export const createDatabaseClient = () => {
 
   return { db, pgPool };
 };
-
-export { politiciansScheme } from './schema/core';
