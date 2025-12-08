@@ -5,11 +5,11 @@ import {
   serializerCompiler,
 } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { env, getPoliticans } from '@rikskollen/shared-types';
+import { apiEnv, getPersons } from '@rikskollen/shared-types';
 
 const app = Fastify({
   logger:
-    env.NODE_ENV === 'development'
+    apiEnv.NODE_ENV === 'development'
       ? { transport: { target: 'pino-pretty', options: { colorize: true } } }
       : true,
 }).withTypeProvider<ZodTypeProvider>();
@@ -18,6 +18,7 @@ const app = Fastify({
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
+// Routes
 app.get(
   '/',
   { schema: { response: { 200: z.object({ hello: z.string() }) } } },
@@ -26,7 +27,7 @@ app.get(
   },
 );
 
-const healthResponseSchema = {
+const HealthResponseSchema = {
   schema: {
     response: {
       200: z.object({ ok: z.literal(true), uptime: z.number() }),
@@ -34,17 +35,18 @@ const healthResponseSchema = {
   },
 };
 
-app.get('/health', healthResponseSchema, async () => ({
+app.get('/health', HealthResponseSchema, async () => ({
   ok: true as const,
   uptime: process.uptime(),
 }));
 
-app.get('/api/politicians', async () => {
-  const p = await getPoliticans();
+app.get('/api/persons', async () => {
+  const p = await getPersons();
   console.log(p);
   return p;
 });
 
+// Server init
 export const start = async () => {
   try {
     await app.listen({ port: 3000 });

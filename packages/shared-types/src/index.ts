@@ -1,2 +1,2 @@
-export * from './env';
-export { getPoliticans } from './riksdag/client';
+export * from './environments';
+export * from './riksdag';

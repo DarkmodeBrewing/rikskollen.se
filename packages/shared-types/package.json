@@ -13,7 +13,5 @@
   "scripts": {
     "build": "tsc -b"
   },
-  "dependencies": {
-    "undici": "^7.16.0"
-  }
+  "dependencies": {}
 }

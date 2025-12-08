@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "pnpm -r dev",
-    "dev:web": "pnpm --filter @rikskollen/website dev",
+    "dev:web": "pnpm --filter @rikskollen/webapp start",
     "dev:api": "pnpm --filter @rikskollen/api dev",
     "dev:db": "pnpm --filter @rikskollen/db dev",
     "build": "pnpm -r build",

@@ -1,16 +1,28 @@
 import pg from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { getDatabaseConfig } from './env.js';
+import { DbEnv } from '@rikskollen/shared-types';
+
+export interface DatabaseConfig {
+  connectionString: string;
+}
+
+export const getDatabaseConfig = (): DatabaseConfig => {
+  const connectionString = DbEnv().DATABASE_URL;
+
+  if (!connectionString) {
+    throw new Error('DB_URL environment variable is required');
+  }
+
+  return { connectionString };
+};
 
 // Export type-safe db client for consumers
 export const createDatabaseClient = () => {
   const { connectionString } = getDatabaseConfig();
 
-  // Use a shared pg.Pool so API + worker can reuse logic
   const pgPool = new pg.Pool({
     connectionString,
-    // optional tuning
-    max: 10, // max connections in pool
+    max: 10,
     idleTimeoutMillis: 30_000,
   });
 
@@ -18,3 +30,6 @@ export const createDatabaseClient = () => {
 
   return { db, pgPool };
 };
+
+export * from './schema';
+export * from './mapping';

@@ -11,6 +11,6 @@
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "environments/db-env.ts"],
   "exclude": ["dist"]
 }
