@@ -1,0 +1,52 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgres://rikskollen:rikskollen@localhost:5432/rikskollen
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: rikskollen
+          POSTGRES_PASSWORD: rikskollen
+          POSTGRES_DB: rikskollen
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rikskollen -d rikskollen"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+      - run: pnpm --filter @rikskollen/db migrate
+      - name: Smoke test the database-backed API
+        run: |
+          pnpm --filter @rikskollen/api start &
+          api_pid=$!
+          trap 'kill "$api_pid"' EXIT
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://localhost:3000/health; then
+              curl --fail --silent http://localhost:3000/api/persons | grep -qx '\[\]'
+              exit 0
+            fi
+            sleep 1
+          done
+          exit 1

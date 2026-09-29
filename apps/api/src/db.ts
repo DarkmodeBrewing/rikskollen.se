@@ -1,7 +1,7 @@
-import { createDatabaseClient } from '@rikskollen/db';
-import { persons } from '@rikskollen/db';
+import { createDatabaseClient, persons } from '@rikskollen/db';
 import { eq } from 'drizzle-orm';
 
+const { db, pgPool } = createDatabaseClient();
 
 export const getAllPoliticians = async () => {
   return db.select().from(persons);
@@ -10,8 +10,10 @@ export const getAllPoliticians = async () => {
 export const getPoliticianByRiksdagId = async (riksdagId: string) => {
   const [row] = await db
     .select()
-    .from(politicians)
-    .where(eq(politicians.riksdagId, riksdagId));
+    .from(persons)
+    .where(eq(persons.personId, riksdagId));
 
   return row ?? null;
 };
+
+export const closeDatabase = () => pgPool.end();

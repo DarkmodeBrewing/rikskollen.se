@@ -1,12 +1,13 @@
 import type { Config } from 'drizzle-kit';
 
 export default {
-  schema: './src/schema/**/*.ts',
+  // Only tables ready for persisted data belong in an applied migration.
+  schema: './src/schema/migrate.ts',
   out: './migrations',
   dialect: 'postgresql',
   dbCredentials: {
     url:
-      process.env.DB_URL ??
+      process.env.DATABASE_URL ??
       'postgres://rikskollen:rikskollen@localhost:5432/rikskollen',
   },
 } satisfies Config;

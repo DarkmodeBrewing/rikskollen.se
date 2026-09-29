@@ -1,7 +1,7 @@
 import {
   PersonSchema,
   PersonDTO,
-  AssingmentDTO,
+  AssignmentDTO,
   AttributesDTO,
   type AssignmentSchema,
   type AttributeSchema,
@@ -22,10 +22,10 @@ export const mapToPoliticianDto = (
     givenName: input.tilltalsnamn,
     lastName: input.efternamn,
     gender: input.kon,
-    birthYear: Number(input.fodd_ar),
+    birthYear: input.fodd_ar ? Number(input.fodd_ar) : null,
     status: input.status,
-    politicianUrl: input.person_url_xml,
-    imageMax: input.bild_url_max,
+    politicianUrl: input.person_url_xml || null,
+    imageMax: input.bild_url_max || null,
     assignments: toAssignmentDto(input.personuppdrag),
     attributes: toAttributesDto(input.personuppgift),
   });
@@ -38,19 +38,22 @@ const toAttributesDto = (input: z.infer<typeof AttributeSchema>) =>
       kind: attribute.typ,
       value: attribute.uppgift,
     }),
-  );
+  ) ?? [];
 
 const toAssignmentDto = (input: z.infer<typeof AssignmentSchema>) =>
   input?.uppdrag?.map((assignment) =>
-    AssingmentDTO.parse({
+    AssignmentDTO.parse({
       personId: assignment.intressent_id,
       organCode: assignment.organ_kod,
       roleCode: assignment.roll_kod,
       kind: assignment.typ,
       status: assignment.status,
-      from: assignment.from ? new Date(assignment.from) : null,
-      to: assignment.tom ? new Date(assignment.tom) : null,
-      value: assignment.uppgift?.[0], // normalized from uppgift[0]
+      // The source has no explicit timezone; keep its date/time text intact.
+      from: assignment.from || null,
+      to: assignment.tom || null,
+      value: typeof assignment.uppgift?.[0] === 'string'
+        ? assignment.uppgift[0]
+        : null,
       order: Number(assignment.ordningsnummer),
     }),
-  );
+  ) ?? [];

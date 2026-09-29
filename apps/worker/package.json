@@ -13,12 +13,14 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "build": "tsc -b",
+    "build": "tsup src/index.ts --format esm --clean --target node20",
     "dry:vote-cases": "tsx src/index.ts"
   },
   "dependencies": {
     "@rikskollen/db": "workspace:*",
-    "@rikskollen/shared-types": "workspace:*",
-    "undici": "^7.16.0"
+    "@rikskollen/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
   }
 }

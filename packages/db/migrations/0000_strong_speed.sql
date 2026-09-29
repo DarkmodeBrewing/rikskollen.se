@@ -1,0 +1,20 @@
+CREATE TABLE "persons" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"person_id" text NOT NULL,
+	"sourceid" uuid NOT NULL,
+	"given_name" text NOT NULL,
+	"last_name" text NOT NULL,
+	"gender" text,
+	"birth_year" integer,
+	"status" text,
+	"person_url" text,
+	"image_max" text,
+	"party_code" text NOT NULL,
+	"constituency" text NOT NULL,
+	"source_url" text NOT NULL,
+	"fetched_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "persons_person_id_unique" UNIQUE("person_id"),
+	CONSTRAINT "persons_sourceid_unique" UNIQUE("sourceid")
+);

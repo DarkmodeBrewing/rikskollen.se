@@ -3,15 +3,12 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "pnpm -r dev",
+    "dev": "pnpm --parallel -r --if-present dev",
     "dev:web": "pnpm --filter @rikskollen/webapp start",
     "dev:api": "pnpm --filter @rikskollen/api dev",
-    "dev:db": "pnpm --filter @rikskollen/db dev",
     "build": "pnpm -r build",
     "build:db": "pnpm --filter @rikskollen/db build",
-    "sync:worker": "pnpm --filter @rikskollen/worker sync",
-    "lint": "pnpm -r lint",
-    "test": "pnpm -r test"
+    "test": "pnpm --filter @rikskollen/db test"
   },
   "packageManager": "pnpm@9.0.0",
   "dependencies": {

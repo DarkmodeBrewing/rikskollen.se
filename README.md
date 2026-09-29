@@ -21,15 +21,30 @@ Rikskollen is **independent of Sveriges riksdag**. Source: Sveriges riksdag. Any
 | --- | --- | --- |
 | `apps/worker` | Fetch and normalize open data | Experimental person and vote clients; entry point prints a limited vote sample |
 | `packages/shared-types` | Source and internal schemas | Partially modelled; several contracts need reconciliation with actual API responses |
-| `packages/db` | PostgreSQL/Drizzle models | Draft schema and mappings, not yet an established ingestion pipeline |
-| `apps/api` | Public read API | Health/example routes and a person route under development |
+| `packages/db` | PostgreSQL/Drizzle models | Initial persons migration and mapping tests; ingestion is not implemented |
+| `apps/api` | Public read API | Health route and database-backed person list (empty until import) |
 | `apps/webapp` | Angular web UI | Starter application |
-| `docker-compose.yml` | Local stack | Draft with stale build paths; not a verified setup |
+| `docker-compose.yml` | Local database | PostgreSQL only; API and webapp run on the host |
 
-These are implementation directions, not claims of working features. The first milestone is to get one traceable person → recorded vote → source document path working end to end.
+The vote, attendance and assignment schemas remain drafts outside the applied migration. The next data milestone is to import people with stable IDs and provenance before expanding the public view.
 
-## Starting point for contributors
+## Local development
 
-The workspace uses pnpm 9 and TypeScript. The package scripts are in the root `package.json`. A fresh install, build, database migration, ingestion and Docker run have **not** been verified for this documentation pass; setup instructions will be added when M0 establishes a reproducible path. Do not treat the current Compose file as deployment instructions.
+Use Node 22, pnpm 9 and Docker Compose. From the repository root:
+
+```bash
+corepack enable
+pnpm install --frozen-lockfile
+docker compose up -d db
+export DATABASE_URL=postgres://rikskollen:rikskollen@localhost:5432/rikskollen
+pnpm build
+pnpm --filter @rikskollen/db migrate
+pnpm test
+pnpm dev:api
+```
+
+The API listens on port 3000 by default. `/health` reports process health; `/api/persons` reads the local database and returns `[]` before any import. Start Angular separately with `pnpm dev:web` (port 4200). The worker's `dry:vote-cases` command fetches and prints a small sample; it does **not** ingest data. To run it, set `RIKSDAG_API_URL=https://data.riksdagen.se` and use `pnpm --filter @rikskollen/worker dry:vote-cases`.
+
+The database password above is only for the local Compose service. Do not reuse it for deployment. The Compose file contains no application images. The [Verify workflow](.github/workflows/verify.yml) is intended to check a clean install, build, mapping tests, migration and empty API query against PostgreSQL. Until that workflow runs successfully, the full fresh-checkout path remains unverified.
 
 For scope and acceptance criteria, start with [the roadmap](docs/roadmap.md). For field definitions and caveats, start with [the methodology](docs/data-methodology.md).
