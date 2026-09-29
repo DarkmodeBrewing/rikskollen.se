@@ -24,6 +24,20 @@ const angularApp = new AngularNodeAppEngine();
  * ```
  */
 
+// Same-origin API proxy for the production SSR server.
+app.use('/api', async (req, res, next) => {
+  try {
+    const upstream = await fetch(
+      new URL(req.originalUrl, process.env['API_BASE_URL'] || 'http://localhost:3000'),
+    );
+    res.status(upstream.status);
+    res.setHeader('content-type', upstream.headers.get('content-type') || 'application/json');
+    res.send(await upstream.text());
+  } catch (error) {
+    next(error);
+  }
+});
+
 /**
  * Serve static files from /browser
  */
@@ -41,9 +55,7 @@ app.use(
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
+    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
     .catch(next);
 });
 

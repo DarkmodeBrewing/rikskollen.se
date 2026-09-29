@@ -19,12 +19,16 @@ export const PersonSchema = z
     personuppdrag: AssignmentSchema,
     personuppgift: AttributeSchema,
   })
-  .strip(); // ignore the many extra keys
+  .passthrough(); // retain extra source fields for the per-person checksum
 
 export const PersonApiResponseSchema = z
   .object({
     personlista: z.object({
-      person: z.array(PersonSchema),
+      '@hits': z.coerce.number().int().nonnegative(),
+      '@systemdatum': z.string(),
+      person: z
+        .union([z.array(PersonSchema), PersonSchema])
+        .transform((value) => (Array.isArray(value) ? value : [value])),
     }),
   })
   .strip();

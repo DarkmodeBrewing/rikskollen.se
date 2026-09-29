@@ -1,3 +1,8 @@
 import { Routes } from '@angular/router';
-
-export const routes: Routes = [];
+import { MemberListComponent } from './member-list';
+import { MemberDetailComponent } from './member-detail';
+export const routes: Routes = [
+  { path: '', component: MemberListComponent },
+  { path: 'ledamot/:id', component: MemberDetailComponent },
+  { path: '**', redirectTo: '' },
+];

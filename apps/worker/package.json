@@ -13,7 +13,9 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "build": "tsup src/index.ts --format esm --clean --target node20",
+    "build": "tsup src/index.ts src/sync-persons.ts --format esm --clean --target node20",
+    "sync:persons": "node dist/sync-persons.js",
+    "test": "node --import tsx --test src/clients/*.test.ts src/*.test.ts",
     "dry:vote-cases": "tsx src/index.ts"
   },
   "dependencies": {

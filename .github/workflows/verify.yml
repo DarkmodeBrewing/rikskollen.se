@@ -35,8 +35,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm test
       - run: pnpm --filter @rikskollen/db migrate
+      - run: pnpm test
       - name: Smoke test the database-backed API
         run: |
           pnpm --filter @rikskollen/api start &
@@ -44,7 +44,8 @@ jobs:
           trap 'kill "$api_pid"' EXIT
           for attempt in $(seq 1 20); do
             if curl --fail --silent http://localhost:3000/health; then
-              curl --fail --silent http://localhost:3000/api/persons | grep -qx '\[\]'
+              curl --fail --silent http://localhost:3000/api/persons | grep -q '"items":\[\]'
+              curl --fail --silent http://localhost:3000/api/import-status | grep -qx 'null'
               exit 0
             fi
             sleep 1

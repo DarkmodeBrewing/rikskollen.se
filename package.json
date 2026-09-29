@@ -8,7 +8,7 @@
     "dev:api": "pnpm --filter @rikskollen/api dev",
     "build": "pnpm -r build",
     "build:db": "pnpm --filter @rikskollen/db build",
-    "test": "pnpm --filter @rikskollen/db test"
+    "test": "pnpm --filter @rikskollen/db test && pnpm --filter @rikskollen/worker test && pnpm --filter @rikskollen/api test"
   },
   "packageManager": "pnpm@9.0.0",
   "dependencies": {
