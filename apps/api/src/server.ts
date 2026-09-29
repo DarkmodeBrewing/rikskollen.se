@@ -6,11 +6,11 @@ import {
 } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { apiEnv } from '@rikskollen/shared-types';
-import { getAllPoliticians } from './db';
+import { getPerson, getImportStatus, listPersons } from './db';
 
 const env = apiEnv();
 
-const app = Fastify({
+export const app = Fastify({
   logger:
     env.NODE_ENV === 'development'
       ? { transport: { target: 'pino-pretty', options: { colorize: true } } }
@@ -43,9 +43,26 @@ app.get('/health', HealthResponseSchema, async () => ({
   uptime: process.uptime(),
 }));
 
-app.get('/api/persons', async () => {
-  return getAllPoliticians();
+const ListQuery = z.object({
+  q: z.string().trim().max(100).default(''),
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(30),
 });
+app.get('/api/persons', async (request, reply) => {
+  const parsed = ListQuery.safeParse(request.query);
+  if (!parsed.success) return reply.code(400).send({ error: 'Invalid query' });
+  return listPersons(parsed.data.q, parsed.data.page, parsed.data.limit);
+});
+app.get('/api/persons/:id', async (request, reply) => {
+  const parsed = z
+    .object({ id: z.string().regex(/^\d{1,30}$/) })
+    .safeParse(request.params);
+  if (!parsed.success)
+    return reply.code(400).send({ error: 'Invalid person ID' });
+  const person = await getPerson(parsed.data.id);
+  return person ?? reply.code(404).send({ error: 'Person not found' });
+});
+app.get('/api/import-status', getImportStatus);
 
 // Server init
 export const start = async () => {
