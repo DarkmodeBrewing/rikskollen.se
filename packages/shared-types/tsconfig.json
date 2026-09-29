@@ -3,7 +3,6 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "module": "ESNext",
@@ -11,6 +10,6 @@
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "environments/db-env.ts"],
+  "include": ["src/**/*"],
   "exclude": ["dist"]
 }

@@ -11,7 +11,13 @@
     }
   },
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsup src/index.ts --format esm --dts --clean --target node20"
   },
-  "dependencies": {}
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  }
 }

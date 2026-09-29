@@ -5,13 +5,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "NODE_ENV=development pnpm -w build:db && tsx watch src/index.ts",
+    "dev": "NODE_ENV=development tsx watch src/index.ts",
     "build": "tsup src/index.ts --format esm --dts --minify --clean",
     "start": "node dist/index.js"
   },
   "dependencies": {
     "@rikskollen/db": "workspace:*",
     "@rikskollen/shared-types": "workspace:*",
+    "drizzle-orm": "^0.44.7",
     "fastify": "^5.6.2",
     "fastify-type-provider-zod": "^6.1.0",
     "pino": "^10.1.0",

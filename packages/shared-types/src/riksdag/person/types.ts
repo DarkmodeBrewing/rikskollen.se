@@ -1,5 +1,5 @@
 import z from 'zod';
-import { AssignmentSchema, AssingmentDTO } from './assignment/types';
+import { AssignmentSchema, AssignmentDTO } from './assignment/types';
 import { AttributeSchema, AttributesDTO } from './attribute/types';
 
 // External
@@ -7,14 +7,15 @@ export const PersonSchema = z
   .object({
     intressent_id: z.string().nonempty(), //Primary key
     sourceid: z.uuid(),
-    fodd_ar: z.string(),
+    fodd_ar: z.string().nullish(),
     kon: z.string(),
     efternamn: z.string(),
     tilltalsnamn: z.string(),
     parti: z.string(),
     valkrets: z.string(),
     status: z.string(),
-    person_url_xml: z.url().optional().default(''),
+    person_url_xml: z.string().nullish(),
+    bild_url_max: z.string().nullish(),
     personuppdrag: AssignmentSchema,
     personuppgift: AttributeSchema,
   })
@@ -40,8 +41,9 @@ export const PersonDTO = z
     gender: z.string(),
     birthYear: z.number().nullable(), // normalized to Date|null
     status: z.string().nullable(),
-    politicianUrl: z.url().nullable(),
-    assignments: z.array(AssingmentDTO),
+    politicianUrl: z.string().nullable(),
+    imageMax: z.string().nullable(),
+    assignments: z.array(AssignmentDTO),
     attributes: z.array(AttributesDTO),
   })
   .strict();

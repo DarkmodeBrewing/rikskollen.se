@@ -10,7 +10,7 @@ export const getDatabaseConfig = (): DatabaseConfig => {
   const connectionString = DbEnv().DATABASE_URL;
 
   if (!connectionString) {
-    throw new Error('DB_URL environment variable is required');
+    throw new Error('DATABASE_URL environment variable is required');
   }
 
   return { connectionString };

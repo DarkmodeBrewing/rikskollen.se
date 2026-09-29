@@ -1,7 +1,7 @@
 import {
   VoteApiResponseSchema,
   type VoteCaseDTO as VoteCaseDTOType,
-  apiEnv,
+  workerEnv,
 } from '@rikskollen/shared-types';
 import { mapToVoteCaseDto } from '@rikskollen/db';
 import { fetchJson } from '../lib/http';
@@ -11,7 +11,7 @@ export type VoteCasesResult =
   | { ok: false; error: Error; items: VoteCaseDTOType[] };
 
 export const getVoteCases = async (): Promise<VoteCasesResult> => {
-  const baseURL = apiEnv().RIKSDAG_API_URL;
+  const baseURL = workerEnv().RIKSDAG_API_URL;
   const segment = '/voteringlista/';
 
   const url = new URL(segment, baseURL);

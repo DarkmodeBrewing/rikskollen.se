@@ -1,10 +1,4 @@
 import { pgTable, text, timestamp, uuid, integer } from 'drizzle-orm/pg-core';
-import { organs } from './organs';
-import { parties } from './parties';
-import { relations } from 'drizzle-orm';
-import { personalAssignment } from './personal-assignment';
-import { personalAttribute } from './personal-attribute';
-import { constituencies } from './constituencies';
 
 export const persons = pgTable('persons', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -17,15 +11,10 @@ export const persons = pgTable('persons', {
   status: text('status'),
   personUrl: text('person_url'),
   imageMax: text('image_max'),
-  partyCode: text('party_code')
-    .notNull()
-    .references(() => parties.code),
-  organCode: text('organ_code')
-    .notNull()
-    .references(() => organs.code),
-  constituencyCode: text('constituency_code')
-    .notNull()
-    .references(() => constituencies.code),
+  partyCode: text('party_code').notNull(),
+  constituency: text('constituency').notNull(),
+  sourceUrl: text('source_url').notNull(),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -33,23 +22,6 @@ export const persons = pgTable('persons', {
     .notNull()
     .defaultNow(),
 });
-
-export const personRelations = relations(persons, ({ many, one }) => ({
-  assignments: many(personalAssignment),
-  attributes: many(personalAttribute),
-  organ: one(organs, {
-    fields: [persons.organCode],
-    references: [organs.code],
-  }),
-  constituency: one(constituencies, {
-    fields: [persons.constituencyCode],
-    references: [constituencies.code],
-  }),
-  party: one(parties, {
-    fields: [persons.partyCode],
-    references: [parties.code],
-  }),
-}));
 
 /**
  * {

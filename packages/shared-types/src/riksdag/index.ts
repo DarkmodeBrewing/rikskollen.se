@@ -6,7 +6,7 @@ export {
 } from './person/types';
 export { AttributesDTO, type AttributeSchema } from './person/attribute/types';
 export {
-  AssingmentDTO,
+  AssignmentDTO,
   type AssignmentSchema,
 } from './person/assignment/types';
 export {

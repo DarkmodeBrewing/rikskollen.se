@@ -8,10 +8,6 @@
     "verbatimModuleSyntax": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "../../packages/shared-types/src/env.ts"],
-  "exclude": ["dist"],
-  "references": [
-    { "path": "../../packages/db" },
-    { "path": "../../packages/shared-types" }
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist"]
 }

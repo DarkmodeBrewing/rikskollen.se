@@ -5,11 +5,14 @@ import {
   serializerCompiler,
 } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { apiEnv, getPersons } from '@rikskollen/shared-types';
+import { apiEnv } from '@rikskollen/shared-types';
+import { getAllPoliticians } from './db';
+
+const env = apiEnv();
 
 const app = Fastify({
   logger:
-    apiEnv.NODE_ENV === 'development'
+    env.NODE_ENV === 'development'
       ? { transport: { target: 'pino-pretty', options: { colorize: true } } }
       : true,
 }).withTypeProvider<ZodTypeProvider>();
@@ -41,15 +44,13 @@ app.get('/health', HealthResponseSchema, async () => ({
 }));
 
 app.get('/api/persons', async () => {
-  const p = await getPersons();
-  console.log(p);
-  return p;
+  return getAllPoliticians();
 });
 
 // Server init
 export const start = async () => {
   try {
-    await app.listen({ port: 3000 });
+    await app.listen({ port: env.PORT, host: '0.0.0.0' });
   } catch (err) {
     app.log.error(err);
     process.exit(1);
