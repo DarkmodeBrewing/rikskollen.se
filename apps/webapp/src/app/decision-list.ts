@@ -14,6 +14,20 @@ import { MemberService } from './member.service';
       <p>Importerade betänkanden med utskottets förslag och källans uppgift om hur varje punkt beslutades.</p>
     </section>
     @if (result(); as result) {
+      @if (result.catalogCoverage; as catalog) {
+        <aside class="notice">
+          Beslutsunderlag finns för {{ catalog.importedDocuments }} av {{ catalog.sourceDocuments }}
+          betänkanden markerade som beslutade i dokumentlistan för {{ catalog.session }}.
+          @if (catalog.withRecordedVote !== null) {
+            {{ catalog.sourceDocuments - catalog.withRecordedVote }} av dessa betänkanden saknar en registrerad
+            votering i det importerade voteringsdatasetet. Det innebär inte att alla beslutspunkter saknar votering.
+          }
+          Dokument som inte är markerade som beslutade ingår inte i nämnaren.
+          <a [href]="catalog.catalogSourceUrl" target="_blank" rel="noopener">Dokumentlista ↗</a>
+        </aside>
+      } @else {
+        <aside class="notice">Ingen fullständig import av beslutade betänkanden ännu.</aside>
+      }
       @if (result.coverage; as coverage) {
         <aside class="notice">
           Beslutsunderlag finns för {{ coverage.importedDocuments }} av {{ coverage.sourceDocuments }}

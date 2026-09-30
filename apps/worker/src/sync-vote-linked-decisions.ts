@@ -11,12 +11,29 @@ export function selectPendingReports(
     throw new Error('Batch limit must be between 1 and 25');
   const unsupported = sourceDocumentIds.filter((id) => !documentIdSchema.safeParse(id).success);
   if (unsupported.length)
-    throw new Error(`Unsupported vote-linked document IDs: ${unsupported.join(', ')}`);
+    throw new Error(`Unsupported report document IDs: ${unsupported.join(', ')}`);
   const unique = new Map(sourceDocumentIds.map((id) => [id.toUpperCase(), id]));
   const completed = new Set(completedDocumentIds.map((id) => id.toUpperCase()));
   const candidates = [...unique].sort(([a], [b]) => a.localeCompare(b, 'sv'))
     .filter(([id]) => !completed.has(id)).map(([, id]) => id);
   return { candidates: candidates.slice(0, limit), pendingBefore: candidates.length, sourceDocumentCount: unique.size };
+}
+
+export async function importPendingReports(
+  selected: string[],
+  load = downloadDecisionStatus,
+) {
+  const imported: Array<{ runId: string; documentId: string; pointCount: number }> = [];
+  for (const documentId of selected) {
+    try {
+      const result = await syncDecision(documentId, load);
+      imported.push({ runId: result.runId, documentId: result.documentId, pointCount: result.pointCount });
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      throw new Error(`Stopped at ${documentId} after ${imported.length} completed reports; rerun to resume: ${detail}`);
+    }
+  }
+  return imported;
 }
 
 // The completed M2 vote snapshot bounds this batch. It cannot find reports
@@ -45,16 +62,7 @@ export async function syncVoteLinkedDecisions(
     await pgPool.end();
   }
   const selection = selectPendingReports(sourceIds, completedIds, limit);
-  const imported: Array<{ documentId: string; pointCount: number }> = [];
-  for (const documentId of selection.candidates) {
-    try {
-      const result = await syncDecision(documentId, load);
-      imported.push({ documentId: result.documentId, pointCount: result.pointCount });
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error);
-      throw new Error(`Stopped at ${documentId} after ${imported.length} completed reports; rerun to resume: ${detail}`);
-    }
-  }
+  const imported = await importPendingReports(selection.candidates, load);
   return {
     voteRunId,
     sourceDocumentCount: selection.sourceDocumentCount,

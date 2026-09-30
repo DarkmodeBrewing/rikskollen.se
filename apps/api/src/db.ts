@@ -8,6 +8,7 @@ import {
   decisionDocuments,
   decisionImportRuns,
   decisionPoints,
+  reportCatalogRuns,
 } from '@rikskollen/db';
 import {
   and,
@@ -231,6 +232,32 @@ export async function listDecisions(page: number, limit: number) {
     LIMIT $1 OFFSET $2`, [limit, (page - 1) * limit]);
 
   const voteRun = await getVoteRun();
+  const [catalogRun] = await db.select().from(reportCatalogRuns)
+    .where(and(eq(reportCatalogRuns.session, '2025/26'), isNotNull(reportCatalogRuns.completedAt)))
+    .orderBy(desc(reportCatalogRuns.completedAt), desc(reportCatalogRuns.id)).limit(1);
+  let catalogCoverage = null;
+  if (catalogRun) {
+    const result = await pgPool.query<{
+      sourceDocuments: number; importedDocuments: number; withRecordedVote: number | null;
+    }>(`SELECT count(*)::int AS "sourceDocuments",
+      count(*) FILTER (WHERE EXISTS (
+        SELECT 1 FROM decision_import_runs d WHERE d.completed_at IS NOT NULL
+        AND upper(d.document_id) = upper(c.document_id)))::int AS "importedDocuments",
+      count(*) FILTER (WHERE $2::uuid IS NOT NULL AND EXISTS (
+        SELECT 1 FROM vote_events v WHERE v.run_id = $2::uuid
+        AND upper(v.document_id) = upper(c.document_id)))::int AS "withRecordedVote"
+      FROM report_catalog_entries c WHERE c.run_id = $1`, [catalogRun.id, voteRun?.id ?? null]);
+    if (result.rows[0].sourceDocuments !== catalogRun.expectedCount)
+      throw new Error(`Incomplete report catalog ${catalogRun.id}`);
+    catalogCoverage = {
+      ...result.rows[0],
+      withRecordedVote: voteRun ? result.rows[0].withRecordedVote : null,
+      session: catalogRun.session,
+      catalogRunId: catalogRun.id,
+      catalogSourceUrl: catalogRun.sourceUrl,
+      catalogCompletedAt: catalogRun.completedAt,
+    };
+  }
   let coverage = null;
   if (voteRun) {
     const result = await pgPool.query<{
@@ -249,7 +276,7 @@ export async function listDecisions(page: number, limit: number) {
       voteSourceUrl: voteRun.sourceUrl,
     };
   }
-  return { items: list.rows, total: total.rows[0].count, page, limit, coverage };
+  return { items: list.rows, total: total.rows[0].count, page, limit, coverage, catalogCoverage };
 }
 export async function getMemberVotes(
   personId: string,

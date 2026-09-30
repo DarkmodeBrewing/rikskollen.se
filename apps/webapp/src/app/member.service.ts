@@ -153,6 +153,15 @@ export interface DecisionList {
     importedDocuments: number;
     voteEventsWithoutDocument: number;
   };
+  catalogCoverage: null | {
+    session: string;
+    catalogRunId: string;
+    catalogSourceUrl: string;
+    catalogCompletedAt: string;
+    sourceDocuments: number;
+    importedDocuments: number;
+    withRecordedVote: number | null;
+  };
 }
 export interface MemberVotes {
   items: Array<{ event: VoteEvent; choice: string }>;

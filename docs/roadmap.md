@@ -35,3 +35,7 @@ Use the 2025/26 committee report TU8 (`HD01TU8`) as a source-linked example. Imp
 ## M3 next slice — bounded vote-linked reports
 
 Enumerate distinct report IDs referenced by the latest complete 2025/26 vote snapshot and import missing document statuses in small resumable batches. Provide an imported-report directory and an explicitly scoped coverage count. This set does **not** include reports with no recorded votes; source-driven enumeration of all committee reports, reconciliation of differing document shapes, and vote-pattern aggregates remain future M3 work. A source outage or unsupported ID must surface as a failed batch, not an apparently complete archive.
+
+## M3 decided-report catalog
+
+Import the source's 2025/26 list of reports marked `beslutad=1`, including those without a recorded vote. Publish the catalog only after every sorted page has been reconciled and IDs are unique. Use it to drive small resumable imports of report status and show catalog-scoped coverage separately from M2 vote-link coverage. Reports not yet marked decided and vote-pattern aggregates remain outside this slice; define the latter only with verified eligible events, numerators and exclusions.
