@@ -31,7 +31,7 @@ const sourceSchema = z.object({
   }),
 });
 
-export const documentIdSchema = z.string().regex(/^HD01[A-Za-zÅÄÖåäö]{1,4}\d{1,3}$/);
+export const documentIdSchema = z.string().regex(/^HD01[A-Za-zÅÄÖåäö]{1,4}\d{1,3}$/i);
 const uuidSchema = z.uuid();
 
 export function decisionStatusUrl(documentId: string) {

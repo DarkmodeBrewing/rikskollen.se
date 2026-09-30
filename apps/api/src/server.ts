@@ -102,7 +102,7 @@ app.get('/api/persons/:id/votes', async (request, reply) => {
   return getMemberVotes(params.data.id, query.data.page, query.data.limit);
 });
 app.get('/api/decisions/:documentId', async (request, reply) => {
-  const params = z.object({ documentId: z.string().regex(/^HD01[A-Za-zÅÄÖåäö]{1,4}\d{1,3}$/) }).safeParse(request.params);
+  const params = z.object({ documentId: z.string().regex(/^HD01[A-Za-zÅÄÖåäö]{1,4}\d{1,3}$/i) }).safeParse(request.params);
   if (!params.success) return reply.code(400).send({ error: 'Invalid document ID' });
   return (await getDecisionTrail(params.data.documentId)) ?? reply.code(404).send({ error: 'Decision trail not imported' });
 });

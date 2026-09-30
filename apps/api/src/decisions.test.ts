@@ -29,6 +29,7 @@ test('decision detail distinguishes a matched recorded vote from an acclamation 
       await pgPool.query(`INSERT INTO vote_events (run_id, vote_id, session, designation, proposal_point, document_id, subject_type, main_vote_type, source_file, source_url, source_hash)
         VALUES ($1, $2, '2025/26', 'TU8', '1', 'HD01TU8', 'sakfrågan', 'huvud', 'fixture.json', 'fixture', 'fixture')`, [voteRun, voteId]);
       const after = await app.inject('/api/decisions/hd01tu8');
+      assert.equal(after.statusCode, 200);
       assert.equal(after.json().points[0].localVoteAvailable, true);
       const vote = await app.inject(`/api/votes/${voteId}`);
       assert.equal(vote.json().decisionTrailAvailable, true);
