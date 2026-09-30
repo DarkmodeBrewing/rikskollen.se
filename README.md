@@ -26,7 +26,7 @@ Rikskollen is **independent of Sveriges riksdag**. Source: Sveriges riksdag. Any
 | `apps/webapp` | Angular web UI | Swedish member list and detail pages |
 | `docker-compose.yml` | Local database | PostgreSQL only; API and webapp run on the host |
 
-The vote and attendance schemas remain drafts outside the applied migration. Member assignments are stored as source-valued JSON within the imported person snapshot; a normalized assignments table remains a draft. The next milestone is recorded votes.
+The separate legacy attendance schema remains a draft outside the applied migrations. Member assignments are stored as source-valued JSON within the imported person snapshot. M3 begins with document and proposal-point context for a bounded report.
 
 ## Local development
 
@@ -64,3 +64,15 @@ The first bounded vote session is **2025/26**. Set `RIKSDAG_API_URL=https://data
 The worker verifies each file's vote ID, proposal point, session, 349 unique member IDs and consistent event fields. It writes a new run snapshot in batches and marks it complete only after every file has been ingested and the totals reconcile. A failed run is removed; a completed previous run remains visible. Each run retains the archive URL and SHA-256; each event retains its file name, source URL and per-file SHA-256. The source archive can be re-downloaded or supplied locally for replay. The archive itself is not stored in PostgreSQL.
 
 The API routes `/api/votes`, `/api/votes/:voteId`, `/api/votes/import-status`, and `/api/persons/:id/votes` read only the latest completed 2025/26 snapshot. The UI offers a vote list, vote detail with each member choice, and a member's history. Dates missing in the source remain unknown. The M2 UI uses signals for its new asynchronous views; the broader Angular upgrade and conversion of the existing member templates are tracked separately in issue #4.
+
+## M3 decision trail: first matter
+
+After building and migrating, import the source document status for the first worked example:
+
+```bash
+pnpm --filter @rikskollen/worker sync:decision HD01TU8
+```
+
+The worker accepts one 2025/26 committee report document ID at a time. It fetches `dokumentstatus/HD01TU8.json`, validates every proposal point, and atomically publishes a versioned report snapshot with the source SHA-256. A later import of the same ID publishes a new version; the previous one remains stored. The service does not store the raw response or HTML, so exact historical replay requires saving the source response separately. No import is scheduled.
+
+`/api/decisions/HD01TU8` and `/arende/HD01TU8` display the source's proposal text, point, decision type, winner where given, and source vote ID. A link to Rikskollen's vote detail appears only if the latest M2 snapshot contains that same document, point, and vote ID. Points labeled `acklamation` show that source classification and no vote link. If M2 or M3 has not been imported, no local connection is claimed. This first slice does not claim full session coverage or publish vote-pattern statistics.

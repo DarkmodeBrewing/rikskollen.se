@@ -5,6 +5,9 @@ import {
   voteChoices,
   voteEvents,
   voteImportRuns,
+  decisionDocuments,
+  decisionImportRuns,
+  decisionPoints,
 } from '@rikskollen/db';
 import {
   and,
@@ -16,6 +19,7 @@ import {
   inArray,
   isNotNull,
   or,
+  sql,
 } from 'drizzle-orm';
 
 const { db, pgPool } = createDatabaseClient();
@@ -131,6 +135,11 @@ export async function getVote(voteId: string) {
     .from(voteEvents)
     .where(and(eq(voteEvents.runId, run.id), eq(voteEvents.voteId, voteId)));
   if (!event) return null;
+  const decisionTrailAvailable = event.documentId
+    ? !!(await db.select({ id: decisionImportRuns.id }).from(decisionImportRuns)
+        .where(and(sql`upper(${decisionImportRuns.documentId}) = upper(${event.documentId})`, isNotNull(decisionImportRuns.completedAt)))
+        .limit(1))[0]
+    : false;
   const choices = await db
     .select()
     .from(voteChoices)
@@ -166,6 +175,7 @@ export async function getVote(voteId: string) {
   );
   return {
     event,
+    decisionTrailAvailable,
     choices: choices.map((choice) => ({
       ...choice,
       memberProfileAvailable: profileIds.has(choice.personId),
@@ -174,6 +184,32 @@ export async function getVote(voteId: string) {
     total: choices.length,
     sourceArchiveUrl: run.sourceUrl,
     importedAt: run.completedAt,
+  };
+}
+
+export async function getDecisionTrail(documentId: string) {
+  const [run] = await db.select().from(decisionImportRuns)
+    .where(and(sql`upper(${decisionImportRuns.documentId}) = upper(${documentId})`, isNotNull(decisionImportRuns.completedAt)))
+    .orderBy(desc(decisionImportRuns.completedAt)).limit(1);
+  if (!run) return null;
+  const [document] = await db.select().from(decisionDocuments).where(eq(decisionDocuments.runId, run.id));
+  const points = await db.select().from(decisionPoints).where(eq(decisionPoints.runId, run.id))
+    .orderBy(sql`case when ${decisionPoints.point} ~ '^[0-9]+$' then ${decisionPoints.point}::integer else 2147483647 end`, asc(decisionPoints.point));
+  if (!document || points.length !== run.expectedPoints)
+    throw new Error(`Incomplete decision import ${run.id}`);
+  const voteRun = await getVoteRun(document.session);
+  const voteRows = voteRun
+    ? await db.select({ voteId: voteEvents.voteId, proposalPoint: voteEvents.proposalPoint })
+        .from(voteEvents).where(and(eq(voteEvents.runId, voteRun.id), sql`upper(${voteEvents.documentId}) = upper(${documentId})`))
+    : [];
+  const verifiedVotes = new Set(voteRows.map((row) => `${row.proposalPoint}:${row.voteId}`));
+  return {
+    document,
+    points: points.map((point) => ({ ...point, localVoteAvailable: !!point.sourceVoteId && verifiedVotes.has(`${point.point}:${point.sourceVoteId}`) })),
+    sourceUrl: run.sourceUrl,
+    sourceHash: run.sourceHash,
+    importedAt: run.completedAt,
+    expectedPoints: run.expectedPoints,
   };
 }
 export async function getMemberVotes(

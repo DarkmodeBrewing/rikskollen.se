@@ -13,9 +13,10 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "build": "tsup src/index.ts src/sync-persons.ts src/sync-votes.ts --format esm --clean --target node20",
+    "build": "tsup src/index.ts src/sync-persons.ts src/sync-votes.ts src/sync-decisions.ts --format esm --clean --target node20",
     "sync:persons": "node dist/sync-persons.js",
     "sync:votes": "node dist/sync-votes.js",
+    "sync:decision": "node dist/sync-decisions.js",
     "test": "node --import tsx --test src/clients/*.test.ts src/*.test.ts",
     "dry:vote-cases": "tsx src/index.ts"
   },

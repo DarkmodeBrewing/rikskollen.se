@@ -23,6 +23,9 @@ import { MemberService } from './member.service';
         Den här sidan visar en registrerad huvudvotering, inte hela ärendets beslut. ”Frånvarande”
         avser endast denna votering.
         @if (vote.event.documentId) {
+          @if (vote.decisionTrailAvailable) {
+            <a [routerLink]="['/arende', vote.event.documentId]">Ärende och beslutspunkter →</a>
+          }
           <a
             [href]="'https://data.riksdagen.se/dokument/' + vote.event.documentId"
             target="_blank"

@@ -1,6 +1,6 @@
 # Roadmap
 
-Status as of 2026-09-29. This is an ordered proposal, not a delivery schedule. Each milestone must leave a demonstrable, source-linked result.
+Status as of 2026-09-30. This is an ordered proposal, not a delivery schedule. Each milestone must leave a demonstrable, source-linked result.
 
 | Milestone | Outcome | Acceptance gate |
 | --- | --- | --- |
@@ -27,3 +27,7 @@ Status as of 2026-09-29. This is an ordered proposal, not a delivery schedule. E
 - Establish initial sync cadence and acceptable lag from source publication; show actual last successful sync, not a promise of “live” data.
 
 The next vertical slice is **member → recorded vote → proposal/document → primary source**, with enough provenance to audit every displayed claim.
+
+## M3 first slice — one complete decision trail
+
+Use the 2025/26 committee report TU8 (`HD01TU8`) as a source-linked example. Import all its proposal points from document status as one versioned report; display each point's proposal, decision method and source vote ID, including points decided by acclamation. Join to M2 only by the verified document, point and vote ID. Keep missing context unknown. Then check a second report's shape and expand bounded imports before any session-wide claim. Define and validate denominators and exclusions before publishing aggregates. The Angular upgrade and broader signals conversion remain separate in issue #4.
