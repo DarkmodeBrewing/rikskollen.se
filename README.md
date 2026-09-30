@@ -50,6 +50,8 @@ The database password above is only for the local Compose service. Do not reuse 
 
 For scope and acceptance criteria, start with [the roadmap](docs/roadmap.md). For field definitions and caveats, start with [the methodology](docs/data-methodology.md).
 
+Following staging acceptance, [M4.1/M4.2](docs/frontend-plan.md) plan a Playwright E2E baseline with mocked API responses and a dedicated frontend design/features slice. Neither is implemented yet.
+
 ## M1 member directory
 
 After the migration, set `RIKSDAG_API_URL=https://data.riksdagen.se` and run `corepack pnpm --filter @rikskollen/worker sync:persons`. The command fetches the Riksdag's unfiltered serving list, then its party-filtered batches, verifies each batch count and every stable ID against the roster, and writes one completed run and its persons in a transaction. Failed or incomplete fetches do not publish a run. Repeating the command updates source values by `intressent_id` without duplicating people. This is a manual import; no schedule or public deployment is configured.

@@ -32,8 +32,14 @@ Prepare API and Angular SSR runtime images, a compiled migration job, explicit m
 
 ## Following M4 slices
 
-1. Scheduled imports with a bounded correction window, explicit failed-job reporting and visible last-successful freshness. Select cadence and acceptable lag using measured source behaviour.
-2. Monitoring/alerts and backup/restore acceptance; retain enough source provenance for corrections and define raw-response retention.
-3. Public-release review: accessibility, attribution, personal-data handling and operational readiness. Member photos require a separate rights review.
+| Slice | Focus | Acceptance |
+| --- | --- | --- |
+| **M4.1 — frontend E2E baseline** | TypeScript Playwright tests with deterministic mocked API responses, including SSR and hydration | Main journeys and failure/coverage states pass in CI; isolated fixtures, desktop/mobile coverage and actionable traces; no live-source dependency |
+| **M4.2 — frontend design and features** | Dedicated design/usability work, consistent page states and a bounded set of discovery/navigation improvements | Reviewed desktop/mobile design, keyboard usability, agreed feature behaviour and source/coverage wording; M4.1 tests remain green and expand for changed journeys |
+| **M4.3 — scheduled imports** | Bounded correction window, explicit failed-job reporting and visible last-successful freshness | Cadence and acceptable lag selected using measured source behaviour; failures preserve completed data |
+| **M4.4 — operational recovery** | Monitoring/alerts and backup/restore acceptance; source provenance and retention | Restore and alert scenarios verified with recorded evidence |
+| **M4.5 — public release** | Accessibility, attribution, personal-data handling and operational readiness | Release checks completed; member photos require a separate rights review |
+
+The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. These are planned slices; implementation starts after the M4.0 host acceptance gate passes. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
 
 The Angular upgrade and remaining member-template conversion to signals stay separately tracked in [issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
