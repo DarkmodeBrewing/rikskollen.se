@@ -28,6 +28,38 @@ import { MemberService } from './member.service';
       } @else {
         <aside class="notice">Ingen fullständig import av beslutade betänkanden ännu.</aside>
       }
+      @if (result.decisionMethodSummary; as summary) {
+        <section class="notice" aria-labelledby="decision-method-heading">
+          <h2 id="decision-method-heading">Beslutssätt i importerade betänkanden</h2>
+          @if (summary.totalPoints > 0) {
+            <p>Av {{ summary.totalPoints }} beslutspunkter i {{ summary.importedDocuments }} av
+              {{ summary.sourceDocuments }} betänkanden markerade som beslutade {{ summary.session }}
+              anger källan:</p>
+            <ul>
+              <li>Röstning: {{ summary.counts.recordedVote }}</li>
+              <li>Acklamation: {{ summary.counts.acclamation }}</li>
+              <li>Annan beslutstyp: {{ summary.counts.other }}</li>
+              <li>Beslutstyp saknas: {{ summary.counts.unknown }}</li>
+            </ul>
+            @if (summary.counts.other > 0) {
+              <p>Övriga källvärden:
+                @for (method of summary.sourceValues; track method.sourceValue) {
+                  @if (method.sourceValue && method.sourceValue.trim().toLowerCase() !== 'röstning' && method.sourceValue.trim().toLowerCase() !== 'acklamation') {
+                    <span>{{ method.sourceValue }} ({{ method.count }}) </span>
+                  }
+                }
+              </p>
+            }
+          } @else {
+            <p>Inga beslutspunkter har importerats från katalogens betänkanden ännu.</p>
+          }
+          <p>{{ summary.excludedDocuments }} katalogbetänkanden saknar importerat beslutsunderlag och
+            deras beslutspunkter ingår inte. Uppgifterna gäller importerade beslutspunkter,
+            inte alla riksdagens beslut eller ledamöters närvaro.
+            <a [href]="summary.catalogSourceUrl" target="_blank" rel="noopener">Källa: Sveriges riksdags dokumentlista ↗</a>
+          </p>
+        </section>
+      }
       @if (result.coverage; as coverage) {
         <aside class="notice">
           Beslutsunderlag finns för {{ coverage.importedDocuments }} av {{ coverage.sourceDocuments }}

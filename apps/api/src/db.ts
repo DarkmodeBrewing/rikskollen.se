@@ -236,6 +236,7 @@ export async function listDecisions(page: number, limit: number) {
     .where(and(eq(reportCatalogRuns.session, '2025/26'), isNotNull(reportCatalogRuns.completedAt)))
     .orderBy(desc(reportCatalogRuns.completedAt), desc(reportCatalogRuns.id)).limit(1);
   let catalogCoverage = null;
+  let decisionMethodSummary = null;
   if (catalogRun) {
     const result = await pgPool.query<{
       sourceDocuments: number; importedDocuments: number; withRecordedVote: number | null;
@@ -254,6 +255,44 @@ export async function listDecisions(page: number, limit: number) {
       withRecordedVote: voteRun ? result.rows[0].withRecordedVote : null,
       session: catalogRun.session,
       catalogRunId: catalogRun.id,
+      catalogSourceUrl: catalogRun.sourceUrl,
+      catalogCompletedAt: catalogRun.completedAt,
+    };
+    const scoped = `${latest}, scoped AS (
+      SELECT l.id, l.expected_points FROM report_catalog_entries c
+      JOIN latest l ON upper(l.document_id) = upper(c.document_id)
+      JOIN decision_documents d ON d.run_id = l.id AND d.session = $1
+      WHERE c.run_id = $2
+    )`;
+    const reports = await pgPool.query<{ importedDocuments: number; expectedPoints: number }>(
+      `${scoped} SELECT count(*)::int AS "importedDocuments",
+        coalesce(sum(expected_points), 0)::int AS "expectedPoints" FROM scoped`,
+      [catalogRun.session, catalogRun.id]);
+    const methods = await pgPool.query<{ sourceValue: string; count: number }>(
+      `${scoped} SELECT p.decision_type AS "sourceValue", count(*)::int AS count
+        FROM scoped s JOIN decision_points p ON p.run_id = s.id
+        GROUP BY p.decision_type ORDER BY p.decision_type`,
+      [catalogRun.session, catalogRun.id]);
+    const importedDocuments = reports.rows[0].importedDocuments;
+    const totalPoints = methods.rows.reduce((sum, row) => sum + row.count, 0);
+    if (importedDocuments !== catalogCoverage.importedDocuments || totalPoints !== reports.rows[0].expectedPoints)
+      throw new Error(`Incomplete decision summary for catalog ${catalogRun.id}`);
+    const counts = { recordedVote: 0, acclamation: 0, other: 0, unknown: 0 };
+    for (const row of methods.rows) {
+      const value = row.sourceValue?.trim().toLocaleLowerCase('sv');
+      if (value === 'röstning') counts.recordedVote += row.count;
+      else if (value === 'acklamation') counts.acclamation += row.count;
+      else if (!value) counts.unknown += row.count;
+      else counts.other += row.count;
+    }
+    decisionMethodSummary = {
+      session: catalogRun.session,
+      sourceDocuments: catalogCoverage.sourceDocuments,
+      importedDocuments,
+      excludedDocuments: catalogCoverage.sourceDocuments - importedDocuments,
+      totalPoints,
+      counts,
+      sourceValues: methods.rows,
       catalogSourceUrl: catalogRun.sourceUrl,
       catalogCompletedAt: catalogRun.completedAt,
     };
@@ -276,7 +315,7 @@ export async function listDecisions(page: number, limit: number) {
       voteSourceUrl: voteRun.sourceUrl,
     };
   }
-  return { items: list.rows, total: total.rows[0].count, page, limit, coverage, catalogCoverage };
+  return { items: list.rows, total: total.rows[0].count, page, limit, coverage, catalogCoverage, decisionMethodSummary };
 }
 export async function getMemberVotes(
   personId: string,
