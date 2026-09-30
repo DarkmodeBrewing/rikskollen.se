@@ -43,3 +43,7 @@ Import the source's 2025/26 list of reports marked `beslutad=1`, including those
 ## M3 decision method summary
 
 Count the source's decision method for points in the latest completed status of each imported report in the latest decided-report catalog. Show the proposal-point denominator, imported versus missing reports, exact source values, session, and source links. A corrected report replaces its previous version. This summary is scoped to imported points; it is not a session-wide decision share or a member attendance measure. Later M3 work can consider vote-pattern summaries only after eligible events and member-level denominators have been validated.
+
+## M3 member vote-choice summary
+
+Count exact source choices across all rows for one person ID in the latest completed 2025/26 vote snapshot. Display the row denominator, missing person records, missing dates, source and import time. Let the visitor filter the history by any observed choice without changing the summary denominator. Corrected snapshots replace old counts; pending imports stay hidden. These counts describe source records, with no inferred eligibility or attendance percentage. Participation rates and comparisons require separate assignment/substitution validation before implementation.

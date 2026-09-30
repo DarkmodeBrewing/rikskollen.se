@@ -65,6 +65,8 @@ The worker verifies each file's vote ID, proposal point, session, 349 unique mem
 
 The API routes `/api/votes`, `/api/votes/:voteId`, `/api/votes/import-status`, and `/api/persons/:id/votes` read only the latest completed 2025/26 snapshot. The UI offers a vote list, vote detail with each member choice, and a member's history. Dates missing in the source remain unknown. The M2 UI uses signals for its new asynchronous views; the broader Angular upgrade and conversion of the existing member templates are tracked separately in issue #4.
 
+The member history now includes counts of each exact source choice for that person's ID, with the source-row denominator, missing person records, missing dates and import time. Clicking a count filters the event list; the summary still covers all rows for the ID in the snapshot. The optional API filter is `choice`, for example `/api/persons/:id/votes?choice=Ja&page=1&limit=20`. The response includes `summary` (null before a completed import) and the selected `choice`. Unexpected source values remain visible. These counts describe source records, not general attendance or eligibility; [methodology](docs/data-methodology.md#m3-member-vote-choice-summary-202526) defines the scope and provides a worked source example.
+
 ## M3 decision trail: first matter
 
 After building and migrating, import the source document status for the first worked example:

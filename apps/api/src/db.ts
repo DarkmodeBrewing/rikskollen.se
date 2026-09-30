@@ -104,7 +104,7 @@ export async function getVoteRun(session = '2025/26') {
         isNotNull(voteImportRuns.completedAt),
       ),
     )
-    .orderBy(desc(voteImportRuns.completedAt))
+    .orderBy(desc(voteImportRuns.completedAt), desc(voteImportRuns.id))
     .limit(1);
   return run ?? null;
 }
@@ -321,17 +321,29 @@ export async function getMemberVotes(
   personId: string,
   page: number,
   limit: number,
+  choice?: string,
 ) {
   const run = await getVoteRun();
-  if (!run) return { items: [], total: 0, page, limit, session: '2025/26' };
+  if (!run) return { items: [], total: 0, page, limit, session: '2025/26', choice: choice ?? null, summary: null };
   const where = and(
     eq(voteChoices.runId, run.id),
     eq(voteChoices.personId, personId),
+    choice === undefined ? undefined : eq(voteChoices.choice, choice),
   );
-  const [total] = await db
-    .select({ count: count() })
+  // Summaries use all rows for the ID, independently of the page and choice filter.
+  const choices = await db.select({ choice: voteChoices.choice, count: count() })
     .from(voteChoices)
-    .where(where);
+    .where(and(eq(voteChoices.runId, run.id), eq(voteChoices.personId, personId)))
+    .groupBy(voteChoices.choice).orderBy(asc(voteChoices.choice));
+  const coverageResult = await pgPool.query<{ sourceEvents: number; eventsWithoutDate: number }>(`SELECT
+    (SELECT count(*)::int FROM vote_events WHERE run_id = $1) AS "sourceEvents",
+    (SELECT count(*)::int FROM vote_choices c JOIN vote_events v
+      ON v.run_id = c.run_id AND v.vote_id = c.vote_id
+      WHERE c.run_id = $1 AND c.person_id = $2 AND v.vote_date IS NULL) AS "eventsWithoutDate"`,
+    [run.id, personId]);
+  const coverage = coverageResult.rows[0];
+  const recordedEvents = choices.reduce((sum, row) => sum + row.count, 0);
+  const total = choice === undefined ? recordedEvents : choices.find((row) => row.choice === choice)?.count ?? 0;
   const items = await db
     .select({ event: voteEvents, choice: voteChoices.choice })
     .from(voteChoices)
@@ -347,10 +359,23 @@ export async function getMemberVotes(
       desc(voteEvents.voteDate),
       asc(voteEvents.designation),
       asc(voteEvents.proposalPoint),
+      asc(voteEvents.voteId),
     )
     .limit(limit)
     .offset((page - 1) * limit);
-  return { items, total: total.count, page, limit, session: run.session };
+  return {
+    items, total, page, limit, session: run.session, choice: choice ?? null,
+    summary: {
+      recordedEvents,
+      choices,
+      sourceEvents: coverage.sourceEvents,
+      eventsWithoutMemberRecord: coverage.sourceEvents - recordedEvents,
+      eventsWithoutDate: coverage.eventsWithoutDate,
+      voteRunId: run.id,
+      sourceArchiveUrl: run.sourceUrl,
+      importedAt: run.completedAt,
+    },
+  };
 }
 export async function getVoteImportStatus() {
   const run = await getVoteRun();

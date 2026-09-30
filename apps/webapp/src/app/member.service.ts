@@ -69,9 +69,9 @@ export class MemberService {
   decisions(page: number) {
     return this.http.get<DecisionList>(`${this.base}/api/decisions`, { params: { page, limit: 30 } });
   }
-  memberVotes(id: string, page: number) {
+  memberVotes(id: string, page: number, choice: string | null = null) {
     return this.http.get<MemberVotes>(`${this.base}/api/persons/${encodeURIComponent(id)}/votes`, {
-      params: { page, limit: 20 },
+      params: { page, limit: 20, ...(choice === null ? {} : { choice }) },
     });
   }
   status() {
@@ -180,4 +180,15 @@ export interface MemberVotes {
   page: number;
   limit: number;
   session: string;
+  choice: string | null;
+  summary: null | {
+    recordedEvents: number;
+    choices: Array<{ choice: string; count: number }>;
+    sourceEvents: number;
+    eventsWithoutMemberRecord: number;
+    eventsWithoutDate: number;
+    voteRunId: string;
+    sourceArchiveUrl: string;
+    importedAt: string;
+  };
 }

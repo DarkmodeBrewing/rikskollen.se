@@ -97,10 +97,10 @@ app.get('/api/persons/:id/votes', async (request, reply) => {
   const params = z
     .object({ id: z.string().regex(/^\d{1,30}$/) })
     .safeParse(request.params);
-  const query = PageQuery.safeParse(request.query);
+  const query = PageQuery.extend({ choice: z.string().max(100).optional() }).safeParse(request.query);
   if (!params.success || !query.success)
     return reply.code(400).send({ error: 'Invalid request' });
-  return getMemberVotes(params.data.id, query.data.page, query.data.limit);
+  return getMemberVotes(params.data.id, query.data.page, query.data.limit, query.data.choice);
 });
 app.get('/api/decisions', async (request, reply) => {
   const query = PageQuery.safeParse(request.query);
