@@ -15,6 +15,7 @@ import {
   listVotes,
   getMemberVotes,
   getDecisionTrail,
+  listDecisions,
 } from './db';
 
 const env = apiEnv();
@@ -100,6 +101,11 @@ app.get('/api/persons/:id/votes', async (request, reply) => {
   if (!params.success || !query.success)
     return reply.code(400).send({ error: 'Invalid request' });
   return getMemberVotes(params.data.id, query.data.page, query.data.limit);
+});
+app.get('/api/decisions', async (request, reply) => {
+  const query = PageQuery.safeParse(request.query);
+  if (!query.success) return reply.code(400).send({ error: 'Invalid query' });
+  return listDecisions(query.data.page, query.data.limit);
 });
 app.get('/api/decisions/:documentId', async (request, reply) => {
   const params = z.object({ documentId: z.string().regex(/^HD01[A-Za-zÅÄÖåäö]{1,4}\d{1,3}$/i) }).safeParse(request.params);

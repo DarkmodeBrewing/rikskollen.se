@@ -31,6 +31,14 @@ test('decision detail distinguishes a matched recorded vote from an acclamation 
       const after = await app.inject('/api/decisions/hd01tu8');
       assert.equal(after.statusCode, 200);
       assert.equal(after.json().points[0].localVoteAvailable, true);
+      const listing = await app.inject('/api/decisions');
+      assert.equal(listing.statusCode, 200);
+      assert.equal(listing.json().total, 1);
+      assert.equal(listing.json().coverage.voteRunId, voteRun);
+      assert.equal(listing.json().coverage.sourceDocuments, 1);
+      assert.equal(listing.json().coverage.importedDocuments, 1);
+      assert.equal(listing.json().coverage.voteEventsWithoutDocument, 0);
+      assert.equal((await app.inject('/api/decisions?page=0')).statusCode, 400);
       const vote = await app.inject(`/api/votes/${voteId}`);
       assert.equal(vote.json().decisionTrailAvailable, true);
       assert.equal((await app.inject('/api/decisions/HD01TU9')).statusCode, 404);

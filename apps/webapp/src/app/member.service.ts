@@ -66,6 +66,9 @@ export class MemberService {
   decision(id: string) {
     return this.http.get<DecisionTrail>(`${this.base}/api/decisions/${encodeURIComponent(id)}`);
   }
+  decisions(page: number) {
+    return this.http.get<DecisionList>(`${this.base}/api/decisions`, { params: { page, limit: 30 } });
+  }
   memberVotes(id: string, page: number) {
     return this.http.get<MemberVotes>(`${this.base}/api/persons/${encodeURIComponent(id)}/votes`, {
       params: { page, limit: 20 },
@@ -136,6 +139,20 @@ export interface DecisionTrail {
   sourceUrl: string;
   importedAt: string;
   expectedPoints: number;
+}
+export interface DecisionList {
+  items: Array<{ documentId: string; session: string; designation: string; title: string; decisionDate: string | null; pointCount: number; sourceUrl: string; importedAt: string }>;
+  total: number;
+  page: number;
+  limit: number;
+  coverage: null | {
+    session: string;
+    voteRunId: string;
+    voteSourceUrl: string;
+    sourceDocuments: number;
+    importedDocuments: number;
+    voteEventsWithoutDocument: number;
+  };
 }
 export interface MemberVotes {
   items: Array<{ event: VoteEvent; choice: string }>;
