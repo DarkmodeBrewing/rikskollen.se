@@ -1,0 +1,103 @@
+# Standalone staging stack. Do not combine with the local docker-compose.yml.
+x-build: &build
+  context: .
+  args:
+    GIT_SHA: ${GIT_SHA:?Set GIT_SHA to the tested commit}
+x-database: &database
+  DATABASE_URL: postgres://rikskollen:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@db:5432/rikskollen
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rikskollen
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: rikskollen
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rikskollen -d rikskollen"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - db_data:/var/lib/postgresql
+    logging: *logging
+
+  migrate:
+    image: rikskollen-migrate:${IMAGE_TAG:-staging}
+    build:
+      <<: *build
+      target: migrate
+    profiles: [jobs]
+    environment: *database
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+
+  api:
+    image: rikskollen-api:${IMAGE_TAG:-staging}
+    build:
+      <<: *build
+      target: api
+    init: true
+    restart: unless-stopped
+    environment:
+      <<: *database
+      PORT: 3000
+      NODE_ENV: production
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/ready', {signal: AbortSignal.timeout(4000)}).then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    logging: *logging
+
+  web:
+    image: rikskollen-web:${IMAGE_TAG:-staging}
+    build:
+      <<: *build
+      target: web
+    init: true
+    restart: unless-stopped
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      API_BASE_URL: http://api:3000
+    ports:
+      - "127.0.0.1:${WEB_PORT:-4080}:4000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/health', {signal: AbortSignal.timeout(4000)}).then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    logging: *logging
+
+  worker:
+    image: rikskollen-worker:${IMAGE_TAG:-staging}
+    build:
+      <<: *build
+      target: worker
+    profiles: [jobs]
+    init: true
+    environment:
+      <<: *database
+      RIKSDAG_API_URL: https://data.riksdagen.se
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+
+volumes:
+  db_data:

@@ -34,3 +34,7 @@ These are intended responsibilities, not proof that every package currently work
 6. Update the README or methodology when setup steps, data definitions, coverage or public wording change. Keep a change scoped to the task; avoid opportunistic rewrites.
 
 Use pnpm workspace commands from the repository root unless a package explicitly requires otherwise. Check scripts before invoking them: this prototype contains unfinished paths. Never commit secrets, local `.env` files or raw personal-data dumps. When proposing a public metric, show a source-linked worked example before shipping it.
+
+## M4 deployment acceptance gate
+
+After M4.0 implementation, verify and record every mandatory row in [the M4.0 test protocol](docs/m4.0-test-protocol.md) for the deployed commit before starting the next feature or M4 implementation slice. CI is evidence for container checks, not for host HTTPS, browser behaviour or real-data imports. Leave unperformed checks NOT RUN or BLOCKED. Fixes within M4.0 may continue until the protocol passes.

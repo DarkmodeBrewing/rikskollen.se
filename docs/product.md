@@ -23,11 +23,15 @@ Start with a recent, explicitly bounded parliamentary session. Expand history on
 
 ## Later opportunities
 
-- Decision and document trails, including matters resolved without a recorded vote.
+- Wider decision/document coverage beyond the implemented 2025/26 committee-report trails and decided-report catalog.
 - Speeches, motions and committee activity where source coverage supports useful links.
 - Carefully defined vote participation summaries and trends with denominators, time ranges and substitute/assignment context.
 - Event timelines, including government formation, if an authoritative source and maintainable editorial workflow are specified. A “days without a new government” counter is a possible separate feature, **not** evidence of parliamentary attendance or part of the first data slice.
 - Public data exports and a stable read API after the internal model settles.
+
+## Current delivery boundary
+
+M1–M3 implement the member directory, recorded vote/history views, source-linked report trails, a decided-report catalog and summaries scoped to imported points or person rows. The next step is M4.0 staging deployment and its [acceptance protocol](m4.0-test-protocol.md). Manual imports remain separate jobs; deployed data coverage and operational readiness must be verified before the next implementation phase.
 
 ## Editorial and technical boundaries
 

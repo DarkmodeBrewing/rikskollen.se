@@ -1,0 +1,46 @@
+name: Staging stack
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  container-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      POSTGRES_PASSWORD: ci-only-password
+      WEB_PORT: 4080
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and test the isolated staging stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          export GIT_SHA=$(git rev-parse HEAD)
+          export IMAGE_TAG=$GIT_SHA
+          dc() { docker compose -p rikskollen-ci -f compose.staging.yml "$@"; }
+          trap 'dc logs --no-color; dc down -v' EXIT
+          dc config --quiet
+          dc build api web worker migrate
+          dc up -d --wait db
+          # The API must stay unready until the schema is migrated.
+          dc up -d api
+          dc exec -T api node --input-type=module -e "for(let n=0;n<20;n++){try{const r=await fetch('http://127.0.0.1:3000/ready'); process.exit(r.status===503?0:1)}catch{await new Promise(r=>setTimeout(r,500))}} process.exit(1)"
+          dc run --rm migrate
+          # Reapplying the same migration history must be safe.
+          dc run --rm migrate
+          dc up -d --wait api web
+          dc run --rm worker --version
+          node scripts/smoke-deployment.mjs --empty
+          dc restart api web
+          dc up -d --wait api web
+          node scripts/smoke-deployment.mjs --empty
+          dc stop api
+          node --input-type=module -e "const r = await fetch('http://127.0.0.1:4080/health'); if(r.status !== 503) process.exit(1); const p = await fetch('http://127.0.0.1:4080/api/votes'); if(p.status !== 502) process.exit(1)"
+          dc up -d --wait api web
+          node scripts/smoke-deployment.mjs --empty

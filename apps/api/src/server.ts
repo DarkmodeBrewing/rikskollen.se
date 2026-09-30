@@ -16,6 +16,7 @@ import {
   getMemberVotes,
   getDecisionTrail,
   listDecisions,
+  checkDatabaseReady,
 } from './db';
 
 const env = apiEnv();
@@ -52,6 +53,14 @@ app.get('/health', HealthResponseSchema, async () => ({
   ok: true as const,
   uptime: process.uptime(),
 }));
+app.get('/ready', async (_request, reply) => {
+  try {
+    await checkDatabaseReady();
+    return { ok: true };
+  } catch {
+    return reply.code(503).send({ ok: false });
+  }
+});
 
 const ListQuery = z.object({
   q: z.string().trim().max(100).default(''),
