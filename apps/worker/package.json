@@ -13,14 +13,17 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "build": "tsup src/index.ts src/sync-persons.ts --format esm --clean --target node20",
+    "build": "tsup src/index.ts src/sync-persons.ts src/sync-votes.ts --format esm --clean --target node20",
     "sync:persons": "node dist/sync-persons.js",
+    "sync:votes": "node dist/sync-votes.js",
     "test": "node --import tsx --test src/clients/*.test.ts src/*.test.ts",
     "dry:vote-cases": "tsx src/index.ts"
   },
   "dependencies": {
     "@rikskollen/db": "workspace:*",
-    "@rikskollen/shared-types": "workspace:*"
+    "@rikskollen/shared-types": "workspace:*",
+    "drizzle-orm": "^0.44.7",
+    "fflate": "^0.8.3"
   },
   "devDependencies": {
     "tsup": "^8.5.0"

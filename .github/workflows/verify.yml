@@ -46,6 +46,8 @@ jobs:
             if curl --fail --silent http://localhost:3000/health; then
               curl --fail --silent http://localhost:3000/api/persons | grep -q '"items":\[\]'
               curl --fail --silent http://localhost:3000/api/import-status | grep -qx 'null'
+              curl --fail --silent http://localhost:3000/api/votes | grep -q '"items":\[\]'
+              curl --fail --silent http://localhost:3000/api/votes/import-status | grep -qx 'null'
               exit 0
             fi
             sleep 1

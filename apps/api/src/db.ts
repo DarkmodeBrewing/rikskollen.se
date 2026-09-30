@@ -1,5 +1,22 @@
-import { createDatabaseClient, importRuns, persons } from '@rikskollen/db';
-import { and, asc, count, desc, eq, ilike, or } from 'drizzle-orm';
+import {
+  createDatabaseClient,
+  importRuns,
+  persons,
+  voteChoices,
+  voteEvents,
+  voteImportRuns,
+} from '@rikskollen/db';
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  isNotNull,
+  or,
+} from 'drizzle-orm';
 
 const { db, pgPool } = createDatabaseClient();
 
@@ -70,3 +87,138 @@ export async function getImportStatus() {
   };
 }
 export const closeDatabase = () => pgPool.end();
+
+// Vote rows are scoped to the most recent completed session snapshot.
+export async function getVoteRun(session = '2025/26') {
+  const [run] = await db
+    .select()
+    .from(voteImportRuns)
+    .where(
+      and(
+        eq(voteImportRuns.session, session),
+        isNotNull(voteImportRuns.completedAt),
+      ),
+    )
+    .orderBy(desc(voteImportRuns.completedAt))
+    .limit(1);
+  return run ?? null;
+}
+export async function listVotes(page: number, limit: number) {
+  const run = await getVoteRun();
+  if (!run) return { items: [], total: 0, page, limit, session: '2025/26' };
+  const [total] = await db
+    .select({ count: count() })
+    .from(voteEvents)
+    .where(eq(voteEvents.runId, run.id));
+  const items = await db
+    .select()
+    .from(voteEvents)
+    .where(eq(voteEvents.runId, run.id))
+    .orderBy(
+      desc(voteEvents.voteDate),
+      asc(voteEvents.designation),
+      asc(voteEvents.proposalPoint),
+    )
+    .limit(limit)
+    .offset((page - 1) * limit);
+  return { items, total: total.count, page, limit, session: run.session };
+}
+export async function getVote(voteId: string) {
+  const run = await getVoteRun();
+  if (!run) return null;
+  const [event] = await db
+    .select()
+    .from(voteEvents)
+    .where(and(eq(voteEvents.runId, run.id), eq(voteEvents.voteId, voteId)));
+  if (!event) return null;
+  const choices = await db
+    .select()
+    .from(voteChoices)
+    .where(and(eq(voteChoices.runId, run.id), eq(voteChoices.voteId, voteId)))
+    .orderBy(asc(voteChoices.sourceName), asc(voteChoices.personId));
+  const [memberRun] = await db
+    .select({ id: importRuns.id })
+    .from(importRuns)
+    .orderBy(desc(importRuns.completedAt))
+    .limit(1);
+  const available = memberRun
+    ? await db
+        .select({ personId: persons.personId })
+        .from(persons)
+        .where(
+          and(
+            eq(persons.importRunId, memberRun.id),
+            inArray(
+              persons.personId,
+              choices.map((row) => row.personId),
+            ),
+          ),
+        )
+    : [];
+  const profileIds = new Set(available.map((row) => row.personId));
+  const counts = Object.fromEntries(
+    Object.entries(
+      choices.reduce<Record<string, number>>((result, row) => {
+        result[row.choice] = (result[row.choice] ?? 0) + 1;
+        return result;
+      }, {}),
+    ).sort(([a], [b]) => a.localeCompare(b, 'sv')),
+  );
+  return {
+    event,
+    choices: choices.map((choice) => ({
+      ...choice,
+      memberProfileAvailable: profileIds.has(choice.personId),
+    })),
+    counts,
+    total: choices.length,
+    sourceArchiveUrl: run.sourceUrl,
+    importedAt: run.completedAt,
+  };
+}
+export async function getMemberVotes(
+  personId: string,
+  page: number,
+  limit: number,
+) {
+  const run = await getVoteRun();
+  if (!run) return { items: [], total: 0, page, limit, session: '2025/26' };
+  const where = and(
+    eq(voteChoices.runId, run.id),
+    eq(voteChoices.personId, personId),
+  );
+  const [total] = await db
+    .select({ count: count() })
+    .from(voteChoices)
+    .where(where);
+  const items = await db
+    .select({ event: voteEvents, choice: voteChoices.choice })
+    .from(voteChoices)
+    .innerJoin(
+      voteEvents,
+      and(
+        eq(voteChoices.runId, voteEvents.runId),
+        eq(voteChoices.voteId, voteEvents.voteId),
+      ),
+    )
+    .where(where)
+    .orderBy(
+      desc(voteEvents.voteDate),
+      asc(voteEvents.designation),
+      asc(voteEvents.proposalPoint),
+    )
+    .limit(limit)
+    .offset((page - 1) * limit);
+  return { items, total: total.count, page, limit, session: run.session };
+}
+export async function getVoteImportStatus() {
+  const run = await getVoteRun();
+  return run
+    ? {
+        ...run,
+        complete:
+          run.eventCount === run.expectedFiles &&
+          run.choiceCount === run.eventCount * 349,
+      }
+    : null;
+}

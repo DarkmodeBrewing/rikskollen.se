@@ -3,10 +3,11 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import { MemberService } from './member.service';
+import { VoteHistoryComponent } from './vote-history';
 
 @Component({
   selector: 'app-member-detail',
-  imports: [AsyncPipe, DatePipe, RouterLink],
+  imports: [AsyncPipe, DatePipe, RouterLink, VoteHistoryComponent],
   template: `
     <a routerLink="/" class="back">← Alla ledamöter</a>
     @if (member$ | async; as member) {
@@ -35,6 +36,7 @@ import { MemberService } from './member.service';
           }
         </ul>
       </section>
+      <app-vote-history />
       <aside class="notice">
         Hämtad {{ member.fetchedAt | date: 'yyyy-MM-dd HH:mm' }}. Källa: Sveriges riksdag.
         <a [href]="member.personUrl || member.sourceUrl" target="_blank" rel="noopener"
