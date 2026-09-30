@@ -15,6 +15,20 @@
       "when": 1790706657847,
       "tag": "0001_sharp_alice",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790708169414,
+      "tag": "0002_loud_skaar",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790738840822,
+      "tag": "0003_same_clea",
+      "breakpoints": true
     }
   ]
 }

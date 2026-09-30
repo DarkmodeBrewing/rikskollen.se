@@ -227,3 +227,37 @@ h2 {
     margin-left: 0;
   }
 }
+
+.site-header nav {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.site-header nav a {
+  text-decoration: none;
+  color: #096e59;
+}
+.vote-count {
+  display: inline-block;
+  padding: 8px 12px;
+  background: #e9f1e9;
+  border-radius: 4px;
+  margin: 4px;
+  font-weight: 700;
+}
+.choice-name {
+  font-weight: 600;
+}
+.choice-value {
+  font-weight: 800;
+  color: #096e59;
+}
+@media (max-width: 700px) {
+  .site-header {
+    flex-wrap: wrap;
+  }
+  .site-header nav {
+    width: 100%;
+  }
+}

@@ -54,7 +54,73 @@ export class MemberService {
   get(id: string) {
     return this.http.get<Member>(`${this.base}/api/persons/${encodeURIComponent(id)}`);
   }
+  votes(page: number) {
+    return this.http.get<VoteList>(`${this.base}/api/votes`, { params: { page, limit: 30 } });
+  }
+  vote(id: string) {
+    return this.http.get<VoteDetail>(`${this.base}/api/votes/${encodeURIComponent(id)}`);
+  }
+  voteStatus() {
+    return this.http.get<VoteStatus | null>(`${this.base}/api/votes/import-status`);
+  }
+  memberVotes(id: string, page: number) {
+    return this.http.get<MemberVotes>(`${this.base}/api/persons/${encodeURIComponent(id)}/votes`, {
+      params: { page, limit: 20 },
+    });
+  }
   status() {
     return this.http.get<ImportStatus | null>(`${this.base}/api/import-status`);
   }
+}
+
+export interface VoteEvent {
+  voteId: string;
+  session: string;
+  designation: string;
+  proposalPoint: string;
+  documentId: string | null;
+  subjectType: string;
+  mainVoteType: string;
+  voteDate: string | null;
+  sourceUrl: string;
+  sourceFile: string;
+}
+export interface VoteList {
+  items: VoteEvent[];
+  total: number;
+  page: number;
+  limit: number;
+  session: string;
+}
+export interface VoteStatus {
+  session: string;
+  expectedFiles: number;
+  eventCount: number;
+  choiceCount: number;
+  complete: boolean;
+  completedAt: string;
+  sourceUrl: string;
+}
+export interface VoteChoice {
+  memberProfileAvailable: boolean;
+  personId: string;
+  sourceName: string;
+  partyCode: string;
+  constituency: string;
+  choice: string;
+}
+export interface VoteDetail {
+  event: VoteEvent;
+  choices: VoteChoice[];
+  counts: Record<string, number>;
+  total: number;
+  sourceArchiveUrl: string;
+  importedAt: string;
+}
+export interface MemberVotes {
+  items: Array<{ event: VoteEvent; choice: string }>;
+  total: number;
+  page: number;
+  limit: number;
+  session: string;
 }

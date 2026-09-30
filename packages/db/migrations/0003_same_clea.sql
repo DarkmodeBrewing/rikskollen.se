@@ -1,0 +1,2 @@
+CREATE INDEX "vote_choices_run_person_idx" ON "vote_choices" USING btree ("run_id","person_id");--> statement-breakpoint
+CREATE INDEX "vote_events_run_date_idx" ON "vote_events" USING btree ("run_id","vote_date");

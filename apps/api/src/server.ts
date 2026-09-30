@@ -6,7 +6,15 @@ import {
 } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { apiEnv } from '@rikskollen/shared-types';
-import { getPerson, getImportStatus, listPersons } from './db';
+import {
+  getPerson,
+  getImportStatus,
+  listPersons,
+  getVote,
+  getVoteImportStatus,
+  listVotes,
+  getMemberVotes,
+} from './db';
 
 const env = apiEnv();
 
@@ -63,6 +71,35 @@ app.get('/api/persons/:id', async (request, reply) => {
   return person ?? reply.code(404).send({ error: 'Person not found' });
 });
 app.get('/api/import-status', getImportStatus);
+
+const PageQuery = z.object({
+  page: z.coerce.number().int().min(1).max(10000).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(30),
+});
+app.get('/api/votes', async (request, reply) => {
+  const query = PageQuery.safeParse(request.query);
+  if (!query.success) return reply.code(400).send({ error: 'Invalid query' });
+  return listVotes(query.data.page, query.data.limit);
+});
+app.get('/api/votes/import-status', getVoteImportStatus);
+app.get('/api/votes/:voteId', async (request, reply) => {
+  const params = z.object({ voteId: z.uuid() }).safeParse(request.params);
+  if (!params.success)
+    return reply.code(400).send({ error: 'Invalid vote ID' });
+  return (
+    (await getVote(params.data.voteId.toLowerCase())) ??
+    reply.code(404).send({ error: 'Vote not found' })
+  );
+});
+app.get('/api/persons/:id/votes', async (request, reply) => {
+  const params = z
+    .object({ id: z.string().regex(/^\d{1,30}$/) })
+    .safeParse(request.params);
+  const query = PageQuery.safeParse(request.query);
+  if (!params.success || !query.success)
+    return reply.code(400).send({ error: 'Invalid request' });
+  return getMemberVotes(params.data.id, query.data.page, query.data.limit);
+});
 
 // Server init
 export const start = async () => {
