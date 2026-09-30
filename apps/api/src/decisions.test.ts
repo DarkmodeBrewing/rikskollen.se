@@ -8,6 +8,7 @@ test('decision detail distinguishes a matched recorded vote from an acclamation 
     const { closeDatabase } = await import('./db');
     const { pgPool } = createDatabaseClient();
     let decisionRun: string | undefined;
+    let correctedRun: string | undefined;
     let voteRun: string | undefined;
     let catalogRun: string | undefined;
     const voteId = '32518106-3c98-46ad-9271-fa4c5b1fca5e';
@@ -49,6 +50,28 @@ test('decision detail distinguishes a matched recorded vote from an acclamation 
       assert.equal(listing.json().catalogCoverage.sourceDocuments, 2);
       assert.equal(listing.json().catalogCoverage.importedDocuments, 1);
       assert.equal(listing.json().catalogCoverage.withRecordedVote, 1);
+      assert.deepEqual(listing.json().decisionMethodSummary.counts,
+        { recordedVote: 1, acclamation: 1, other: 0, unknown: 0 });
+      assert.equal(listing.json().decisionMethodSummary.totalPoints, 2);
+      assert.equal(listing.json().decisionMethodSummary.importedDocuments, 1);
+      assert.equal(listing.json().decisionMethodSummary.excludedDocuments, 1);
+      assert.deepEqual(listing.json().decisionMethodSummary.sourceValues,
+        [{ sourceValue: 'acklamation', count: 1 }, { sourceValue: 'röstning', count: 1 }]);
+      // A corrected status replaces the earlier point set in the aggregate.
+      const correction = await pgPool.query(`INSERT INTO decision_import_runs (document_id, source_url, source_hash, expected_points, completed_at)
+        VALUES ('HD01TU8', 'https://data.riksdagen.se/dokumentstatus/HD01TU8.json', 'corrected fixture', 2, now() + interval '1 second') RETURNING id`);
+      correctedRun = correction.rows[0].id;
+      await pgPool.query(`INSERT INTO decision_documents (run_id, document_id, session, designation, title, status)
+        VALUES ($1, 'HD01TU8', '2025/26', 'TU8', 'Digitaliserings- och postfrågor', 'Webbpublicering')`, [correctedRun]);
+      await pgPool.query(`INSERT INTO decision_points (run_id, point, heading, proposal_text, decision_type) VALUES
+        ($1, '1', 'Utgångspunkter', 'Riksdagen avslår motionerna', 'acklamation'),
+        ($1, '2', 'Digital delaktighet', 'Riksdagen avslår motionerna', 'annat')`, [correctedRun]);
+      const corrected = (await app.inject('/api/decisions')).json().decisionMethodSummary;
+      assert.deepEqual(corrected.counts,
+        { recordedVote: 0, acclamation: 1, other: 1, unknown: 0 });
+      assert.equal(corrected.totalPoints, 2);
+      assert.deepEqual(corrected.sourceValues,
+        [{ sourceValue: 'acklamation', count: 1 }, { sourceValue: 'annat', count: 1 }]);
       assert.equal((await app.inject('/api/decisions?page=0')).statusCode, 400);
       const vote = await app.inject(`/api/votes/${voteId}`);
       assert.equal(vote.json().decisionTrailAvailable, true);
@@ -56,6 +79,7 @@ test('decision detail distinguishes a matched recorded vote from an acclamation 
     } finally {
       if (catalogRun) await pgPool.query('DELETE FROM report_catalog_runs WHERE id = $1', [catalogRun]);
       if (voteRun) await pgPool.query('DELETE FROM vote_import_runs WHERE id = $1', [voteRun]);
+      if (correctedRun) await pgPool.query('DELETE FROM decision_import_runs WHERE id = $1', [correctedRun]);
       if (decisionRun) await pgPool.query('DELETE FROM decision_import_runs WHERE id = $1', [decisionRun]);
       await pgPool.end();
       await app.close();

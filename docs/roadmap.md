@@ -39,3 +39,7 @@ Enumerate distinct report IDs referenced by the latest complete 2025/26 vote sna
 ## M3 decided-report catalog
 
 Import the source's 2025/26 list of reports marked `beslutad=1`, including those without a recorded vote. Publish the catalog only after every sorted page has been reconciled and IDs are unique. Use it to drive small resumable imports of report status and show catalog-scoped coverage separately from M2 vote-link coverage. Reports not yet marked decided and vote-pattern aggregates remain outside this slice; define the latter only with verified eligible events, numerators and exclusions.
+
+## M3 decision method summary
+
+Count the source's decision method for points in the latest completed status of each imported report in the latest decided-report catalog. Show the proposal-point denominator, imported versus missing reports, exact source values, session, and source links. A corrected report replaces its previous version. This summary is scoped to imported points; it is not a session-wide decision share or a member attendance measure. Later M3 work can consider vote-pattern summaries only after eligible events and member-level denominators have been validated.

@@ -162,6 +162,17 @@ export interface DecisionList {
     importedDocuments: number;
     withRecordedVote: number | null;
   };
+  decisionMethodSummary: null | {
+    session: string;
+    sourceDocuments: number;
+    importedDocuments: number;
+    excludedDocuments: number;
+    totalPoints: number;
+    counts: { recordedVote: number; acclamation: number; other: number; unknown: number };
+    sourceValues: Array<{ sourceValue: string; count: number }>;
+    catalogSourceUrl: string;
+    catalogCompletedAt: string;
+  };
 }
 export interface MemberVotes {
   items: Array<{ event: VoteEvent; choice: string }>;
