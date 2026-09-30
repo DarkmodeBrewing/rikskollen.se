@@ -2,7 +2,7 @@
 
 Rikskollen is a proposed public, independent view of what happens in the Swedish Riksdag. It uses the Riksdag's open data to make members, assignments, recorded votes, decisions and their source documents easier to explore. The aim is to answer factual questions such as “How did this member vote on this proposal?” and “Which votes recorded this member as absent?” without assigning political scores or guessing motives.
 
-**Status:** early prototype. The repository is not yet a working public service. See [project brief](docs/product.md), [data and methodology](docs/data-methodology.md), and [roadmap](docs/roadmap.md).
+**Status (2026-09-30):** M0–M3 implementation is merged: member directory, recorded votes, decision trails, decided-report catalog and scoped summaries. M4.0 prepares the first staging deployment; no server deployment or real-data staging acceptance has been recorded. See [project brief](docs/product.md), [methodology](docs/data-methodology.md), [roadmap](docs/roadmap.md), [staging runbook](docs/deployment.md) and [acceptance protocol](docs/m4.0-test-protocol.md).
 
 ## Product principles
 
@@ -19,14 +19,15 @@ Rikskollen is **independent of Sveriges riksdag**. Source: Sveriges riksdag. Any
 
 | Path | Intended role | Current state |
 | --- | --- | --- |
-| `apps/worker` | Fetch and normalize open data | Manual member import and experimental vote client |
-| `packages/shared-types` | Source and internal schemas | Member and vote source schemas; later data contracts still need validation |
-| `packages/db` | PostgreSQL/Drizzle models | Persons and import runs migrations; repeat import test runs with PostgreSQL |
-| `apps/api` | Public read API | Health, paged person list/detail and import coverage routes |
-| `apps/webapp` | Angular web UI | Swedish member list and detail pages |
+| `apps/worker` | Fetch and normalize open data | Manual snapshot imports for members, 2025/26 votes, report statuses and the decided-report catalog; bounded report batches |
+| `packages/shared-types` | Source and internal schemas | Member/vote source contracts and environment validation; API DTOs currently also live in the web service |
+| `packages/db` | PostgreSQL/Drizzle models | Versioned import snapshots, six applied migration files and a compiled migration job; PostgreSQL integration tests |
+| `apps/api` | Read API | Member/vote/report list and detail, filtered member history, coverage and scoped summaries; process health and DB readiness |
+| `apps/webapp` | Angular web UI | Swedish directory, vote/history and decision views; SSR and same-origin API proxy; signals in M2/M3 views |
 | `docker-compose.yml` | Local database | PostgreSQL only; API and webapp run on the host |
+| `Dockerfile`, `compose.staging.yml` | Staging deployment | Separate API/web runtime images and migration/import jobs; host acceptance remains pending |
 
-The separate legacy attendance schema remains a draft outside the applied migrations. Member assignments are stored as source-valued JSON within the imported person snapshot. M3 begins with document and proposal-point context for a bounded report.
+The separate legacy attendance schema remains a draft outside the applied migrations. Member assignments are stored as source-valued JSON within the imported person snapshot. Decision summaries count imported proposal points; member summaries count source vote rows. Neither establishes general attendance. The Angular upgrade and remaining `AsyncPipe` conversion remain in issue #4.
 
 ## Local development
 
@@ -45,9 +46,11 @@ pnpm dev:api
 
 The API listens on port 3000 by default. `/health` reports process health; `/api/persons` reads the latest completed import and returns `{ "items": [], "total": 0, "page": 1, "limit": 30 }` before any import. Start Angular separately with `pnpm dev:web` (port 4200). The worker's `dry:vote-cases` command fetches and prints a small sample; it does **not** ingest data. To run it, set `RIKSDAG_API_URL=https://data.riksdagen.se` and use `pnpm --filter @rikskollen/worker dry:vote-cases`.
 
-The database password above is only for the local Compose service. Do not reuse it for deployment. The Compose file contains no application images. The [Verify workflow](.github/workflows/verify.yml) checks clean install, build, mapping and batch tests, migration, repeat import and empty API query against PostgreSQL.
+The database password above is only for the local Compose service. Do not reuse it for deployment. This development Compose file contains no application images; staging uses the separate [runbook](docs/deployment.md). The [Verify workflow](.github/workflows/verify.yml) checks clean install, build, mapping and batch tests, migration, repeat import and empty API query against PostgreSQL. The [Staging stack workflow](.github/workflows/staging.yml) builds runtime images and checks migration, readiness, SSR, the API proxy and restart/failure recovery with an empty database. These checks do not establish host or real-source acceptance.
 
 For scope and acceptance criteria, start with [the roadmap](docs/roadmap.md). For field definitions and caveats, start with [the methodology](docs/data-methodology.md).
+
+Following staging acceptance, [M4.1/M4.2](docs/frontend-plan.md) plan a Playwright E2E baseline with mocked API responses and a dedicated frontend design/features slice. Neither is implemented yet.
 
 ## M1 member directory
 

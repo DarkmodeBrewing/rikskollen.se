@@ -1,6 +1,6 @@
 # Data sources and methodology
 
-This document records intended handling rules. It is not a claim that ingestion or public calculations already work.
+This document records the implemented M1–M3 handling rules, inspected source examples and remaining limitations. Source sample counts are tied to their inspected snapshots; they are not evidence of a deployed server's coverage. M4.0 host acceptance is recorded separately in the [deployment test protocol](m4.0-test-protocol.md).
 
 ## Primary sources
 

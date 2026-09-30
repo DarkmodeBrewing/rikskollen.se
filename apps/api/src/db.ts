@@ -93,6 +93,11 @@ export async function getImportStatus() {
 }
 export const closeDatabase = () => pgPool.end();
 
+// Readiness requires connectivity and the latest applied schema, not imported data.
+export async function checkDatabaseReady() {
+  await pgPool.query('SELECT 1 FROM report_catalog_entries LIMIT 0');
+}
+
 // Vote rows are scoped to the most recent completed session snapshot.
 export async function getVoteRun(session = '2025/26') {
   const [run] = await db

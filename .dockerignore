@@ -1,0 +1,12 @@
+.git
+.github
+**/node_modules
+**/dist
+**/.angular
+**/.env
+**/.env.*
+**/*.env
+**/*.zip
+**/*.log
+deploy/staging.env
+coverage

@@ -11,39 +11,35 @@ Status as of 2026-09-30. This is an ordered proposal, not a delivery schedule. E
 | **M4 — Public release** | Operate an independent, transparent site | Repeatable deployment, scheduled imports with correction window, monitoring and failure alerts, backups/restore check, accessibility review, source and photo attribution, personal-data review, and visible freshness/coverage status. |
 | **Later** | Wider history and richer activity | Backfill and reconcile additional sessions; speeches/motions/committee context and public API only where the evidence and maintenance cost justify them. Government-formation status remains separately scoped. |
 
-## Immediate work queue for M0
+## Delivered implementation
 
-1. Run `pnpm install --frozen-lockfile`, root build and existing tests from a clean checkout; record failures before changing code.
-2. Resolve the API/worker/shared-types boundaries, undefined database references and source schema mismatches. Do not merely make TypeScript pass while the mapping rejects real records.
-3. Make local Postgres and migrations repeatable. Fix Compose build paths/Dockerfiles or document a verified non-Docker development route.
-4. Add a smoke fixture for one person and one recorded vote from a documented source sample, plus ingestion failure/pagination cases that matter to the first slice.
-5. Add CI and replace the README's unverified setup note with commands proven on a fresh checkout.
+| Slice | Implemented result | Evidence boundary |
+| --- | --- | --- |
+| M0 | Workspace builds, migrations, PostgreSQL tests and CI | Deployment acceptance is separate |
+| M1 | Versioned member/assignment imports, directory and source links | Serving-list snapshot; no attendance source |
+| M2 | Complete 2025/26 archive import, vote detail and member history | Source vote rows; incomplete IDs/dates stay unknown |
+| M3 decision trails | Complete report snapshots; vote links match document, point and vote ID | TU8 source example; other statuses imported in bounded batches |
+| M3 catalog | Reconciled decided-report catalog and resumable status imports | Reports not marked decided are outside its denominator |
+| M3 summaries | Decision-method counts and member choice counts with filterable history | Imported points/rows, explicit denominators, exclusions and corrections |
 
-## Decisions to validate during M0/M1
+M0–M3 implementation is merged through PR #10. Mapping and PostgreSQL integration tests pass in CI. Official source samples and worked examples are documented in [methodology](data-methodology.md). No deployed real-data acceptance is recorded; implemented import support does not mean that a server has ingested the full catalog. Rankings, inferred attendance and member participation rates are outside the delivered scope.
 
-- Select the first session and backfill window after inspecting source volume and completeness.
-- Decide whether a raw response store or a versioned snapshot reference is sufficient for correction history.
-- Confirm exact source identifiers, vote/point/document relationships, substitution and assignment semantics using real records.
-- Establish initial sync cadence and acceptable lag from source publication; show actual last successful sync, not a promise of “live” data.
+## M4.0 — first staging deployment (current slice)
 
-The next vertical slice is **member → recorded vote → proposal/document → primary source**, with enough provenance to audit every displayed claim.
+Prepare API and Angular SSR runtime images, a compiled migration job, explicit manual worker jobs, a persistent isolated PostgreSQL volume and a loopback web endpoint for the existing reverse proxy. Test the container stack in CI with no live Riksdag requests. Follow the [staging runbook](deployment.md) on the target host and record the [small acceptance protocol](m4.0-test-protocol.md), including real imports, HTTPS, source-linked navigation, counts and recovery.
 
-## M3 first slice — one complete decision trail
+**Gate:** after M4.0 implementation, every mandatory protocol row must be PASS with evidence for the tested commit before beginning another feature or M4 implementation slice. CI success alone does not pass the host protocol. Remediation within M4.0 can continue until the gate passes; a blocker is recorded as FAIL/BLOCKED, never silently waived.
 
-Use the 2025/26 committee report TU8 (`HD01TU8`) as a source-linked example. Import all its proposal points from document status as one versioned report; display each point's proposal, decision method and source vote ID, including points decided by acclamation. Join to M2 only by the verified document, point and vote ID. Keep missing context unknown. Then check a second report's shape and expand bounded imports before any session-wide claim. Define and validate denominators and exclusions before publishing aggregates. The Angular upgrade and broader signals conversion remain separate in issue #4.
+## Following M4 slices
 
-## M3 next slice — bounded vote-linked reports
+| Slice | Focus | Acceptance |
+| --- | --- | --- |
+| **M4.1 — frontend E2E baseline** | TypeScript Playwright tests with deterministic mocked API responses, including SSR and hydration | Main journeys and failure/coverage states pass in CI; isolated fixtures, desktop/mobile coverage and actionable traces; no live-source dependency |
+| **M4.2 — frontend design and features** | Dedicated design/usability work, consistent page states and a bounded set of discovery/navigation improvements | Reviewed desktop/mobile design, keyboard usability, agreed feature behaviour and source/coverage wording; M4.1 tests remain green and expand for changed journeys |
+| **M4.3 — scheduled imports** | Bounded correction window, explicit failed-job reporting and visible last-successful freshness | Cadence and acceptable lag selected using measured source behaviour; failures preserve completed data |
+| **M4.4 — operational recovery** | Monitoring/alerts and backup/restore acceptance; source provenance and retention | Restore and alert scenarios verified with recorded evidence |
+| **M4.5 — public release** | Accessibility, attribution, personal-data handling and operational readiness | Release checks completed; member photos require a separate rights review |
 
-Enumerate distinct report IDs referenced by the latest complete 2025/26 vote snapshot and import missing document statuses in small resumable batches. Provide an imported-report directory and an explicitly scoped coverage count. This set does **not** include reports with no recorded votes; source-driven enumeration of all committee reports, reconciliation of differing document shapes, and vote-pattern aggregates remain future M3 work. A source outage or unsupported ID must surface as a failed batch, not an apparently complete archive.
+The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. These are planned slices; implementation starts after the M4.0 host acceptance gate passes. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
 
-## M3 decided-report catalog
-
-Import the source's 2025/26 list of reports marked `beslutad=1`, including those without a recorded vote. Publish the catalog only after every sorted page has been reconciled and IDs are unique. Use it to drive small resumable imports of report status and show catalog-scoped coverage separately from M2 vote-link coverage. Reports not yet marked decided and vote-pattern aggregates remain outside this slice; define the latter only with verified eligible events, numerators and exclusions.
-
-## M3 decision method summary
-
-Count the source's decision method for points in the latest completed status of each imported report in the latest decided-report catalog. Show the proposal-point denominator, imported versus missing reports, exact source values, session, and source links. A corrected report replaces its previous version. This summary is scoped to imported points; it is not a session-wide decision share or a member attendance measure. Later M3 work can consider vote-pattern summaries only after eligible events and member-level denominators have been validated.
-
-## M3 member vote-choice summary
-
-Count exact source choices across all rows for one person ID in the latest completed 2025/26 vote snapshot. Display the row denominator, missing person records, missing dates, source and import time. Let the visitor filter the history by any observed choice without changing the summary denominator. Corrected snapshots replace old counts; pending imports stay hidden. These counts describe source records, with no inferred eligibility or attendance percentage. Participation rates and comparisons require separate assignment/substitution validation before implementation.
+The Angular upgrade and remaining member-template conversion to signals stay separately tracked in [issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
