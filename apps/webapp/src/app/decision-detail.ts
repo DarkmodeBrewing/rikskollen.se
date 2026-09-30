@@ -9,7 +9,7 @@ import { MemberService } from './member.service';
   selector: 'app-decision-detail',
   imports: [DatePipe, RouterLink],
   template: `
-    <a routerLink="/voteringar" class="back">← Voteringar</a>
+    <a routerLink="/arenden" class="back">← Ärenden</a>
     @if (trail(); as data) {
       <section class="intro">
         <p class="eyebrow">Ärende · {{ data.document.session }}:{{ data.document.designation }}</p>

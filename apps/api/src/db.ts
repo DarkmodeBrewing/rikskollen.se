@@ -212,6 +212,45 @@ export async function getDecisionTrail(documentId: string) {
     expectedPoints: run.expectedPoints,
   };
 }
+
+export async function listDecisions(page: number, limit: number) {
+  const latest = `WITH latest AS (
+    SELECT DISTINCT ON (upper(document_id)) id, document_id, source_url, completed_at, expected_points
+    FROM decision_import_runs WHERE completed_at IS NOT NULL
+    ORDER BY upper(document_id), completed_at DESC, id DESC
+  )`;
+  const total = await pgPool.query<{ count: number }>(`${latest} SELECT count(*)::int AS count FROM latest`);
+  const list = await pgPool.query<{
+    documentId: string; session: string; designation: string; title: string;
+    decisionDate: string | null; pointCount: number; sourceUrl: string; importedAt: Date;
+  }>(`${latest} SELECT d.document_id AS "documentId", d.session, d.designation, d.title,
+      d.decision_date AS "decisionDate", l.expected_points AS "pointCount",
+      l.source_url AS "sourceUrl", l.completed_at AS "importedAt"
+    FROM latest l JOIN decision_documents d ON d.run_id = l.id
+    ORDER BY d.decision_date DESC NULLS LAST, d.designation, d.document_id
+    LIMIT $1 OFFSET $2`, [limit, (page - 1) * limit]);
+
+  const voteRun = await getVoteRun();
+  let coverage = null;
+  if (voteRun) {
+    const result = await pgPool.query<{
+      sourceDocuments: number; importedDocuments: number; voteEventsWithoutDocument: number;
+    }>(`SELECT
+      (SELECT count(DISTINCT upper(document_id))::int FROM vote_events WHERE run_id = $1 AND document_id IS NOT NULL) AS "sourceDocuments",
+      (SELECT count(DISTINCT upper(v.document_id))::int FROM vote_events v
+        WHERE v.run_id = $1 AND v.document_id IS NOT NULL AND EXISTS (
+          SELECT 1 FROM decision_import_runs r WHERE r.completed_at IS NOT NULL
+          AND upper(r.document_id) = upper(v.document_id))) AS "importedDocuments",
+      (SELECT count(*)::int FROM vote_events WHERE run_id = $1 AND document_id IS NULL) AS "voteEventsWithoutDocument"`, [voteRun.id]);
+    coverage = {
+      ...result.rows[0],
+      session: voteRun.session,
+      voteRunId: voteRun.id,
+      voteSourceUrl: voteRun.sourceUrl,
+    };
+  }
+  return { items: list.rows, total: total.rows[0].count, page, limit, coverage };
+}
 export async function getMemberVotes(
   personId: string,
   page: number,

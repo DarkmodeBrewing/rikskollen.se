@@ -31,3 +31,7 @@ The next vertical slice is **member → recorded vote → proposal/document → 
 ## M3 first slice — one complete decision trail
 
 Use the 2025/26 committee report TU8 (`HD01TU8`) as a source-linked example. Import all its proposal points from document status as one versioned report; display each point's proposal, decision method and source vote ID, including points decided by acclamation. Join to M2 only by the verified document, point and vote ID. Keep missing context unknown. Then check a second report's shape and expand bounded imports before any session-wide claim. Define and validate denominators and exclusions before publishing aggregates. The Angular upgrade and broader signals conversion remain separate in issue #4.
+
+## M3 next slice — bounded vote-linked reports
+
+Enumerate distinct report IDs referenced by the latest complete 2025/26 vote snapshot and import missing document statuses in small resumable batches. Provide an imported-report directory and an explicitly scoped coverage count. This set does **not** include reports with no recorded votes; source-driven enumeration of all committee reports, reconciliation of differing document shapes, and vote-pattern aggregates remain future M3 work. A source outage or unsupported ID must surface as a failed batch, not an apparently complete archive.

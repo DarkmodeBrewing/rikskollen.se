@@ -76,3 +76,15 @@ pnpm --filter @rikskollen/worker sync:decision HD01TU8
 The worker accepts one 2025/26 committee report document ID at a time. It fetches `dokumentstatus/HD01TU8.json`, validates every proposal point, and atomically publishes a versioned report snapshot with the source SHA-256. A later import of the same ID publishes a new version; the previous one remains stored. The service does not store the raw response or HTML, so exact historical replay requires saving the source response separately. No import is scheduled.
 
 `/api/decisions/HD01TU8` and `/arende/HD01TU8` display the source's proposal text, point, decision type, winner where given, and source vote ID. A link to Rikskollen's vote detail appears only if the latest M2 snapshot contains that same document, point, and vote ID. Points labeled `acklamation` show that source classification and no vote link. If M2 or M3 has not been imported, no local connection is claimed. This first slice does not claim full session coverage or publish vote-pattern statistics.
+
+## M3 vote-linked report batches
+
+Once the M2 vote archive has been imported, run a bounded batch of reports whose IDs appear in its latest completed 2025/26 snapshot:
+
+```bash
+pnpm --filter @rikskollen/worker sync:vote-linked-decisions 10
+```
+
+The argument is the maximum **new** reports for this run (1–25, default 10). The command skips reports with a completed M3 import. Repeat it to continue; use `sync:decision ID` to re-fetch one report after a correction. Each report is an atomic snapshot; if one fetch or mapping fails, the batch stops, reports how many succeeded, and a later run resumes from the remaining IDs. It refuses unsupported document IDs rather than silently ignoring them. This is manual and requires the official document-status service to respond; no live batch was run as part of development.
+
+`/api/decisions?page=1&limit=30` and `/arenden` list imported reports. The displayed coverage is **imported unique report IDs referenced by the latest M2 vote snapshot / unique non-null report IDs referenced by that snapshot**, for session 2025/26. Vote events without a verifiable report ID and reports with no recorded vote are outside that denominator; those reports require a separate document source before any session-wide decision coverage claim. The page labels this as import coverage, not an attendance or decision-rate statistic.

@@ -4,11 +4,13 @@ import { MemberDetailComponent } from './member-detail';
 import { VoteListComponent } from './vote-list';
 import { VoteDetailComponent } from './vote-detail';
 import { DecisionDetailComponent } from './decision-detail';
+import { DecisionListComponent } from './decision-list';
 export const routes: Routes = [
   { path: '', component: MemberListComponent },
   { path: 'ledamot/:id', component: MemberDetailComponent },
   { path: 'voteringar', component: VoteListComponent },
   { path: 'votering/:id', component: VoteDetailComponent },
   { path: 'arende/:id', component: DecisionDetailComponent },
+  { path: 'arenden', component: DecisionListComponent },
   { path: '**', redirectTo: '' },
 ];
