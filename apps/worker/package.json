@@ -13,11 +13,13 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "build": "tsup src/index.ts src/sync-persons.ts src/sync-votes.ts src/sync-decisions.ts src/sync-vote-linked-decisions.ts --format esm --clean --target node20",
+    "build": "tsup src/index.ts src/sync-persons.ts src/sync-votes.ts src/sync-decisions.ts src/sync-vote-linked-decisions.ts src/sync-report-catalog.ts src/sync-catalog-decisions.ts --format esm --clean --target node20",
     "sync:persons": "node dist/sync-persons.js",
     "sync:votes": "node dist/sync-votes.js",
     "sync:decision": "node dist/sync-decisions.js",
     "sync:vote-linked-decisions": "node dist/sync-vote-linked-decisions.js",
+    "sync:report-catalog": "node dist/sync-report-catalog.js",
+    "sync:catalog-decisions": "node dist/sync-catalog-decisions.js",
     "test": "node --import tsx --test --test-concurrency=1 src/clients/*.test.ts src/*.test.ts",
     "dry:vote-cases": "tsx src/index.ts"
   },

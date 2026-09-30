@@ -88,3 +88,16 @@ pnpm --filter @rikskollen/worker sync:vote-linked-decisions 10
 The argument is the maximum **new** reports for this run (1–25, default 10). The command skips reports with a completed M3 import. Repeat it to continue; use `sync:decision ID` to re-fetch one report after a correction. Each report is an atomic snapshot; if one fetch or mapping fails, the batch stops, reports how many succeeded, and a later run resumes from the remaining IDs. It refuses unsupported document IDs rather than silently ignoring them. This is manual and requires the official document-status service to respond; no live batch was run as part of development.
 
 `/api/decisions?page=1&limit=30` and `/arenden` list imported reports. The displayed coverage is **imported unique report IDs referenced by the latest M2 vote snapshot / unique non-null report IDs referenced by that snapshot**, for session 2025/26. Vote events without a verifiable report ID and reports with no recorded vote are outside that denominator; those reports require a separate document source before any session-wide decision coverage claim. The page labels this as import coverage, not an attendance or decision-rate statistic.
+
+## M3 decided-report catalog
+
+Import the official list of committee reports **marked decided** for 2025/26, then import missing report statuses in bounded batches:
+
+```bash
+pnpm --filter @rikskollen/worker sync:report-catalog
+pnpm --filter @rikskollen/worker sync:catalog-decisions 10
+```
+
+The catalog uses `dokumentlista` with `doktyp=bet`, `rm=2025/26`, `beslutad=1`, and an explicit ascending date sort. It validates every page number, count, source filter, next-page link and unique document ID before one database transaction publishes the complete catalog. The 2026-09-30 sample returned 474 reports across 24 pages. A failed page leaves the previous completed catalog visible; source list responses are represented by per-page hashes and URLs, not raw JSON. Repeat the catalog import for upstream corrections. The second command imports up to 25 *missing* reports per run and resumes after a failed report; individual `sync:decision ID` can re-fetch a completed report.
+
+The `/arenden` page now shows a second coverage figure: **imported document statuses / reports marked decided in the latest complete catalog**. When M2 is also imported it shows how many catalog reports have a matching recorded vote. Reports not marked decided are outside this denominator. This is data import coverage, not the share of parliamentary decisions made by a vote. A report can contain both voted and acclamation points; its detail page remains the place to inspect each point.
