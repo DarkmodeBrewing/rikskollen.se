@@ -10,3 +10,5 @@
 **/*.log
 deploy/staging.env
 coverage
+playwright-report
+test-results

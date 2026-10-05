@@ -2,7 +2,7 @@
 
 Rikskollen is a proposed public, independent view of what happens in the Swedish Riksdag. It uses the Riksdag's open data to make members, assignments, recorded votes, decisions and their source documents easier to explore. The aim is to answer factual questions such as “How did this member vote on this proposal?” and “Which votes recorded this member as absent?” without assigning political scores or guessing motives.
 
-**Status (2026-09-30):** M0–M3 implementation is merged: member directory, recorded votes, decision trails, decided-report catalog and scoped summaries. M4.0 prepares the first staging deployment; no server deployment or real-data staging acceptance has been recorded. See [project brief](docs/product.md), [methodology](docs/data-methodology.md), [roadmap](docs/roadmap.md), [staging runbook](docs/deployment.md) and [acceptance protocol](docs/m4.0-test-protocol.md).
+**Status (2026-10-05):** M0–M3 and M4.0 are merged. Staging deployment at https://rikskollen.se passed the [M4.0 acceptance protocol](docs/m4.0-test-protocol.md). Imports remain manual; report-status coverage is partial. M4.1 adds deterministic Playwright tests; scheduling, backup/restore and public-release review remain later gates. See [project brief](docs/product.md), [methodology](docs/data-methodology.md), [roadmap](docs/roadmap.md) and [deployment runbook](docs/deployment.md).
 
 ## Product principles
 
@@ -25,7 +25,7 @@ Rikskollen is **independent of Sveriges riksdag**. Source: Sveriges riksdag. Any
 | `apps/api` | Read API | Member/vote/report list and detail, filtered member history, coverage and scoped summaries; process health and DB readiness |
 | `apps/webapp` | Angular web UI | Swedish directory, vote/history and decision views; SSR and same-origin API proxy; signals in M2/M3 views |
 | `docker-compose.yml` | Local database | PostgreSQL only; API and webapp run on the host |
-| `Dockerfile`, `compose.staging.yml` | Staging deployment | Separate API/web runtime images and migration/import jobs; host acceptance remains pending |
+| `Dockerfile`, `compose.staging.yml` | Staging deployment | Separate API/web runtime images and migration/import jobs; host acceptance recorded in the protocol |
 
 The separate legacy attendance schema remains a draft outside the applied migrations. Member assignments are stored as source-valued JSON within the imported person snapshot. Decision summaries count imported proposal points; member summaries count source vote rows. Neither establishes general attendance. The Angular upgrade and remaining `AsyncPipe` conversion remain in issue #4.
 
@@ -50,7 +50,7 @@ The database password above is only for the local Compose service. Do not reuse 
 
 For scope and acceptance criteria, start with [the roadmap](docs/roadmap.md). For field definitions and caveats, start with [the methodology](docs/data-methodology.md).
 
-Following staging acceptance, [M4.1/M4.2](docs/frontend-plan.md) plan a Playwright E2E baseline with mocked API responses and a dedicated frontend design/features slice. Neither is implemented yet.
+Following staging acceptance, [M4.1/M4.2](docs/frontend-plan.md) plan a Playwright E2E baseline with mocked API responses and a dedicated frontend design/features slice. M4.1 is implemented on this branch; M4.2 remains planned.
 
 ## M1 member directory
 
@@ -108,3 +108,7 @@ The catalog uses `dokumentlista` with `doktyp=bet`, `rm=2025/26`, `beslutad=1`, 
 The `/arenden` page now shows a second coverage figure: **imported document statuses / reports marked decided in the latest complete catalog**. When M2 is also imported it shows how many catalog reports have a matching recorded vote. Reports not marked decided are outside this denominator. This is data import coverage, not the share of parliamentary decisions made by a vote. A report can contain both voted and acclamation points; its detail page remains the place to inspect each point.
 
 The same page and `/api/decisions` show a decision-method summary over proposal points in the **latest completed status for each imported catalog report**. It counts source-labeled `röstning`, `acklamation`, other values and missing values, with the point denominator and the number of catalog reports still missing status. A single report can contribute several points. This does not describe every decision in the session or member attendance; see [methodology](docs/data-methodology.md#M3-decision-method-summary-202526) for the exact scope and a TU8 example. Re-run `sync:catalog-decisions` to increase coverage or `sync:decision ID` to incorporate an upstream correction.
+
+## Frontend E2E
+
+See [the E2E runbook](docs/e2e.md) for fresh-checkout commands, fixture isolation, coverage and current UI limitations. Run `pnpm test:e2e` to type-check fixtures, build Angular SSR and execute Chromium desktop/mobile tests.
