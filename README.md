@@ -27,11 +27,11 @@ Rikskollen is **independent of Sveriges riksdag**. Source: Sveriges riksdag. Any
 | `docker-compose.yml` | Local database | PostgreSQL only; API and webapp run on the host |
 | `Dockerfile`, `compose.staging.yml` | Staging deployment | Separate API/web runtime images and migration/import jobs; host acceptance recorded in the protocol |
 
-The separate legacy attendance schema remains a draft outside the applied migrations. Member assignments are stored as source-valued JSON within the imported person snapshot. Decision summaries count imported proposal points; member summaries count source vote rows. Neither establishes general attendance. The Angular upgrade and remaining `AsyncPipe` conversion remain in issue #4.
+The separate legacy attendance schema remains a draft outside the applied migrations. Member assignments are stored as source-valued JSON within the imported person snapshot. Decision summaries count imported proposal points; member summaries count source vote rows. Neither establishes general attendance. Issue #4 upgrades the webapp to Angular 22.2.1 with TypeScript 6.0 and signal-based member list/profile state. See [upgrade notes](docs/angular-upgrade.md).
 
 ## Local development
 
-Use Node 22, pnpm 9 and Docker Compose. From the repository root:
+Use Node 24 (at least 24.15.0), pnpm 9 and Docker Compose. Node 22 is also supported from 22.22.3. From the repository root:
 
 ```bash
 corepack enable
@@ -66,7 +66,7 @@ The first bounded vote session is **2025/26**. Set `RIKSDAG_API_URL=https://data
 
 The worker verifies each file's vote ID, proposal point, session, 349 unique member IDs and consistent event fields. It writes a new run snapshot in batches and marks it complete only after every file has been ingested and the totals reconcile. A failed run is removed; a completed previous run remains visible. Each run retains the archive URL and SHA-256; each event retains its file name, source URL and per-file SHA-256. The source archive can be re-downloaded or supplied locally for replay. The archive itself is not stored in PostgreSQL.
 
-The API routes `/api/votes`, `/api/votes/:voteId`, `/api/votes/import-status`, and `/api/persons/:id/votes` read only the latest completed 2025/26 snapshot. The UI offers a vote list, vote detail with each member choice, and a member's history. Dates missing in the source remain unknown. The M2 UI uses signals for its new asynchronous views; the broader Angular upgrade and conversion of the existing member templates are tracked separately in issue #4.
+The API routes `/api/votes`, `/api/votes/:voteId`, `/api/votes/import-status`, and `/api/persons/:id/votes` read only the latest completed 2025/26 snapshot. The UI offers a vote list, vote detail with each member choice, and a member's history. Dates missing in the source remain unknown. All component-facing asynchronous views use signals; issue #4 also distinguishes member loading, missing and error states.
 
 The member history now includes counts of each exact source choice for that person's ID, with the source-row denominator, missing person records, missing dates and import time. Clicking a count filters the event list; the summary still covers all rows for the ID in the snapshot. The optional API filter is `choice`, for example `/api/persons/:id/votes?choice=Ja&page=1&limit=20`. The response includes `summary` (null before a completed import) and the selected `choice`. Unexpected source values remain visible. These counts describe source records, not general attendance or eligibility; [methodology](docs/data-methodology.md#m3-member-vote-choice-summary-202526) defines the scope and provides a worked source example.
 

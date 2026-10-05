@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:22-bookworm-slim AS build
+FROM node:24-bookworm-slim AS build
 WORKDIR /workspace
 RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
 COPY . .
@@ -9,7 +9,7 @@ RUN pnpm --filter @rikskollen/api --prod deploy /out/api \
     && pnpm --filter @rikskollen/worker --prod deploy /out/worker \
     && pnpm --filter @rikskollen/db --prod deploy /out/db
 
-FROM node:22-bookworm-slim AS runtime
+FROM node:24-bookworm-slim AS runtime
 ARG GIT_SHA=unknown
 LABEL org.opencontainers.image.revision=$GIT_SHA
 ENV NODE_ENV=production

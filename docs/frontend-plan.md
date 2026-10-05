@@ -1,6 +1,6 @@
 # Frontend testing and design slices
 
-Status: M4.0 accepted on 2026-10-05. M4.1 is implemented on this branch; M4.2 remains planned. See [E2E commands and evidence boundaries](e2e.md).
+Status: M4.0 accepted on 2026-10-05. M4.1 is merged; M4.2 remains planned. See [E2E commands and evidence boundaries](e2e.md).
 
 ## M4.1 — Playwright E2E baseline
 
@@ -34,4 +34,4 @@ Feature candidates are improved vote/report discovery (search, filters or sortin
 
 Acceptance: reviewed before/after desktop/mobile views; chosen features have explicit behaviour and meaningful Playwright coverage; SSR, browser navigation and source/count semantics remain correct; keyboard/manual review and CI pass. Update the frontend acceptance record for the changed journeys.
 
-The Angular upgrade and remaining signal conversion in [issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4) remain a separate technical change. Establish the E2E baseline first so it can validate that upgrade; choose its position before design implementation without mixing a framework migration into a visual redesign PR.
+[Issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4) is implemented in a separate technical slice before M4.2: Angular 22.2.1, signal-based member list/profile state and explicit member request states. The E2E baseline validates the upgrade; visual design remains separately scoped. See [upgrade notes](angular-upgrade.md).

@@ -24,3 +24,18 @@ test('SSR delivers data and controlled failure states without a browser', async 
     'Inga betänkanden importerade.',
   );
 });
+
+test('SSR accepts a configured deployment host and rejects an unlisted host', async ({
+  app,
+  request,
+}) => {
+  const permitted = await request.get(`${app.url}/arenden`, {
+    headers: { host: 'test.rikskollen.invalid' },
+  });
+  expect(permitted.status()).toBe(200);
+  expect(await permitted.text()).toContain('Av 5 beslutspunkter');
+  const denied = await request.get(`${app.url}/arenden`, {
+    headers: { host: 'unlisted.invalid' },
+  });
+  expect(denied.status()).toBe(400);
+});

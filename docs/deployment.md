@@ -4,8 +4,8 @@ Scope: one staging host, manual imports, existing HTTPS reverse proxy. This runb
 
 ## Stack and prerequisites
 
-- Linux host with Docker Engine and Compose v2 supporting `up --wait`, enough space for the build/images and PostgreSQL volume, Git; Node 22 runs in a disposable container for the smoke script. Record host architecture and Docker/Compose versions in the protocol. CI tests the native amd64 stack; the target host's build must be checked separately, including ARM if applicable.
-- A checked-out commit with both Verify and Staging stack CI green. Builds use Node 22, pnpm 9.0.0 and the frozen lockfile. Base images track Node 22/PostgreSQL 18 tags; record resulting image IDs as well as the commit because rebuilding later can pull changed base images.
+- Linux host with Docker Engine and Compose v2 supporting `up --wait`, enough space for the build/images and PostgreSQL volume, Git; Node 24 runs in a disposable container for the smoke script. Record host architecture and Docker/Compose versions in the protocol. CI tests the native amd64 stack; the target host's build must be checked separately, including ARM if applicable.
+- A checked-out commit with both Verify and Staging stack CI green. Builds use Node 24 (at least 24.15.0), pnpm 9.0.0 and the frozen lockfile. Base images track Node 24/PostgreSQL 18 tags; record resulting image IDs as well as the commit because rebuilding later can pull changed base images.
 - A staging hostname and HTTPS route managed by your existing reverse proxy. Restrict staging access to testers there. The stack publishes only `127.0.0.1:4080`; API and PostgreSQL have no host ports. A container-based or remote proxy needs an explicitly configured route to the staging host rather than its own loopback address.
 
 The root `docker-compose.yml` remains the development database only. Use `compose.staging.yml` independently with its own project name and persistent volume. API and web images run as the Node user; migration and worker images have runtime dependencies and compiled code, without requiring pnpm or TypeScript on the host. The migration image includes the committed SQL/journal files. Import jobs are explicit one-off commands, never started by the ordinary application startup.
@@ -84,11 +84,19 @@ Implementation references: [Compose startup ordering](https://docs.docker.com/co
 
 ## Smoke checks without host Node
 
-The accepted darkmode01 deployment intentionally has no host Node runtime. Run the existing script in disposable Node 22 containers, from the repository root:
+The accepted darkmode01 deployment intentionally has no host Node runtime. Run the existing script in disposable Node 24 containers, from the repository root:
 
 ```bash
-docker run --rm --network host -e STAGING_BASE_URL=http://127.0.0.1:4080 -v "$PWD/scripts:/scripts:ro" node:22 node /scripts/smoke-deployment.mjs --empty
-docker run --rm -e STAGING_BASE_URL=https://rikskollen.se -v "$PWD/scripts:/scripts:ro" node:22 node /scripts/smoke-deployment.mjs
+docker run --rm --network host -e STAGING_BASE_URL=http://127.0.0.1:4080 -v "$PWD/scripts:/scripts:ro" node:24 node /scripts/smoke-deployment.mjs --empty
+docker run --rm -e STAGING_BASE_URL=https://rikskollen.se -v "$PWD/scripts:/scripts:ro" node:24 node /scripts/smoke-deployment.mjs
 ```
 
 The loopback URL above is for the default binding. Set it to the actual reachable WireGuard address and port for a remote-proxy override (the acceptance failure check observed port 8092). Use `--empty` only before imports. These commands replace each host `node scripts/smoke-deployment.mjs` invocation above; HTTPS checks use the actual hostname. They do not replace manual browser acceptance.
+
+## Angular 22 host validation
+
+Before deploying the issue #4 upgrade, set `NG_ALLOWED_HOSTS` in `deploy/staging.env` to the exact hostname(s) used for SSR requests, without scheme or port. Compose defaults to `localhost,127.0.0.1,rikskollen.se`. Add the actual WireGuard IP if direct smoke requests use it. The standalone SSR server defaults to local hostnames. Do not use a wildcard. The API proxy/health handlers retain their existing behavior; SSR page requests with unlisted hosts return 400.
+
+The reverse proxy should preserve the intended public Host. Angular ignores untrusted proxy headers by default. Only opt into specific `NG_TRUST_PROXY_HEADERS` (for example `x-forwarded-proto`) if the proxy overwrites those headers and the web endpoint is limited to that proxy; no blanket trust is enabled by this upgrade.
+
+This framework/Node/configuration change needs the affected HTTPS, direct-link/hydration, container routing and recovery checks rerun on the host after deployment. The M4.0 protocol remains the historical acceptance of its recorded commit.

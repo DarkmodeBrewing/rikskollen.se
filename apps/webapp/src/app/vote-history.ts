@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, combineLatest, of, switchMap } from 'rxjs';
 import { MemberService } from './member.service';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-vote-history',
   imports: [DatePipe, RouterLink],
   styles: [`.vote-count[aria-current="true"] { outline: 2px solid #096e59; outline-offset: 2px; }`],
