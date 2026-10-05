@@ -339,6 +339,8 @@ test('member profile loading and failure are distinct from missing data', async 
   page,
 }) => {
   await page.goto('/');
+  // Finish the directory's browser request before delaying profile requests.
+  await expect(page.locator('.member-directory a').first()).toBeVisible();
   let release!: () => void;
   app.delay = new Promise<void>((resolve) => {
     release = resolve;

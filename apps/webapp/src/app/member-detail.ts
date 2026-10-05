@@ -16,7 +16,7 @@ import { VoteHistoryComponent } from './vote-history';
     @let state = member();
     @if (state.status === 'ready') {
       @let member = state.data;
-      <section class="intro">
+      <section class="intro member-intro">
         <p class="eyebrow">Ledamotsprofil · {{ member.partyCode }}</p>
         <h1>{{ member.givenName }} {{ member.lastName }}</h1>
         <p>{{ member.constituency }} · {{ member.status }}</p>
@@ -27,7 +27,7 @@ import { VoteHistoryComponent } from './vote-history';
           Historiska och pågående uppdrag visas med källans datumtext. Tiderna saknar angiven
           tidszon.
         </p>
-        <ul class="assignments">
+        <ul class="assignments profile-assignments">
           @for (item of member.assignments; track $index) {
             <li>
               <strong>{{ item.roleCode }}</strong> · {{ item.value || item.organCode }}
