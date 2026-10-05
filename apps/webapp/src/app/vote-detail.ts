@@ -1,3 +1,4 @@
+import { bindPageMetadata } from './page-metadata';
 import { VoteChoiceChartComponent } from './vote-choice-chart';
 import { voteLabel } from './vote-label';
 import { DatePipe } from '@angular/common';
@@ -102,6 +103,31 @@ import { MemberService, type VoteDetail } from './member.service';
   `,
 })
 export class VoteDetailComponent {
+  constructor() {
+    bindPageMetadata(() =>
+      (() => {
+        const state = this.detail();
+        if (state.status !== 'ready')
+          return {
+            title: state.status === 'missing' ? 'Votering saknas' : 'Votering',
+            description:
+              'Utforska registrerade voteringar med röstfördelning och källor från Sveriges riksdag.',
+            indexable: false,
+          };
+        const event = state.data.event;
+        const topic = voteLabel(event);
+        const report =
+          event.context?.pointHeading && event.context?.reportTitle
+            ? ` ${event.context.reportTitle}.`
+            : '';
+        return {
+          title: `${topic}${event.context?.pointHeading && event.context?.reportTitle ? ` – ${event.context.reportTitle}` : ''} – votering`,
+          description: `${topic}.${report} Punkt ${event.proposalPoint}, riksmöte ${event.session}. Se registrerade röster och källor. Frånvarande gäller endast denna votering.`,
+        };
+      })(),
+    );
+  }
+
   protected readonly voteLabel = voteLabel;
   private route = inject(ActivatedRoute);
   private service = inject(MemberService);

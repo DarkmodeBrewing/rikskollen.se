@@ -43,3 +43,7 @@ The member directory/profile spacing and vote-choice chart are implemented on `m
 ### M4.2 second slice — votes and reports
 
 Member design is merged/deployed through PR #15. The next local slice applies the same spacing to vote/report routes, introduces explicit request states and a single-vote choice chart, and adds source-backed readable topics to vote lists/details and member histories. References remain secondary; absent source text is explicit. [Review, contract and screenshots](m4.2-vote-report-review.md) record the scope and pending acceptance. Further vote-discovery ideas are not yet selected.
+
+### M4.2 page identity and sharing
+
+PR #16 is merged. A follow-up local slice replaces the generic browser title and starter favicon, adds Swedish source-backed metadata to every route, and supplies Open Graph/Twitter image cards, canonical URLs and a basic sitemap. [Metadata design and verification](page-metadata.md) record the public-origin and indexing behaviour.

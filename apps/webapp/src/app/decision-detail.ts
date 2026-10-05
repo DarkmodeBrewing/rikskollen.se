@@ -1,3 +1,4 @@
+import { bindPageMetadata } from './page-metadata';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -83,6 +84,25 @@ import { MemberService, type DecisionTrail } from './member.service';
   `,
 })
 export class DecisionDetailComponent {
+  constructor() {
+    bindPageMetadata(() =>
+      (() => {
+        const state = this.trail();
+        if (state.status !== 'ready')
+          return {
+            title: state.status === 'missing' ? 'Beslutsunderlag saknas' : 'Ärende',
+            description:
+              'Läs betänkanden, förslag och beslutspunkter från Sveriges riksdags öppna data.',
+            indexable: false,
+          };
+        return {
+          title: `${state.data.document.title} – ärende`,
+          description: `${state.data.document.title}. Läs ${state.data.expectedPoints} importerade förslagspunkter, utskottets förslag och källans uppgifter om beslut.`,
+        };
+      })(),
+    );
+  }
+
   private readonly route = inject(ActivatedRoute);
   private readonly service = inject(MemberService);
   readonly trail = toSignal(

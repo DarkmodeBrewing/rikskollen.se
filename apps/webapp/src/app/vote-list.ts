@@ -1,3 +1,4 @@
+import { bindPageMetadata } from './page-metadata';
 import { voteLabel } from './vote-label';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
@@ -86,6 +87,15 @@ import { MemberService, type VoteStatus, type VoteList } from './member.service'
   `,
 })
 export class VoteListComponent {
+  constructor() {
+    bindPageMetadata(() => ({
+      title: 'Registrerade voteringar',
+      description:
+        'Utforska registrerade huvudvoteringar 2025/26, läs vad de gäller och följ röstfördelningen tillbaka till Sveriges riksdag.',
+      indexable: this.result().status === 'ready',
+    }));
+  }
+
   protected readonly voteLabel = voteLabel;
   private route = inject(ActivatedRoute);
   private service = inject(MemberService);

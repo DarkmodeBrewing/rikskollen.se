@@ -1,3 +1,4 @@
+import { bindPageMetadata } from './page-metadata';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -131,6 +132,15 @@ import { MemberService, type DecisionList } from './member.service';
   `,
 })
 export class DecisionListComponent {
+  constructor() {
+    bindPageMetadata(() => ({
+      title: 'Ärenden och beslutspunkter',
+      description:
+        'Läs importerade betänkanden, utskottets förslag och källans uppgifter om hur varje beslutspunkt beslutades.',
+      indexable: this.result().status === 'ready',
+    }));
+  }
+
   private readonly route = inject(ActivatedRoute);
   private readonly service = inject(MemberService);
   readonly result = toSignal(
