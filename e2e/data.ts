@@ -22,6 +22,19 @@ export const member: Member = {
 };
 export const events: VoteEvent[] = Array.from({ length: 25 }, (_, index) => ({
   voteId: `test-vote-${index + 1}`,
+  context:
+    index === 0
+      ? {
+          reportTitle: 'Syntetiskt testärende',
+          pointHeading: 'Registrerad omröstning',
+          titleSourceUrl:
+            'https://data.riksdagen.se/dokumentstatus/TESTREPORT.json',
+          titleImportedAt: timestamp,
+          pointSourceUrl:
+            'https://data.riksdagen.se/dokumentstatus/TESTREPORT.json',
+          pointImportedAt: timestamp,
+        }
+      : undefined,
   session: '2025/26',
   designation: 'TEST1',
   proposalPoint: String(index + 1),

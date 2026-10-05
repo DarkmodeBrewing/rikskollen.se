@@ -34,4 +34,15 @@ describe('VoteChoiceChartComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Ingen fördelning kan visas');
     expect(fixture.nativeElement.querySelector('.bar')).toBeNull();
   });
+  it('labels a single vote without implying a member history or overall attendance', async () => {
+    const fixture = TestBed.createComponent(VoteChoiceChartComponent);
+    fixture.componentRef.setInput('choices', [{ choice: 'Frånvarande', count: 2 }]);
+    fixture.componentRef.setInput('total', 2);
+    fixture.componentRef.setInput('session', '2025/26');
+    fixture.componentRef.setInput('mode', 'vote');
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Röster i denna votering');
+    expect(fixture.nativeElement.textContent).toContain('Frånvarande gäller endast denna votering');
+    expect(fixture.nativeElement.textContent).not.toContain('personens ID');
+  });
 });

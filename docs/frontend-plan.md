@@ -39,3 +39,7 @@ Acceptance: reviewed before/after desktop/mobile views; chosen features have exp
 ### M4.2 first agreed slice — members
 
 The member directory/profile spacing and vote-choice chart are implemented on `m4/design-members`. Search/paging/filter URL behaviour and full-summary counts remain unchanged. See [design review and before/after evidence](m4.2-design-review.md). This first slice awaits visual approval and CI; vote/report design and their remaining page-state work are separate follow-up slices.
+
+### M4.2 second slice — votes and reports
+
+Member design is merged/deployed through PR #15. The next local slice applies the same spacing to vote/report routes, introduces explicit request states and a single-vote choice chart, and adds source-backed readable topics to vote lists/details and member histories. References remain secondary; absent source text is explicit. [Review, contract and screenshots](m4.2-vote-report-review.md) record the scope and pending acceptance. Further vote-discovery ideas are not yet selected.

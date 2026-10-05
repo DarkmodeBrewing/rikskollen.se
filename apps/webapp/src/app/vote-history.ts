@@ -1,3 +1,4 @@
+import { voteLabel } from './vote-label';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -79,9 +80,13 @@ import { MemberService } from './member.service';
         <ul class="assignments history-list">
           @for (row of history.items; track row.event.voteId) {
             <li>
-              <a [routerLink]="['/votering', row.event.voteId]"
-                >{{ row.event.designation }} · punkt {{ row.event.proposalPoint }}</a
-              >
+              <div class="history-topic">
+                <a [routerLink]="['/votering', row.event.voteId]">{{ voteLabel(row.event) }}</a>
+                @if (row.event.context?.pointHeading && row.event.context?.reportTitle) {
+                  <small>{{ row.event.context?.reportTitle }}</small>
+                }
+                <small>{{ row.event.designation }} · punkt {{ row.event.proposalPoint }}</small>
+              </div>
               <span>{{ row.event.voteDate || 'Datum okänt' }} · {{ row.choice }}</span>
             </li>
           } @empty {
@@ -114,6 +119,7 @@ import { MemberService } from './member.service';
   `,
 })
 export class VoteHistoryComponent {
+  protected readonly voteLabel = voteLabel;
   private route = inject(ActivatedRoute);
   private service = inject(MemberService);
   result = toSignal(

@@ -25,7 +25,7 @@ SSR checks inspect raw HTML containing fixture data. The hydration test follows 
 
 ## Current UI limits and next design slice
 
-Issue #4 now distinguishes member-list/profile loading and error states, a missing member profile, and failed versus absent member-import status. Member-list route changes recover after a failed request. Vote/report pages still combine missing/failed fetches and initially use unavailable-state text; their status failures can resemble no import. M4.2 should extend explicit states to those remaining views. Recovery currently uses refresh; no retry control is invented by this baseline. Firefox/WebKit and deeper accessibility review remain pre-public-release work. Mocked success cannot establish backend correctness, live-source coverage, data freshness or operational recovery.
+Issue #4 now distinguishes member-list/profile loading and error states, a missing member profile, and failed versus absent member-import status. Member-list route changes recover after a failed request. The second M4.2 slice extends explicit request states to vote/report routes; import-status failures differ from no completed import. Member vote-history failure handling still uses its earlier unavailable-state text. Recovery currently uses refresh; no retry control is invented by this baseline. Firefox/WebKit and deeper accessibility review remain pre-public-release work. Mocked success cannot establish backend correctness, live-source coverage, data freshness or operational recovery.
 
 Acceptance evidence: frontend CI must pass both viewport projects; Verify and Staging stack remain independent checks. A temporary fixture/link mutation must make the relevant assertion fail before this baseline is accepted. Record the CI result and mutation evidence in the PR. Do not change the M4.0 host protocol to imply a new deployment.
 
@@ -36,3 +36,7 @@ Acceptance evidence: frontend CI must pass both viewport projects; Verify and St
 - Mutation check: temporarily changed the catalog's `totalPoints` fixture from 5 to 6. The SSR test failed on its expected `Av 5 beslutspunkter` assertion. Restored the fixture before the passing suite.
 
 These results establish the local regression baseline; they do not replace the forthcoming GitHub CI run or the host deployment protocol.
+
+## M4.2 vote/report regression update
+
+Vote/report list/detail routes now distinguish loading, unavailable imports, missing records and API errors. Readable topic and exact result-chart checks extend the desktop/mobile suite to 36 cases. Fixture topics remain synthetic and include missing-context fallback. Browser tests do not establish production title coverage; the API integration test and source-linked methodology verify enrichment separately. See [design review](m4.2-vote-report-review.md).
