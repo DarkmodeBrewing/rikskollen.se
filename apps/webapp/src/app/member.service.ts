@@ -1,3 +1,4 @@
+import type { DataStatus } from '../../../../packages/shared-types/src/data-status';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
@@ -73,6 +74,9 @@ export class MemberService {
     return this.http.get<MemberVotes>(`${this.base}/api/persons/${encodeURIComponent(id)}/votes`, {
       params: { page, limit: 20, ...(choice === null ? {} : { choice }) },
     });
+  }
+  dataStatus(page: number) {
+    return this.http.get<DataStatus>(`${this.base}/api/data-status`, { params: { page } });
   }
   status() {
     return this.http.get<ImportStatus | null>(`${this.base}/api/import-status`);

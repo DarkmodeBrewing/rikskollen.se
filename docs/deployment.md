@@ -100,3 +100,7 @@ Before deploying the issue #4 upgrade, set `NG_ALLOWED_HOSTS` in `deploy/staging
 The reverse proxy should preserve the intended public Host. Angular ignores untrusted proxy headers by default. Only opt into specific `NG_TRUST_PROXY_HEADERS` (for example `x-forwarded-proto`) if the proxy overwrites those headers and the web endpoint is limited to that proxy; no blanket trust is enabled by this upgrade.
 
 This framework/Node/configuration change needs the affected HTTPS, direct-link/hydration, container routing and recovery checks rerun on the host after deployment. The M4.0 protocol remains the historical acceptance of its recorded commit.
+
+## Import status slice (M4.3)
+
+The import status slice adds migration `0006` (`import_attempts`). Follow the build → database → migrate → API/web order above before using the updated worker. Readiness requires this table. `/datastatus` displays existing published coverage immediately; new attempt history begins with the first updated worker invocation. Check `/api/data-status` through the web proxy and compare its counts/times with one bounded manual job. A killed worker has no proven final outcome, so its public attempt remains “Slutstatus saknas”. No schedule, retention pruning or new environment setting is enabled. See [acceptance and failure semantics](import-status.md).

@@ -37,6 +37,12 @@ test(
       assert.match(detail.json().sourceUrl, /data\.riksdagen\.se/);
       const status = await app.inject('/api/import-status');
       assert.equal(status.json().complete, true);
+      const dataStatus = (await app.inject('/api/data-status')).json();
+      const members = dataStatus.coverage.find((row: { dataset: string }) => row.dataset === 'members');
+      assert.equal(members.importedCount, 1);
+      assert.equal(members.expectedCount, 1);
+      assert.equal(members.snapshotId, runId);
+      assert.equal(members.complete, true);
       assert.equal((await app.inject('/api/persons?page=0')).statusCode, 400);
       assert.equal(
         (await app.inject('/api/persons/999999999')).statusCode,

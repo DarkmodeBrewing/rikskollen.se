@@ -46,6 +46,11 @@ test(
       assert.deepEqual(history.json().summary.choices, [{ choice: 'Frånvarande', count: 1 }]);
       const status = await app.inject('/api/votes/import-status');
       assert.equal(status.json().complete, true);
+      const voteCoverage = (await app.inject('/api/data-status')).json().coverage.find((row: { dataset: string }) => row.dataset === 'votes');
+      assert.equal(voteCoverage.importedCount, 1);
+      assert.equal(voteCoverage.expectedCount, 1);
+      assert.equal(voteCoverage.secondaryCount, 349);
+      assert.equal(voteCoverage.complete, true);
 
       // Synthetic events exercise each source choice, an unexpected value, a
       // missing date and a substituted person ID; none imply eligible attendance.
@@ -105,6 +110,14 @@ test(
       assert.equal(corrected.summary.recordedEvents, 1);
       assert.deepEqual(corrected.summary.choices, [{ choice: 'Nej', count: 1 }]);
       assert.equal(corrected.items[0].choice, 'Nej');
+      const correctedCoverage = (await app.inject('/api/data-status')).json().coverage.find((row: { dataset: string }) => row.dataset === 'votes');
+      assert.equal(correctedCoverage.snapshotId, correctedRunId);
+      assert.equal(correctedCoverage.importedCount, 1);
+      // Missing choice rows are surfaced rather than claiming completeness.
+      await pgPool.query('DELETE FROM vote_choices WHERE run_id = $1 AND person_id = $2', [correctedRunId, '0000000000001']);
+      const incompleteCoverage = (await app.inject('/api/data-status')).json().coverage.find((row: { dataset: string }) => row.dataset === 'votes');
+      assert.equal(incompleteCoverage.secondaryCount, 348);
+      assert.equal(incompleteCoverage.complete, false);
     } finally {
       if (pendingRunId) await pgPool.query('DELETE FROM vote_import_runs WHERE id = $1', [pendingRunId]);
       if (correctedRunId) await pgPool.query('DELETE FROM vote_import_runs WHERE id = $1', [correctedRunId]);

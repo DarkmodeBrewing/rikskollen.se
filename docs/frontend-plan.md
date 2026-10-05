@@ -1,6 +1,6 @@
 # Frontend testing and design slices
 
-Status: M4.0 accepted on 2026-10-05. M4.1 is merged; M4.2 remains planned. See [E2E commands and evidence boundaries](e2e.md).
+Status: M4.0 accepted on 2026-10-05. M4.1 and M4.2 implementation are merged through PR #17; M4.3 import status is the next local slice. See [E2E commands and evidence boundaries](e2e.md).
 
 ## M4.1 — Playwright E2E baseline
 
@@ -47,3 +47,7 @@ Member design is merged/deployed through PR #15. The next local slice applies th
 ### M4.2 page identity and sharing
 
 PR #16 is merged. A follow-up local slice replaces the generic browser title and starter favicon, adds Swedish source-backed metadata to every route, and supplies Open Graph/Twitter image cards, canonical URLs and a basic sitemap. [Metadata design and verification](page-metadata.md) record the public-origin and indexing behaviour.
+
+### M4.3 import status
+
+`/datastatus` adds accessible source-scoped coverage bars, oldest/newest status import times, latest worker attempts and URL-paginated history. The worker/API contract and deployment boundaries are in [the import status review](import-status.md). Existing source, vote absence and count semantics are preserved.

@@ -112,3 +112,9 @@ The same page and `/api/decisions` show a decision-method summary over proposal 
 ## Frontend E2E
 
 See [the E2E runbook](docs/e2e.md) for fresh-checkout commands, fixture isolation, coverage and current UI limitations. Run `pnpm test:e2e` to type-check fixtures, build Angular SSR and execute Chromium desktop/mobile tests.
+
+## Import status
+
+`/datastatus` shows source-scoped coverage, successful data import times, latest attempts per worker job and paginated history. Its read-only API is `/api/data-status?page=1`. All six existing import commands now record attempts, including source fetch failures and partially completed report batches. Older successful snapshots still supply coverage; history starts with the new tracking and cannot reconstruct past failures.
+
+Apply migration `0006` before running the updated API/worker; API readiness checks the new table. No new environment variables or automatic scheduling are introduced. See [import count definitions and acceptance](docs/import-status.md) and the [deployment runbook](docs/deployment.md).
