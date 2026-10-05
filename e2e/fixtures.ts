@@ -174,6 +174,7 @@ export const test = base.extend<{ app: FixtureApp }>({
         env: {
           ...process.env,
           API_BASE_URL: apiUrl,
+          NG_ALLOWED_HOSTS: '127.0.0.1,localhost,test.rikskollen.invalid',
           PORT: new URL(webUrl).port,
         },
         stdio: ['ignore', 'pipe', 'pipe'],

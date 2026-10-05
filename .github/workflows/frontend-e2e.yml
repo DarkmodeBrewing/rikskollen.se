@@ -14,10 +14,11 @@ jobs:
           version: 9.0.0
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @rikskollen/webapp test --watch=false
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v4
         if: always()

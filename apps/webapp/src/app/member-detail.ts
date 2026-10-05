@@ -1,16 +1,21 @@
-import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, of, switchMap } from 'rxjs';
-import { MemberService } from './member.service';
+import { distinctUntilChanged, map, switchMap } from 'rxjs';
+import { requestState, type RequestState } from './request-state';
+import { MemberService, type Member } from './member.service';
 import { VoteHistoryComponent } from './vote-history';
 
 @Component({
   selector: 'app-member-detail',
-  imports: [AsyncPipe, DatePipe, RouterLink, VoteHistoryComponent],
+  imports: [DatePipe, RouterLink, VoteHistoryComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <a routerLink="/" class="back">← Alla ledamöter</a>
-    @if (member$ | async; as member) {
+    @let state = member();
+    @if (state.status === 'ready') {
+      @let member = state.data;
       <section class="intro">
         <p class="eyebrow">Ledamotsprofil · {{ member.partyCode }}</p>
         <h1>{{ member.givenName }} {{ member.lastName }}</h1>
@@ -43,16 +48,24 @@ import { VoteHistoryComponent } from './vote-history';
           >Visa originalpost ↗</a
         >
       </aside>
+    } @else if (state.status === 'loading') {
+      <p role="status">Hämtar ledamotsprofil…</p>
+    } @else if (state.status === 'missing') {
+      <p>Profilen saknas i den senaste ledamotsimporten.</p>
     } @else {
-      <p>Profilen kunde inte hämtas eller saknas.</p>
+      <p role="alert">Profilen kunde inte hämtas. Försök igen senare.</p>
     }
   `,
 })
 export class MemberDetailComponent {
-  private route = inject(ActivatedRoute);
-  private service = inject(MemberService);
-  member$ = this.route.paramMap.pipe(
-    switchMap((p) => this.service.get(p.get('id') ?? '')),
-    catchError(() => of(null)),
+  private readonly route = inject(ActivatedRoute);
+  private readonly service = inject(MemberService);
+  readonly member = toSignal(
+    this.route.paramMap.pipe(
+      map((params) => params.get('id') ?? ''),
+      distinctUntilChanged(),
+      switchMap((id) => requestState(this.service.get(id), true)),
+    ),
+    { initialValue: { status: 'loading' } as RequestState<Member> },
   );
 }

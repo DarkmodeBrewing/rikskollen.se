@@ -204,14 +204,14 @@ test('empty lists and unavailable imports are visible', async ({
   ).toBeVisible();
 });
 
-test('missing details use current unavailable-state copy', async ({
+test('missing member profiles are distinct from API errors', async ({
   app,
   page,
 }) => {
   app.scenario = 'missing';
   await page.goto(`/ledamot/${member.personId}`);
   await expect(
-    page.getByText('Profilen kunde inte hämtas eller saknas.'),
+    page.getByText('Profilen saknas i den senaste ledamotsimporten.'),
   ).toBeVisible();
   await page.goto(`/votering/${events[0].voteId}`);
   await expect(
@@ -291,4 +291,101 @@ test('unavailable local report keeps original document and vote links', async ({
   await expect(
     page.getByRole('link', { name: 'Betänkande/dokument' }),
   ).toHaveAttribute('href', 'https://data.riksdagen.se/dokument/TESTREPORT');
+});
+
+test('member list exposes loading and recovers on a later query after a failed page', async ({
+  app,
+  page,
+}) => {
+  await page.goto('/voteringar');
+  let release!: () => void;
+  app.delay = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  try {
+    await page
+      .getByRole('navigation', { name: 'Huvudnavigation' })
+      .getByRole('link', { name: 'Ledamöter' })
+      .click();
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Hämtar ledamöter' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Hämtar importstatus' }),
+    ).toBeVisible();
+    await expect(
+      page.getByText('Ingen slutförd import ännu. Listan kan vara tom.'),
+    ).toHaveCount(0);
+    await expect(page.getByRole('alert')).toHaveCount(0);
+  } finally {
+    app.delay = null;
+    release();
+  }
+  await expect(page.getByText('31 personer', { exact: true })).toBeVisible();
+  app.scenario = 'error';
+  await page.getByRole('link', { name: 'Nästa' }).click();
+  await expect(page.getByRole('alert')).toContainText(
+    'Listan kunde inte hämtas.',
+  );
+  app.scenario = 'normal';
+  await page.goBack();
+  await expect(page.getByText('31 personer', { exact: true })).toBeVisible();
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(page.getByText('Sida 1 av 2')).toBeVisible();
+});
+
+test('member profile loading and failure are distinct from missing data', async ({
+  app,
+  page,
+}) => {
+  await page.goto('/');
+  let release!: () => void;
+  app.delay = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  try {
+    await page
+      .getByRole('link')
+      .filter({ has: page.getByText('Test Ledamot', { exact: true }) })
+      .click();
+    await expect(page.getByRole('status')).toHaveText('Hämtar ledamotsprofil…');
+    await expect(
+      page.getByText('Profilen saknas i den senaste ledamotsimporten.'),
+    ).toHaveCount(0);
+  } finally {
+    app.delay = null;
+    release();
+  }
+  await expect(
+    page.getByRole('heading', { name: 'Test Ledamot', exact: true }),
+  ).toBeVisible();
+  app.scenario = 'error';
+  await page.reload();
+  await expect(page.getByRole('alert')).toHaveText(
+    'Profilen kunde inte hämtas. Försök igen senare.',
+  );
+  await expect(
+    page.getByText('Profilen saknas i den senaste ledamotsimporten.'),
+  ).toHaveCount(0);
+  app.scenario = 'normal';
+  await page.reload();
+  await expect(
+    page.getByRole('heading', { name: 'Test Ledamot', exact: true }),
+  ).toBeVisible();
+});
+
+test('failed member import status is not presented as an unimported directory', async ({
+  app,
+  page,
+}) => {
+  app.scenario = 'error';
+  await page.goto('/');
+  await expect(
+    page
+      .getByRole('alert')
+      .filter({ hasText: 'Importstatus kunde inte hämtas.' }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Ingen slutförd import ännu. Listan kan vara tom.'),
+  ).toHaveCount(0);
 });

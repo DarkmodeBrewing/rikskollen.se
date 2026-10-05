@@ -4,7 +4,7 @@ M4.0 staging acceptance passed on 2026-10-05. This slice adds TypeScript Playwri
 
 ## Run from a fresh checkout
 
-Use Node 22 and the repository's pnpm 9.0.0:
+Use Node 24 (at least 24.15.0) and the repository's pnpm 9.0.0. Angular 22 also supports Node 22 from 22.22.3:
 
 ```bash
 corepack enable
@@ -25,7 +25,7 @@ SSR checks inspect raw HTML containing fixture data. The hydration test follows 
 
 ## Current UI limits and next design slice
 
-Detail pages currently combine missing and failed fetches in their copy; loading also initially uses unavailable-state text. Import status failures can look like no import. Tests preserve and document these current states; M4.2 should introduce distinct loading, missing, error and unimported states with corresponding assertions. Recovery currently uses refresh; no retry control is invented by this baseline. Firefox/WebKit and deeper accessibility review remain pre-public-release work. Mocked success cannot establish backend correctness, live-source coverage, data freshness or operational recovery.
+Issue #4 now distinguishes member-list/profile loading and error states, a missing member profile, and failed versus absent member-import status. Member-list route changes recover after a failed request. Vote/report pages still combine missing/failed fetches and initially use unavailable-state text; their status failures can resemble no import. M4.2 should extend explicit states to those remaining views. Recovery currently uses refresh; no retry control is invented by this baseline. Firefox/WebKit and deeper accessibility review remain pre-public-release work. Mocked success cannot establish backend correctness, live-source coverage, data freshness or operational recovery.
 
 Acceptance evidence: frontend CI must pass both viewport projects; Verify and Staging stack remain independent checks. A temporary fixture/link mutation must make the relevant assertion fail before this baseline is accepted. Record the CI result and mutation evidence in the PR. Do not change the M4.0 host protocol to imply a new deployment.
 

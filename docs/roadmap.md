@@ -40,8 +40,8 @@ Prepare API and Angular SSR runtime images, a compiled migration job, explicit m
 | **M4.4 — operational recovery** | Monitoring/alerts and backup/restore acceptance; source provenance and retention | Restore and alert scenarios verified with recorded evidence |
 | **M4.5 — public release** | Accessibility, attribution, personal-data handling and operational readiness | Release checks completed; member photos require a separate rights review |
 
-The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. M4.0 host acceptance passed on 2026-10-05. M4.1 is implemented on this branch; the following slices remain planned. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
+The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. M4.0 host acceptance passed on 2026-10-05. M4.1 is merged; the following slices remain planned. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
 
-The Angular upgrade and remaining member-template conversion to signals stay separately tracked in [issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
+[Issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4) upgrades Angular to 22.2.1 and converts the remaining member templates to signals in a separate technical slice before M4.2; see [upgrade notes](angular-upgrade.md). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
 
 M4.1 commands, coverage and known page-state limitations are recorded in [the E2E runbook](e2e.md). Framework upgrade/signal conversion remains separate from this baseline.

@@ -10,7 +10,12 @@ import { join } from 'node:path';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+// Angular validates SSR hosts; authorize only this deployment's hostnames.
+const allowedHosts = (process.env['NG_ALLOWED_HOSTS'] || 'localhost,127.0.0.1')
+  .split(',')
+  .map((host) => host.trim())
+  .filter(Boolean);
+const angularApp = new AngularNodeAppEngine({ allowedHosts });
 
 const apiBaseUrl = process.env['API_BASE_URL'] || 'http://localhost:3000';
 
@@ -34,10 +39,10 @@ app.use('/api', async (req, res) => {
     return;
   }
   try {
-    const upstream = await fetch(
-      new URL(req.originalUrl, apiBaseUrl),
-      { method: req.method, signal: AbortSignal.timeout(10_000) },
-    );
+    const upstream = await fetch(new URL(req.originalUrl, apiBaseUrl), {
+      method: req.method,
+      signal: AbortSignal.timeout(10_000),
+    });
     res.status(upstream.status);
     res.setHeader('content-type', upstream.headers.get('content-type') || 'application/json');
     res.send(await upstream.text());
