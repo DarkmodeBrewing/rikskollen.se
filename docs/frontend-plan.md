@@ -1,6 +1,6 @@
 # Frontend testing and design slices
 
-Status: planned, not implemented. M4.0 staging acceptance remains the prerequisite for beginning these implementation slices. Planning does not mark any host protocol check as passed.
+Status: M4.0 accepted on 2026-10-05. M4.1 is implemented on this branch; M4.2 remains planned. See [E2E commands and evidence boundaries](e2e.md).
 
 ## M4.1 — Playwright E2E baseline
 

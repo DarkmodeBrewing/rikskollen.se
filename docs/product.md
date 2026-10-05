@@ -31,7 +31,7 @@ Start with a recent, explicitly bounded parliamentary session. Expand history on
 
 ## Current delivery boundary
 
-M1–M3 implement the member directory, recorded vote/history views, source-linked report trails, a decided-report catalog and summaries scoped to imported points or person rows. The next step is M4.0 staging deployment and its [acceptance protocol](m4.0-test-protocol.md). Manual imports remain separate jobs; deployed data coverage and operational readiness must be verified before the next implementation phase.
+M1–M3 implement the member directory, recorded vote/history views, source-linked report trails, a decided-report catalog and summaries scoped to imported points or person rows. M4.0 staging deployment passed its [acceptance protocol](m4.0-test-protocol.md) on 2026-10-05. Manual imports remain separate jobs and report status coverage is partial. M4.1 establishes a mocked SSR/browser regression baseline before design and framework changes.
 
 ## Editorial and technical boundaries
 

@@ -1,6 +1,6 @@
 # Roadmap
 
-Status as of 2026-09-30. This is an ordered proposal, not a delivery schedule. Each milestone must leave a demonstrable, source-linked result.
+Status as of 2026-10-05. This is an ordered proposal, not a delivery schedule. Each milestone must leave a demonstrable, source-linked result.
 
 | Milestone | Outcome | Acceptance gate |
 | --- | --- | --- |
@@ -22,9 +22,9 @@ Status as of 2026-09-30. This is an ordered proposal, not a delivery schedule. E
 | M3 catalog | Reconciled decided-report catalog and resumable status imports | Reports not marked decided are outside its denominator |
 | M3 summaries | Decision-method counts and member choice counts with filterable history | Imported points/rows, explicit denominators, exclusions and corrections |
 
-M0–M3 implementation is merged through PR #10. Mapping and PostgreSQL integration tests pass in CI. Official source samples and worked examples are documented in [methodology](data-methodology.md). No deployed real-data acceptance is recorded; implemented import support does not mean that a server has ingested the full catalog. Rankings, inferred attendance and member participation rates are outside the delivered scope.
+M0–M3 implementation is merged through PR #10. Mapping and PostgreSQL integration tests pass in CI. Official source samples and worked examples are documented in [methodology](data-methodology.md). M4.0 deployed real-data acceptance is recorded in the test protocol. The catalog contains 474 reports; acceptance imported status details for four, leaving 470 pending. Rankings, inferred attendance and member participation rates are outside the delivered scope.
 
-## M4.0 — first staging deployment (current slice)
+## M4.0 — first staging deployment (accepted)
 
 Prepare API and Angular SSR runtime images, a compiled migration job, explicit manual worker jobs, a persistent isolated PostgreSQL volume and a loopback web endpoint for the existing reverse proxy. Test the container stack in CI with no live Riksdag requests. Follow the [staging runbook](deployment.md) on the target host and record the [small acceptance protocol](m4.0-test-protocol.md), including real imports, HTTPS, source-linked navigation, counts and recovery.
 
@@ -40,6 +40,8 @@ Prepare API and Angular SSR runtime images, a compiled migration job, explicit m
 | **M4.4 — operational recovery** | Monitoring/alerts and backup/restore acceptance; source provenance and retention | Restore and alert scenarios verified with recorded evidence |
 | **M4.5 — public release** | Accessibility, attribution, personal-data handling and operational readiness | Release checks completed; member photos require a separate rights review |
 
-The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. These are planned slices; implementation starts after the M4.0 host acceptance gate passes. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
+The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. M4.0 host acceptance passed on 2026-10-05. M4.1 is implemented on this branch; the following slices remain planned. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
 
 The Angular upgrade and remaining member-template conversion to signals stay separately tracked in [issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
+
+M4.1 commands, coverage and known page-state limitations are recorded in [the E2E runbook](e2e.md). Framework upgrade/signal conversion remains separate from this baseline.

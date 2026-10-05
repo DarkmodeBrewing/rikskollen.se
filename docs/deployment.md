@@ -4,7 +4,7 @@ Scope: one staging host, manual imports, existing HTTPS reverse proxy. This runb
 
 ## Stack and prerequisites
 
-- Linux host with Docker Engine and Compose v2 supporting `up --wait`, enough space for the build/images and PostgreSQL volume, Git and Node 22 for the smoke script. Record host architecture and Docker/Compose versions in the protocol. CI tests the native amd64 stack; the target host's build must be checked separately, including ARM if applicable.
+- Linux host with Docker Engine and Compose v2 supporting `up --wait`, enough space for the build/images and PostgreSQL volume, Git; Node 22 runs in a disposable container for the smoke script. Record host architecture and Docker/Compose versions in the protocol. CI tests the native amd64 stack; the target host's build must be checked separately, including ARM if applicable.
 - A checked-out commit with both Verify and Staging stack CI green. Builds use Node 22, pnpm 9.0.0 and the frozen lockfile. Base images track Node 22/PostgreSQL 18 tags; record resulting image IDs as well as the commit because rebuilding later can pull changed base images.
 - A staging hostname and HTTPS route managed by your existing reverse proxy. Restrict staging access to testers there. The stack publishes only `127.0.0.1:4080`; API and PostgreSQL have no host ports. A container-based or remote proxy needs an explicitly configured route to the staging host rather than its own loopback address.
 
@@ -37,7 +37,7 @@ node scripts/smoke-deployment.mjs --empty
 
 Run commands in order and stop on any failure. The second migration invocation checks that an already applied journal is safe to replay. API readiness requires the database and latest schema; it does not require imported data. `/health` on the web server checks the web process → internal API `/ready` → migrated database path. The API's own `/health` remains process-only. The proxy bounds requests and returns a generic 502 if the API is unavailable; readiness returns 503. No credentials or upstream error stacks are returned to the browser by these handlers.
 
-Configure the existing reverse proxy to forward the staging hostname to the loopback web port, then run:
+For a proxy on the same host, forward the hostname to the loopback web port. The accepted deployment uses Cloudflare → tunnel → darkmode02/Caddy → WireGuard → darkmode01, so Caddy must reach the web port over WireGuard. Keep API/PostgreSQL internal. Use a host-specific Compose override binding the web port to the host’s WireGuard address, with network access limited to the proxy; never point the remote proxy at its own loopback. Record the actual bind address and port in acceptance evidence. Then run:
 
 ```bash
 STAGING_BASE_URL=https://your-staging-hostname node scripts/smoke-deployment.mjs --empty
@@ -81,3 +81,14 @@ Before a later migration, take and protect a database backup. Keep the previousl
 Useful diagnostics: `dc ps`, `dc logs --tail=100 api web`, individual job logs, `docker image inspect` for revision labels and image IDs. Do not attach credentials or raw personal-data dumps to acceptance evidence. CI's stack is disposable and uses a distinct project name; only CI removes its own test volume.
 
 Implementation references: [Compose startup ordering](https://docs.docker.com/compose/how-tos/startup-order/), [one-off profile services](https://docs.docker.com/compose/how-tos/profiles/) and [pnpm deployment packaging](https://pnpm.io/cli/deploy). The repository pins pnpm 9.0.0; runtime packaging is verified by the container workflow rather than assuming current pnpm documentation applies unchanged to that version.
+
+## Smoke checks without host Node
+
+The accepted darkmode01 deployment intentionally has no host Node runtime. Run the existing script in disposable Node 22 containers, from the repository root:
+
+```bash
+docker run --rm --network host -e STAGING_BASE_URL=http://127.0.0.1:4080 -v "$PWD/scripts:/scripts:ro" node:22 node /scripts/smoke-deployment.mjs --empty
+docker run --rm -e STAGING_BASE_URL=https://rikskollen.se -v "$PWD/scripts:/scripts:ro" node:22 node /scripts/smoke-deployment.mjs
+```
+
+The loopback URL above is for the default binding. Set it to the actual reachable WireGuard address and port for a remote-proxy override (the acceptance failure check observed port 8092). Use `--empty` only before imports. These commands replace each host `node scripts/smoke-deployment.mjs` invocation above; HTTPS checks use the actual hostname. They do not replace manual browser acceptance.

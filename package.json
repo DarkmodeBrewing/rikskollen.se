@@ -8,7 +8,10 @@
     "dev:api": "pnpm --filter @rikskollen/api dev",
     "build": "pnpm -r build",
     "build:db": "pnpm --filter @rikskollen/db build",
-    "test": "pnpm --filter @rikskollen/db test && pnpm --filter @rikskollen/worker test && pnpm --filter @rikskollen/api test"
+    "test": "pnpm --filter @rikskollen/db test && pnpm --filter @rikskollen/worker test && pnpm --filter @rikskollen/api test",
+    "test:e2e": "pnpm typecheck:e2e && pnpm --filter @rikskollen/webapp build && playwright test",
+    "test:e2e:built": "playwright test",
+    "typecheck:e2e": "tsc -p e2e/tsconfig.json"
   },
   "packageManager": "pnpm@9.0.0",
   "dependencies": {
@@ -20,5 +23,8 @@
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
   }
 }
