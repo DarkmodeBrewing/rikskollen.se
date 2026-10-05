@@ -18,7 +18,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm --filter @rikskollen/webapp test --watch=false
+      - run: pnpm --filter @rikskollen/webapp run test --watch=false
       - run: pnpm test:e2e
       - uses: actions/upload-artifact@v4
         if: always()
