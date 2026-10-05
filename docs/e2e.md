@@ -40,3 +40,7 @@ These results establish the local regression baseline; they do not replace the f
 ## M4.2 vote/report regression update
 
 Vote/report list/detail routes now distinguish loading, unavailable imports, missing records and API errors. Readable topic and exact result-chart checks extend the desktop/mobile suite to 36 cases. Fixture topics remain synthetic and include missing-context fallback. Browser tests do not establish production title coverage; the API integration test and source-linked methodology verify enrichment separately. See [design review](m4.2-vote-report-review.md).
+
+## Page metadata regression update
+
+The suite now has 40 cases across desktop/mobile. `metadata.spec.ts` checks raw SSR titles/social metadata on every page type, static branding assets, client navigation updates, canonical/share URLs and unavailable-page indexing behaviour. The 1200×630 image is a shared brand card; page-specific text is carried in metadata. Social platforms themselves are not called by the tests.

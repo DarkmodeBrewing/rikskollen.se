@@ -1,3 +1,4 @@
+import { bindPageMetadata } from './page-metadata';
 import { DatePipe } from '@angular/common';
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -92,6 +93,15 @@ import { MemberService, type ImportStatus, type MemberList } from './member.serv
   `,
 })
 export class MemberListComponent {
+  constructor() {
+    bindPageMetadata(() => ({
+      title: 'Ledamöter',
+      description:
+        'Sök bland riksdagens ledamöter. Utforska uppdrag och registrerade röster med tydliga källor och datatäckning.',
+      indexable: this.results().status === 'ready',
+    }));
+  }
+
   private readonly route = inject(ActivatedRoute);
   private readonly service = inject(MemberService);
   protected readonly Math = Math;

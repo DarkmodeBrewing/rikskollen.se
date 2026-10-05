@@ -1,3 +1,4 @@
+import { bindPageMetadata } from './page-metadata';
 import { DatePipe } from '@angular/common';
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -58,6 +59,25 @@ import { VoteHistoryComponent } from './vote-history';
   `,
 })
 export class MemberDetailComponent {
+  constructor() {
+    bindPageMetadata(() =>
+      (() => {
+        const state = this.member();
+        if (state.status !== 'ready')
+          return {
+            title: state.status === 'missing' ? 'Ledamotsprofil saknas' : 'Ledamotsprofil',
+            description: 'Utforska riksdagens ledamöter, uppdrag och registrerade röster.',
+            indexable: false,
+          };
+        const person = state.data;
+        return {
+          title: `${person.givenName} ${person.lastName} – ledamotsprofil`,
+          description: `${person.givenName} ${person.lastName} (${person.partyCode}), ${person.constituency}. Se uppdrag och registrerade röster med källor från Sveriges riksdag.`,
+        };
+      })(),
+    );
+  }
+
   private readonly route = inject(ActivatedRoute);
   private readonly service = inject(MemberService);
   readonly member = toSignal(
