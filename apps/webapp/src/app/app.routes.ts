@@ -1,3 +1,4 @@
+import { DataStatusComponent } from './data-status';
 import { Routes } from '@angular/router';
 import { MemberListComponent } from './member-list';
 import { MemberDetailComponent } from './member-detail';
@@ -12,5 +13,6 @@ export const routes: Routes = [
   { path: 'votering/:id', component: VoteDetailComponent },
   { path: 'arende/:id', component: DecisionDetailComponent },
   { path: 'arenden', component: DecisionListComponent },
+  { path: 'datastatus', component: DataStatusComponent },
   { path: '**', redirectTo: '' },
 ];

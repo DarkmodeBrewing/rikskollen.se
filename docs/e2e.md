@@ -44,3 +44,7 @@ Vote/report list/detail routes now distinguish loading, unavailable imports, mis
 ## Page metadata regression update
 
 The suite now has 40 cases across desktop/mobile. `metadata.spec.ts` checks raw SSR titles/social metadata on every page type, static branding assets, client navigation updates, canonical/share URLs and unavailable-page indexing behaviour. The 1200×630 image is a shared brand card; page-specific text is carried in metadata. Social platforms themselves are not called by the tests.
+
+## Import status coverage
+
+The worker-to-UI status slice adds six desktop/mobile cases (46 total) for source-scoped counts and accessible bars, raw SSR/social metadata, footer navigation, URL history paging/reload, empty snapshots/history, API failure, keyboard retry and delayed refresh. Fixtures are synthetic and do not contact the live source. See [the contract and verification](import-status.md).

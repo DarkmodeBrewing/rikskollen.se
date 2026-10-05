@@ -1,3 +1,4 @@
+import { readDataStatus } from './data-status';
 import { withVoteContext } from './vote-context';
 import {
   createDatabaseClient,
@@ -96,7 +97,7 @@ export const closeDatabase = () => pgPool.end();
 
 // Readiness requires connectivity and the latest applied schema, not imported data.
 export async function checkDatabaseReady() {
-  await pgPool.query('SELECT 1 FROM report_catalog_entries LIMIT 0');
+  await pgPool.query('SELECT 1 FROM import_attempts LIMIT 0');
 }
 
 // Vote rows are scoped to the most recent completed session snapshot.
@@ -395,3 +396,5 @@ export async function getVoteImportStatus() {
       }
     : null;
 }
+
+export const getDataStatus = (page: number) => readDataStatus(pgPool, page);

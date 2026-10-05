@@ -40,8 +40,12 @@ Prepare API and Angular SSR runtime images, a compiled migration job, explicit m
 | **M4.4 — operational recovery** | Monitoring/alerts and backup/restore acceptance; source provenance and retention | Restore and alert scenarios verified with recorded evidence |
 | **M4.5 — public release** | Accessibility, attribution, personal-data handling and operational readiness | Release checks completed; member photos require a separate rights review |
 
-The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. M4.0 host acceptance passed on 2026-10-05. M4.1 is merged; the following slices remain planned. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
+The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. M4.0 host acceptance passed on 2026-10-05. M4.1 and the Angular signals upgrade are merged. M4.2 design and page identity/sharing are merged through PR #17; deployed sharing verification remains separate. M4.3 begins with the worker-to-UI import status slice. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
 
 [Issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4) upgrades Angular to 22.2.1 and converts the remaining member templates to signals in a separate technical slice before M4.2; see [upgrade notes](angular-upgrade.md). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
 
 M4.1 commands, coverage and known page-state limitations are recorded in [the E2E runbook](e2e.md). Framework upgrade/signal conversion remains separate from this baseline.
+
+## M4.3 first slice — import status
+
+The local `m4/import-status` slice adds durable attempts for all six worker commands, source-scoped published counts and freshness, a read-only status API, and the Swedish `/datastatus` page. See [count definitions and acceptance](import-status.md). Scheduling, measured correction windows and freshness SLAs are follow-up work; no live source imports or deployments are part of implementation verification.

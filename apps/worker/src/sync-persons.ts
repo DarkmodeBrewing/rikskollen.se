@@ -1,8 +1,24 @@
+import {
+  recordImportAttempt,
+  type AttemptProgress,
+} from './lib/import-attempt';
 import { createDatabaseClient, importRuns, persons } from '@rikskollen/db';
 import { getPersons } from './clients/person';
 
 export async function syncPersons(load = getPersons) {
-  const batch = await load(); // All network work and validation precedes the transaction.
+  return recordImportAttempt(
+    { dataset: 'members', job: 'persons' },
+    (progress) => executeSyncPersons(load, progress),
+    (result) => ({ importedCount: result.count, snapshotId: result.runId }),
+  );
+}
+
+async function executeSyncPersons(
+  load = getPersons,
+  progress: AttemptProgress,
+) {
+  const batch = await load();
+  await progress.expected(batch.expectedCount); // All network work and validation precedes the transaction.
   const { db, pgPool } = createDatabaseClient();
   const now = new Date();
   try {

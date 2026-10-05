@@ -169,3 +169,26 @@ export const decisions: DecisionList = {
     catalogCompletedAt: timestamp,
   },
 };
+
+// Operational data is synthetic; counts never claim real deployment coverage.
+export const dataStatus: import('../packages/shared-types/src/data-status').DataStatus = {
+  generatedAt: timestamp, trackingStartedAt: timestamp,
+  coverage: [
+    { dataset: 'members', session: null, snapshotId: '00000000-0000-0000-0000-000000000001', sourceUrl: member.sourceUrl,
+      expectedCount: 31, importedCount: 31, complete: true, lastSuccessfulAt: timestamp, oldestSuccessfulAt: timestamp, secondaryCount: null },
+    { dataset: 'votes', session: '2025/26', snapshotId: '00000000-0000-0000-0000-000000000002', sourceUrl: history.summary!.sourceArchiveUrl,
+      expectedCount: 25, importedCount: 25, complete: true, lastSuccessfulAt: timestamp, oldestSuccessfulAt: timestamp, secondaryCount: 8725 },
+    { dataset: 'catalog', session: '2025/26', snapshotId: '00000000-0000-0000-0000-000000000003', sourceUrl: 'https://data.riksdagen.se/dokumentlista/?rm=2025/26',
+      expectedCount: 2, importedCount: 2, complete: true, lastSuccessfulAt: timestamp, oldestSuccessfulAt: timestamp, secondaryCount: null },
+    { dataset: 'decisions', session: '2025/26', snapshotId: '00000000-0000-0000-0000-000000000003', sourceUrl: 'https://data.riksdagen.se/dokumentlista/?rm=2025/26',
+      expectedCount: 2, importedCount: 1, complete: false, lastSuccessfulAt: timestamp, oldestSuccessfulAt: '2026-01-01T12:00:00Z', secondaryCount: 2 },
+  ],
+  latestAttempts: [{ id: '00000000-0000-0000-0000-000000000021', dataset: 'decisions', job: 'catalog-decisions', session: '2025/26', documentId: null,
+    status: 'failed', expectedCount: 2, importedCount: 1, snapshotId: null, startedAt: timestamp, finishedAt: timestamp, durationSeconds: 0 }],
+  history: { page: 1, limit: 20, total: 21,
+    items: Array.from({ length: 21 }, (_, i) => ({
+      id: `00000000-0000-0000-0000-${String(i+1).padStart(12,'0')}`, dataset: 'decisions', job: 'catalog-decisions', session: '2025/26', documentId: null,
+      status: i === 0 ? 'running' : 'failed', expectedCount: 2, importedCount: 1, snapshotId: null,
+      startedAt: timestamp, finishedAt: i === 0 ? null : timestamp, durationSeconds: i === 0 ? null : 0,
+    })) },
+};

@@ -1,3 +1,7 @@
+import {
+  recordImportAttempt,
+  type AttemptProgress,
+} from './lib/import-attempt';
 import { readFile } from 'node:fs/promises';
 import { eq } from 'drizzle-orm';
 import {
@@ -15,9 +19,24 @@ import {
 } from './clients/vote-dataset';
 
 export async function syncVotes(loadArchive = downloadVoteArchive) {
+  return recordImportAttempt(
+    { dataset: 'votes', job: 'votes', session: '2025/26' },
+    (progress) => executeSyncVotes(loadArchive, progress),
+    (result) => ({
+      importedCount: result.eventCount,
+      snapshotId: result.runId,
+    }),
+  );
+}
+
+async function executeSyncVotes(
+  loadArchive = downloadVoteArchive,
+  progress: AttemptProgress,
+) {
   const url = archiveUrl();
   const bytes = await loadArchive(url);
   const { files, names, archiveHash } = readVoteArchive(bytes);
+  await progress.expected(names.length);
   const { db, pgPool } = createDatabaseClient();
   let runId: string | undefined;
   try {

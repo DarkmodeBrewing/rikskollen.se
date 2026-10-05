@@ -485,3 +485,26 @@ input:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* Import coverage and operational history share the existing panel rhythm. */
+.status-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; margin-block: 1.5rem 3rem; }
+.status-card { margin: 0; }
+.status-card h3 { font-size: 1.45rem; }
+.status-number { font-size: clamp(2rem, 4vw, 3rem); font-weight: 750; line-height: 1.2; margin-block: 1.5rem .5rem; }
+.status-number span { font-size: 1.1rem; font-weight: 400; color: #52635d; }
+.status-card progress { width: 100%; height: .9rem; accent-color: #087963; }
+.status-card progress::-webkit-progress-bar { background: #e6e5dd; border-radius: .5rem; }
+.status-card progress::-webkit-progress-value { background: #087963; border-radius: .5rem; }
+.status-tag { font-size: .9rem; font-weight: 650; }
+.status-explanation { color: #52635d; border-top: 1px solid #d9dfd7; padding-top: 1.25rem; margin-top: 1.5rem; }
+.status-times { display: grid; gap: .35rem; }
+.status-times dd { margin: 0 0 .75rem; font-weight: 650; }
+.status-runs, .status-history { list-style: none; padding: 0; }
+.status-runs li { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; padding-block: 1rem; border-bottom: 1px solid #d9dfd7; }
+.status-runs strong { flex: 1 1 18rem; }
+.status-history li { display: grid; grid-template-columns: minmax(12rem, 1fr) 2fr; gap: 2rem; padding-block: 1.5rem; border-bottom: 1px solid #d9dfd7; }
+.status-history h3 { margin-top: 0; }
+@media (max-width: 680px) {
+  .status-grid, .status-history li { grid-template-columns: 1fr; }
+  .status-history li { gap: .5rem; }
+}

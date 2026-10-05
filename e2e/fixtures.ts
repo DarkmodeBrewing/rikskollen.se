@@ -2,7 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import { createServer, type Server } from 'node:http';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { member, events, history, trail, decisions, timestamp } from './data';
+import { member, events, history, trail, decisions, timestamp, dataStatus } from './data';
 
 type Scenario = 'normal' | 'empty' | 'error' | 'missing' | 'no-context';
 export interface FixtureApp {
@@ -44,6 +44,13 @@ export const test = base.extend<{ app: FixtureApp }>({
       let body: unknown;
       let status = 200;
       if (path === '/ready') body = { ok: true };
+      else if (path === '/api/data-status') {
+        const empty = app.scenario === 'empty';
+        body = { ...dataStatus, coverage: empty ? [] : dataStatus.coverage,
+          latestAttempts: empty ? [] : dataStatus.latestAttempts, trackingStartedAt: empty ? null : dataStatus.trackingStartedAt,
+          history: { ...paged(empty ? [] : dataStatus.history.items), limit: 20,
+            items: empty ? [] : dataStatus.history.items.slice((page-1)*20, page*20) } };
+      }
       else if (path === '/api/import-status')
         body =
           app.scenario === 'empty'
