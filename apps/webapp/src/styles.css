@@ -1,3 +1,401 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
 
-@import "tailwindcss";
+/* Shared page styles must reach components rendered by the router. */
+
+* {
+  box-sizing: border-box;
+}
+a {
+  color: inherit;
+}
+.container {
+  width: min(1080px, calc(100% - 40px));
+  margin: auto;
+}
+.site-header {
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px max(20px, calc((100% - 1080px) / 2));
+  border-bottom: 1px solid #d9dfd7;
+  background: #fff;
+}
+.site-header > span {
+  font-size: 13px;
+  color: #52635d;
+}
+.brand {
+  text-decoration: none;
+  font-size: 25px;
+  font-weight: 850;
+  letter-spacing: -0.06em;
+}
+.brand span {
+  color: #087963;
+}
+.brand .brand-dot {
+  color: #e2a142;
+}
+main {
+  min-height: calc(100vh - 180px);
+  padding: 55px 0 90px;
+}
+.intro {
+  max-width: 730px;
+  margin-bottom: 36px;
+}
+.eyebrow {
+  color: #087963;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 12px;
+  font-weight: 800;
+}
+h1 {
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+  margin: 12px 0 20px;
+}
+h2 {
+  font-size: 24px;
+  letter-spacing: -0.03em;
+}
+.intro > p:last-child {
+  color: #50615a;
+  font-size: 17px;
+  line-height: 1.7;
+}
+.notice {
+  background: #e9f1e9;
+  border-left: 4px solid #16836c;
+  padding: 17px 20px;
+  margin: 30px 0;
+  line-height: 1.6;
+  font-size: 14px;
+}
+.notice a {
+  margin-left: 10px;
+  font-weight: 700;
+  color: #096650;
+}
+.search {
+  margin: 35px 0 30px;
+}
+.search label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.search > div {
+  display: flex;
+  gap: 8px;
+}
+.search input {
+  width: min(100%, 540px);
+  border: 1px solid #b4c2b8;
+  background: white;
+  border-radius: 5px;
+  padding: 14px 16px;
+  font: inherit;
+}
+.search button {
+  flex-shrink: 0;
+  white-space: nowrap;
+  border: 0;
+  background: #096e59;
+  color: white;
+  padding: 0 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.search button:hover {
+  background: #075441;
+}
+.count {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #587068;
+  font-weight: 700;
+}
+.members,
+.assignments {
+  list-style: none;
+  padding: 0;
+}
+.members {
+  border-top: 1px solid #d2dbd2;
+}
+.members li {
+  border-bottom: 1px solid #d2dbd2;
+}
+.members a {
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr 1.4fr 30px;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 8px;
+  text-decoration: none;
+}
+.members a:hover {
+  background: #eaf0e8;
+}
+.members strong {
+  font-size: 17px;
+}
+.members span,
+.members small {
+  color: #4f6258;
+  font-size: 14px;
+}
+.members b {
+  color: #087963;
+  font-size: 21px;
+}
+.empty {
+  padding: 30px 8px;
+}
+.pagination {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  margin-top: 26px;
+  font-size: 14px;
+}
+.pagination a {
+  color: #096e59;
+  font-weight: 700;
+}
+.panel {
+  background: white;
+  border: 1px solid #d9dfd7;
+  padding: 30px;
+  margin: 30px 0;
+}
+.panel > p {
+  color: #52635d;
+}
+.assignments li {
+  border-top: 1px solid #e2e7e1;
+  padding: 14px 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.assignments span {
+  margin-left: auto;
+  color: #52635d;
+  font-size: 14px;
+}
+.back {
+  color: #096e59;
+  font-weight: 700;
+  text-decoration: none;
+}
+.site-footer {
+  background: #132f28;
+  color: #d8e8dd;
+  padding: 30px 0;
+  font-size: 13px;
+}
+.site-footer a {
+  margin-left: 10px;
+}
+@media (max-width: 700px) {
+  .site-header > span {
+    display: none;
+  }
+  .members a {
+    grid-template-columns: 1fr 30px;
+    gap: 5px;
+  }
+  .members span,
+  .members small {
+    grid-column: 1;
+  }
+  .members b {
+    grid-column: 2;
+    grid-row: 1/4;
+  }
+  .assignments span {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.site-header nav {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.site-header nav a {
+  text-decoration: none;
+  color: #096e59;
+}
+.vote-count {
+  display: inline-block;
+  padding: 8px 12px;
+  background: #e9f1e9;
+  border-radius: 4px;
+  margin: 4px;
+  font-weight: 700;
+}
+.decision-point .proposal {
+  white-space: pre-wrap;
+  line-height: 1.65;
+  color: #223b32;
+}
+.choice-name {
+  font-weight: 600;
+}
+.choice-value {
+  font-weight: 800;
+  color: #096e59;
+}
+@media (max-width: 700px) {
+  .site-header {
+    flex-wrap: wrap;
+  }
+  .site-header nav {
+    width: 100%;
+  }
+}
+
+/* M4.2: member discovery and profile rhythm. */
+body {
+  margin: 0;
+}
+p {
+  line-height: 1.65;
+}
+h2 {
+  margin: 0 0 16px;
+  font-weight: 750;
+}
+h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+a,
+button,
+input {
+  overflow-wrap: anywhere;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #096e59;
+  outline-offset: 4px;
+}
+.member-intro {
+  margin-top: 24px;
+  margin-bottom: 44px;
+}
+.member-directory {
+  margin: 20px 0 0;
+}
+.member-directory a {
+  padding: 28px 20px;
+  gap: 24px;
+  min-height: 100px;
+}
+.member-directory strong {
+  font-size: 19px;
+  line-height: 1.45;
+}
+.member-directory small {
+  justify-self: start;
+  background: #e9f1e9;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+.panel {
+  padding: 36px;
+  margin: 40px 0;
+}
+.panel > p {
+  max-width: 75ch;
+  margin-bottom: 28px;
+}
+.profile-assignments li,
+.history-list li {
+  padding: 24px 0;
+  gap: 16px;
+  line-height: 1.6;
+}
+.history-list a {
+  font-weight: 700;
+  color: #096650;
+}
+.vote-summary {
+  padding-top: 8px;
+}
+.vote-summary > p {
+  max-width: 75ch;
+  margin: 16px 0 24px;
+}
+.vote-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0;
+}
+.vote-filters .vote-count {
+  margin: 0;
+  padding: 12px 16px;
+  min-height: 44px;
+  text-decoration: none;
+}
+.vote-filters .vote-count[aria-current='true'] {
+  background: #096e59;
+  color: white;
+  outline: 2px solid #096e59;
+  outline-offset: 3px;
+}
+.pagination {
+  flex-wrap: wrap;
+  gap: 16px 28px;
+}
+.pagination a {
+  padding: 12px 0;
+  min-height: 44px;
+}
+.search input {
+  min-width: 0;
+}
+@media (max-width: 700px) {
+  .container {
+    width: calc(100% - 32px);
+  }
+  main {
+    padding: 32px 0 60px;
+  }
+  .member-directory a {
+    padding: 24px 8px;
+    gap: 10px 16px;
+  }
+  .member-directory small {
+    margin-top: 4px;
+  }
+  .panel {
+    padding: 24px 20px;
+    margin: 32px 0;
+  }
+  .notice {
+    padding: 16px;
+  }
+  .notice a {
+    display: inline-block;
+    margin: 8px 0 0;
+  }
+  .profile-assignments li,
+  .history-list li {
+    gap: 8px;
+  }
+}

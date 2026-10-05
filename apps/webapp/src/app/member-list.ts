@@ -11,7 +11,7 @@ import { MemberService, type ImportStatus, type MemberList } from './member.serv
   imports: [DatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="intro">
+    <section class="intro member-intro">
       <p class="eyebrow">Ledamöter</p>
       <h1>Utforska riksdagens ledamöter</h1>
       <p>
@@ -55,7 +55,7 @@ import { MemberService, type ImportStatus, type MemberList } from './member.serv
     @if (resultState.status === 'ready') {
       @let result = resultState.data;
       <p class="count">{{ result.total }} personer</p>
-      <ul class="members">
+      <ul class="members member-directory">
         @for (member of result.items; track member.personId) {
           <li>
             <a [routerLink]="['/ledamot', member.personId]"
