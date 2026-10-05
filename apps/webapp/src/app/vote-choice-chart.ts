@@ -5,8 +5,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <figure aria-labelledby="choice-chart-heading">
-      <figcaption id="choice-chart-heading">Fördelning av källans noteringar</figcaption>
-      <p>Antal källposter · {{ total() }} totalt · session {{ session() }}</p>
+      <figcaption id="choice-chart-heading">
+        {{ mode() === 'vote' ? 'Röster i denna votering' : 'Fördelning av källans noteringar' }}
+      </figcaption>
+      <p>
+        {{ mode() === 'vote' ? 'Antal ledamotsröster' : 'Antal källposter' }} · {{ total() }} totalt
+        · session {{ session() }}
+      </p>
       @if (total() > 0) {
         <ul aria-label="Antal källposter per röstvärde">
           @for (group of choices(); track group.choice) {
@@ -27,12 +32,24 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
           }
         </ul>
       } @else {
-        <p>Inga källposter för personens ID i denna import. Ingen fördelning kan visas.</p>
+        <p>
+          {{
+            mode() === 'vote'
+              ? 'Inga ledamotsröster i denna import.'
+              : 'Inga källposter för personens ID i denna import.'
+          }}
+          Ingen fördelning kan visas.
+        </p>
       }
       <p class="explanation">
         Varje stapel visar antal poster med det angivna källvärdet, på samma skala från 0 till
-        {{ total() }}. Frånvarande gäller enskilda voteringar. Fördelningen visar inte närvaro i
-        arbetet.
+        {{ total() }}.
+        {{
+          mode() === 'vote'
+            ? 'Frånvarande gäller endast denna votering.'
+            : 'Frånvarande gäller enskilda voteringar.'
+        }}
+        Fördelningen visar inte närvaro i arbetet.
       </p>
     </figure>
   `,
@@ -103,6 +120,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   ],
 })
 export class VoteChoiceChartComponent {
+  readonly mode = input<'member' | 'vote'>('member');
   readonly choices = input.required<ReadonlyArray<{ choice: string; count: number }>>();
   readonly total = input.required<number>();
   readonly session = input.required<string>();

@@ -80,6 +80,14 @@ export class MemberService {
 }
 
 export interface VoteEvent {
+  context?: {
+    reportTitle: string | null;
+    pointHeading: string | null;
+    titleSourceUrl: string | null;
+    titleImportedAt: string | null;
+    pointSourceUrl: string | null;
+    pointImportedAt: string | null;
+  };
   voteId: string;
   session: string;
   designation: string;

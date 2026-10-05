@@ -1,3 +1,4 @@
+import { withVoteContext } from './vote-context';
 import {
   createDatabaseClient,
   importRuns,
@@ -131,7 +132,7 @@ export async function listVotes(page: number, limit: number) {
     )
     .limit(limit)
     .offset((page - 1) * limit);
-  return { items, total: total.count, page, limit, session: run.session };
+  return { items: await withVoteContext(pgPool, items), total: total.count, page, limit, session: run.session };
 }
 export async function getVote(voteId: string) {
   const run = await getVoteRun();
@@ -180,7 +181,7 @@ export async function getVote(voteId: string) {
     ).sort(([a], [b]) => a.localeCompare(b, 'sv')),
   );
   return {
-    event,
+    event: (await withVoteContext(pgPool, [event]))[0],
     decisionTrailAvailable,
     choices: choices.map((choice) => ({
       ...choice,
@@ -368,8 +369,9 @@ export async function getMemberVotes(
     )
     .limit(limit)
     .offset((page - 1) * limit);
+  const enrichedEvents = await withVoteContext(pgPool, items.map(item => item.event));
   return {
-    items, total, page, limit, session: run.session, choice: choice ?? null,
+    items: items.map((item, index) => ({ ...item, event: enrichedEvents[index] })), total, page, limit, session: run.session, choice: choice ?? null,
     summary: {
       recordedEvents,
       choices,

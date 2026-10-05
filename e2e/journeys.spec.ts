@@ -62,7 +62,7 @@ test('history counts retain their denominator through filter, paging and browser
   await expect(page).toHaveURL(/votesPage=2/);
   await expect(summary).toContainText('25 källposter');
   await expect(
-    page.getByRole('link', { name: 'TEST1 · punkt 21', exact: true }),
+    page.locator('a[href="/votering/test-vote-21"]'),
   ).toBeVisible();
   await page.goBack();
   await expect(page).toHaveURL(/votesPage=1/);
@@ -83,7 +83,7 @@ test('vote to report links match fixtures, acclamation and unavailable context r
   await page.goto('/voteringar');
   await page
     .getByRole('link')
-    .filter({ has: page.getByText('TEST1 · punkt 1', { exact: true }) })
+    .filter({ has: page.getByText('Registrerad omröstning', { exact: true }) })
     .click();
   await expect(
     page.getByRole('heading', { name: 'Ledamotsröster (2)' }),
@@ -102,7 +102,7 @@ test('vote to report links match fixtures, acclamation and unavailable context r
     page.getByRole('link', { name: 'Visa registrerad votering' }),
   ).toHaveAttribute('href', `/votering/${events[0].voteId}`);
   const acclamation = page
-    .getByRole('heading', { name: 'Punkt 2 · Acklamation', exact: true })
+    .getByRole('heading', { name: 'Acklamation', exact: true })
     .locator('..');
   await expect(acclamation).toContainText('ingen registrerad votering');
   await expect(acclamation.getByRole('link')).toHaveCount(0);
@@ -215,7 +215,7 @@ test('missing member profiles are distinct from API errors', async ({
   ).toBeVisible();
   await page.goto(`/votering/${events[0].voteId}`);
   await expect(
-    page.getByText('Voteringen kunde inte hämtas eller saknas.'),
+    page.getByText('Voteringen saknas i den senaste importen.'),
   ).toBeVisible();
   await page.goto('/arende/TESTREPORT');
   await expect(
