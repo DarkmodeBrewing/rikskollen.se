@@ -49,3 +49,122 @@ M4.1 commands, coverage and known page-state limitations are recorded in [the E2
 ## M4.3 first slice — import status
 
 The local `m4/import-status` slice adds durable attempts for all six worker commands, source-scoped published counts and freshness, a read-only status API, and the Swedish `/datastatus` page. See [count definitions and acceptance](import-status.md). Scheduling, measured correction windows and freshness SLAs are follow-up work; no live source imports or deployments are part of implementation verification.
+
+## Product direction after M4
+
+The M0–M4 milestones above remain the authoritative delivery history and public-release gate. The following sequence captures the product direction agreed on 2026-10-06 without weakening the existing evidence, accessibility, privacy or operational requirements.
+
+Rikskollen should make Swedish parliamentary activity understandable, traceable and easy to follow. It should present public political activity and source-backed derived facts without profiling visitors or assigning politicians opaque grades.
+
+> **Rikskollen granskar makten, inte besökaren.**
+
+Two rules apply across the roadmap:
+
+1. Every displayed fact should be traceable to its source.
+2. Every derived measure should have a documented method, denominator, period and exclusions, with underlying records inspectable where practical.
+
+### R0.1 — Understand: public-ready information architecture
+
+Complete M4 first, then make the existing product understandable to a visitor arriving without prior context.
+
+- Rework global navigation around user concepts rather than implementation slices: matters/reports, votes, members, parties, statistics and search. Add calendar/watch destinations only when implemented.
+- Redesign the front page so statistics are not the entry point. Lead with **På gång**, **Just nu**, **Senaste besluten** and **Utforska**; derived insights can follow.
+- Make search first-class and progressively support human names, topics, constituencies, document IDs and other canonical identifiers without hiding source terminology.
+- Add `/om` as a transparency page covering independence, datasets and authoritative sources, imported versus derived data, provenance/freshness, calculation methodology, technology, repository/license/contribution links, privacy, error reporting and disclaimers.
+- Explicitly disclose AI-assisted/agentic coding as part of the development methodology. AI tooling is not an authoritative political-data source; source records and deterministic/inspectable transformations remain distinct.
+- Add global footer links to `/om`, source/data status, repository and privacy/visitor-statistics information.
+- Preserve and extend the existing page metadata, canonical URL, Open Graph, sitemap and source-backed human-readable title work.
+- Evaluate self-hosted Plausible versus Umami. Prefer the option that provides useful aggregate analytics with no cookies, no persistent visitor profile and no cross-site tracking. If practical, expose the aggregate analytics dashboard publicly and document the exact configuration rather than merely claiming “privacy-friendly analytics”.
+
+**Acceptance direction:** a first-time visitor can understand what Rikskollen is, discover current material, reach authoritative sources/methodology, and navigate core areas on desktop/mobile. Analytics must not create a durable political-interest profile of visitors.
+
+### R0.2 — Follow: calendar and anonymous subscriptions
+
+Use the Riksdag's authoritative calendar/open-data sources to make Rikskollen temporal: what happened, what is happening and what will happen.
+
+- Import future parliamentary events into canonical event records with source URL, source identifier, retrieval time and correction/update handling.
+- Add `/kalender` with useful views such as today, this week and upcoming, plus source-backed event categories and filters.
+- Link calendar events to existing matters/reports, documents, committees and later resulting decisions/votes when source identifiers support the relationship. Do not infer relationships from loose text similarity.
+- Feed **På gång** on the front page from the same canonical event data.
+- Add Atom feeds before collecting subscriber identity. Start with broad Rikskollen/calendar feeds and add entity/topic feeds where matching semantics are documented.
+- Evolve Atom into `/bevaka`: follow a matter, member, committee or documented topic without requiring an account.
+
+Email notifications are deliberately deferred until Atom usage demonstrates demand. If introduced, use a dedicated transactional email provider behind an application abstraction and durable idempotent notification outbox; do not operate a general-purpose mail server as part of Rikskollen. Cloudflare Email Service is a candidate, not an architectural dependency.
+
+### R0.3 — Analyse: transparent derived statistics
+
+Build useful analysis from already imported parliamentary data before expanding aggressively into external datasets.
+
+Candidate measures include:
+
+- party voting agreement and change over time;
+- party cohesion on recorded votes;
+- individual deviations from the participating party majority, presented descriptively rather than as a loyalty/rebellion grade;
+- recorded-vote participation with explicit denominator, assignment/time context and the existing warning that “Frånvarande” in a vote is not a general attendance claim;
+- member activity using separately sourced motions, questions/interpellations, speeches and committee assignments where coverage is sufficient;
+- relationship/network views derived from documented voting agreement.
+
+Do not introduce “best/worst MP”, political recommendations, opaque composite scores or claims about intent. Rankings that implicitly turn measurements into political grades remain outside scope. Every measure needs methodology and drill-down to the observations behind it.
+
+### R0.4 — Connect: external datasource architecture and Valmyndigheten
+
+Before source #2, generalize provenance enough that Rikskollen can distinguish authority, retrieval, normalization and derivation across providers.
+
+Conceptually:
+
+    authoritative source
+            |
+            v
+    bounded/raw ingestion
+            |
+            v
+    canonical Rikskollen entities
+            |
+            v
+    derived observations/aggregates
+            |
+            v
+    API and public UI
+
+Valmyndigheten is the preferred first external datasource because election results and electoral geography naturally connect to parties, constituencies and representation.
+
+Potential outputs include election history, constituency pages, geographic party-support context, MP/constituency relationships and maps. Cross-source joins must document identifier/geography mappings and historical-boundary limitations.
+
+The used electoral roll (röstlängd) is **not** part of this automated importer. Individual election participation may be obtainable as a public record, but acquisition can require requests to municipalities. Treat any such material as a separately sourced/manual dataset with its own publication and personal-data review.
+
+### R0.5+ — Expand selectively
+
+Add external sources only to answer a defined public question.
+
+Candidates:
+
+- selected SCB tables for population, age, income, employment, education and geography;
+- government budget/appropriation data linked to propositions, committees and decisions;
+- EU legislative context where identifiers and provenance permit reliable joins;
+- political-financing and transparency datasets when structured authoritative data is available;
+- wider parliamentary history, speeches, motions, questions/interpellations and committee activity already identified in the product brief.
+
+Do **not** mirror all of SCB or other authorities “just in case”. Import bounded datasets with known semantics, update behaviour and a planned public use.
+
+## Explicitly parked
+
+These ideas are useful but are not current delivery work:
+
+- user accounts;
+- browser push notifications;
+- email watches before Atom proves demand;
+- long-lived visitor identifiers or behavioural profiles;
+- broad/full SCB mirroring;
+- manually requested electoral-roll enrichment until there is a specific editorial use and personal-data review;
+- a graph database unless measured PostgreSQL workloads demonstrate a real need;
+- public API stability guarantees until the internal canonical model has settled.
+
+## Relationship to existing documents
+
+- [product.md](product.md) remains authoritative for editorial boundaries: evidence over grading, no inferred intent, no unqualified attendance claims and no political recommendations.
+- [data-methodology.md](data-methodology.md) remains authoritative for implemented source definitions and calculation semantics. New derived measures and sources must extend it before publication.
+- [frontend-plan.md](frontend-plan.md) and [e2e.md](e2e.md) remain authoritative for the delivered M4 frontend/test baseline; the R0.1 information-architecture work should extend those regression journeys rather than replace them.
+- [import-status.md](import-status.md) remains the current M4.3 contract. Calendar/external-source import health should later use the same principle of source-scoped, explicit coverage rather than pretending to measure all parliamentary activity.
+- [page-metadata.md](page-metadata.md) remains the baseline for page identity and sharing; homepage/navigation changes must preserve its canonical/share semantics.
+
+This post-M4 roadmap is intentionally ordered by product leverage: make the existing data understandable, make it timely/followable, derive transparent analysis, then add external datasets.
