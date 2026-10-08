@@ -45,6 +45,7 @@ const jobs: Record<ImportJob, string> = {
   'report-catalog': 'Betänkandekatalog',
   decision: 'Enskilt beslutsunderlag',
   'catalog-decisions': 'Beslutsunderlag från katalog',
+  'refresh-decisions': 'Kontroll av tidigare beslut',
   'vote-linked-decisions': 'Beslutsunderlag från voteringar',
 };
 
@@ -62,10 +63,10 @@ const jobs: Record<ImportJob, string> = {
     @if (state.status === 'ready') {
       @let data = state.data;
       <aside class="notice">
-        Importerna startas manuellt. Schemalagda uppdateringar är ännu inte aktiverade. Ett nytt
-        importförsök ändrar inte tidpunkten för den senast slutförda dataimporten. Misslyckade
-        importer publicerar ingen ofullständig ögonblicksbild; redan slutförda betänkanden i en
-        avbruten batch behålls.
+        Importerna kan startas manuellt eller schemalagt. Historiken visar hur varje försök
+        startades. Ett nytt importförsök ändrar inte tidpunkten för den senast slutförda
+        dataimporten. Misslyckade importer publicerar ingen ofullständig ögonblicksbild; redan
+        slutförda betänkanden i en avbruten batch behålls.
       </aside>
       <section aria-labelledby="coverage-title">
         <h2 id="coverage-title">Importerade uppgifter</h2>
@@ -172,7 +173,10 @@ const jobs: Record<ImportJob, string> = {
           @for (attempt of data.latestAttempts; track attempt.job) {
             <li>
               <strong>{{ jobs[attempt.job] }}</strong
-              ><span>{{ outcome(attempt) }}</span>
+              ><span
+                >{{ outcome(attempt) }} ·
+                {{ attempt.trigger === 'scheduled' ? 'Schemalagd' : 'Manuell' }}</span
+              >
               <time [attr.datetime]="attempt.startedAt">{{
                 attempt.startedAt | stockholmDate
               }}</time>
@@ -206,7 +210,10 @@ const jobs: Record<ImportJob, string> = {
                 </p>
               </div>
               <div>
-                <strong>{{ outcome(attempt) }}</strong>
+                <strong
+                  >{{ outcome(attempt) }} ·
+                  {{ attempt.trigger === 'scheduled' ? 'Schemalagd' : 'Manuell' }}</strong
+                >
                 <p>
                   Start:
                   <time [attr.datetime]="attempt.startedAt">{{
@@ -219,17 +226,24 @@ const jobs: Record<ImportJob, string> = {
                     {{ attempt.durationSeconds | number: '1.0-1' : 'sv' }} sekunder
                   </p>
                 }
-                <p>
-                  {{ attempt.importedCount }}
-                  {{ attempt.importedCount === 1 ? 'publicerad' : 'publicerade' }}
-                  {{ unit(attempt.dataset, attempt.importedCount) }} i detta försök
-                  @if (attempt.expectedCount !== null) {
-                    av {{ attempt.expectedCount }}
-                    {{ attempt.expectedCount === 1 ? 'planerad' : 'planerade' }}.
-                  } @else {
-                    · Planerat antal är okänt.
-                  }
-                </p>
+                @if (attempt.status === 'succeeded' && attempt.unchanged) {
+                  <p>
+                    Inga nya versioner publicerades. Kontrollerat antal:
+                    {{ attempt.expectedCount }}.
+                  </p>
+                } @else {
+                  <p>
+                    {{ attempt.importedCount }}
+                    {{ attempt.importedCount === 1 ? 'publicerad' : 'publicerade' }}
+                    {{ unit(attempt.dataset, attempt.importedCount) }} i detta försök
+                    @if (attempt.expectedCount !== null) {
+                      av {{ attempt.expectedCount }}
+                      {{ attempt.expectedCount === 1 ? 'planerad' : 'planerade' }}.
+                    } @else {
+                      · Planerat antal är okänt.
+                    }
+                  </p>
+                }
                 @if (attempt.status === 'failed') {
                   <p>Importen kunde inte slutföras. Tekniska detaljer finns i serverns loggar.</p>
                 }
@@ -330,6 +344,7 @@ export class DataStatusComponent {
       : datasets[key].unit;
   }
   outcome(attempt: PublicImportAttempt) {
+    if (attempt.status === 'succeeded' && attempt.unchanged) return 'Kontrollerad – oförändrad';
     return { running: 'Slutstatus saknas', succeeded: 'Slutförd', failed: 'Misslyckad' }[
       attempt.status
     ];

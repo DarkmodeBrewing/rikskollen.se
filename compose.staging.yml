@@ -100,5 +100,24 @@ services:
         condition: service_healthy
     logging: *logging
 
+  scheduler:
+    image: rikskollen-worker:${IMAGE_TAG:-staging}
+    build:
+      <<: *build
+      target: worker
+    profiles: [scheduled-imports]
+    command: ["dist/scheduler.js"]
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      <<: *database
+      RIKSDAG_API_URL: https://data.riksdagen.se
+      IMPORT_BATCH_LIMIT: ${IMPORT_BATCH_LIMIT:-10}
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+
 volumes:
   db_data:

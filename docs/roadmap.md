@@ -48,7 +48,7 @@ M4.1 commands, coverage and known page-state limitations are recorded in [the E2
 
 ## M4.3 first slice — import status
 
-PR #18 merged the `m4/import-status` slice, which adds durable attempts for all six worker commands, source-scoped published counts and freshness, a read-only status API, and the Swedish `/datastatus` page. See [count definitions](import-status.md) and [functional host acceptance on 2026-10-08](m4.3-test-protocol.md). Scheduling, measured correction windows and freshness SLAs are follow-up work; no live source imports or deployments are part of implementation verification.
+PR #18 merged the `m4/import-status` slice, which adds durable attempts for all six worker commands, source-scoped published counts and freshness, a read-only status API, and the Swedish `/datastatus` page. See [count definitions](import-status.md) and [functional host acceptance on 2026-10-08](m4.3-test-protocol.md). The next slice adds [opt-in scheduled imports and bounded corrections](scheduled-imports.md); host acceptance and a measured freshness SLA remain open; no live source imports or deployments are part of implementation verification.
 
 ## Product direction after M4
 

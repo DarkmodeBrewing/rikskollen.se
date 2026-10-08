@@ -2,6 +2,7 @@ import {
   recordImportAttempt,
   type AttemptProgress,
 } from './lib/import-attempt';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { eq } from 'drizzle-orm';
 import {
@@ -18,12 +19,16 @@ import {
   VOTE_SESSION,
 } from './clients/vote-dataset';
 
-export async function syncVotes(loadArchive = downloadVoteArchive) {
+export async function syncVotes(
+  loadArchive = downloadVoteArchive,
+  onlyChanged = false,
+) {
   return recordImportAttempt(
     { dataset: 'votes', job: 'votes', session: '2025/26' },
-    (progress) => executeSyncVotes(loadArchive, progress),
+    (progress) => executeSyncVotes(loadArchive, progress, onlyChanged),
     (result) => ({
-      importedCount: result.eventCount,
+      importedCount: result.unchanged ? 0 : result.eventCount,
+      unchanged: result.unchanged,
       snapshotId: result.runId,
     }),
   );
@@ -32,6 +37,7 @@ export async function syncVotes(loadArchive = downloadVoteArchive) {
 async function executeSyncVotes(
   loadArchive = downloadVoteArchive,
   progress: AttemptProgress,
+  onlyChanged: boolean,
 ) {
   const url = archiveUrl();
   const bytes = await loadArchive(url);
@@ -40,6 +46,60 @@ async function executeSyncVotes(
   const { db, pgPool } = createDatabaseClient();
   let runId: string | undefined;
   try {
+    if (onlyChanged) {
+      const previous = await pgPool.query<{
+        id: string;
+        expected_files: number;
+        event_count: number;
+        choice_count: number;
+        actual: number;
+        choices: number;
+      }>(
+        `
+        SELECT r.*, (SELECT count(*)::int FROM vote_events WHERE run_id = r.id) AS actual,
+          (SELECT count(*)::int FROM vote_choices WHERE run_id = r.id) AS choices
+        FROM vote_import_runs r WHERE session = $1 AND completed_at IS NOT NULL
+        ORDER BY completed_at DESC, id DESC LIMIT 1`,
+        [VOTE_SESSION],
+      );
+      const run = previous.rows[0];
+      if (
+        run &&
+        run.expected_files === names.length &&
+        run.event_count === names.length &&
+        run.actual === names.length &&
+        run.choice_count === names.length * 349 &&
+        run.choices === run.choice_count
+      ) {
+        const events = await pgPool.query<{
+          source_file: string;
+          source_hash: string;
+        }>(
+          'SELECT source_file, source_hash FROM vote_events WHERE run_id = $1',
+          [run.id],
+        );
+        const hashes = new Map(
+          events.rows.map((e) => [e.source_file, e.source_hash]),
+        );
+        // ZIP metadata can change every day without a single source row changing.
+        if (
+          names.every(
+            (name) =>
+              hashes.get(name) ===
+              createHash('sha256').update(files[name]).digest('hex'),
+          )
+        ) {
+          return {
+            runId: run.id,
+            session: VOTE_SESSION,
+            eventCount: names.length,
+            choiceCount: run.choice_count,
+            archiveHash,
+            unchanged: true,
+          };
+        }
+      }
+    }
     const [run] = await db
       .insert(voteImportRuns)
       .values({
@@ -79,6 +139,7 @@ async function executeSyncVotes(
       eventCount,
       choiceCount,
       archiveHash,
+      unchanged: false,
     };
   } catch (error) {
     if (runId)

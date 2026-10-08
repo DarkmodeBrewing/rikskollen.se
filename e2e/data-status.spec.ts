@@ -25,7 +25,14 @@ test('datastatus is linked, rendered by SSR, and shows scoped coverage and attem
   await expect(reports.getByRole('progressbar')).toHaveAttribute('max', '2');
   await expect(reports).toContainText('Äldsta importerade underlag');
   await expect(reports).toContainText('Senast importerade underlag');
-  await expect(page.getByText('Importerna startas manuellt.')).toBeVisible();
+  await expect(
+    page.getByText('Importerna kan startas manuellt eller schemalagt.', {
+      exact: false,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Kontrollerad – oförändrad · Schemalagd'),
+  ).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

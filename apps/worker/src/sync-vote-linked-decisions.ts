@@ -40,12 +40,14 @@ export async function importPendingReports(
   selected: string[],
   load = downloadDecisionStatus,
   published: (count: number) => Promise<void> = async () => {},
+  continueOnFailure = false,
 ) {
   const imported: Array<{
     runId: string;
     documentId: string;
     pointCount: number;
   }> = [];
+  const failed: string[] = [];
   for (const documentId of selected) {
     try {
       const result = await syncDecision(documentId, load);
@@ -57,11 +59,20 @@ export async function importPendingReports(
       await published(imported.length);
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
+      if (continueOnFailure) {
+        failed.push(documentId);
+        console.error(`Import failed for ${documentId}`, error);
+        continue;
+      }
       throw new Error(
         `Stopped at ${documentId} after ${imported.length} completed reports; rerun to resume: ${detail}`,
       );
     }
   }
+  if (failed.length)
+    throw new Error(
+      `Batch failed for ${failed.join(', ')} after ${imported.length} completed reports; rerun to resume`,
+    );
   return imported;
 }
 

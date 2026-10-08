@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createDatabaseClient } from '@rikskollen/db';
-import { fixtureArchive } from './clients/vote-fixture';
+import { fixtureArchive, fixtureRows } from './clients/vote-fixture';
 import { syncVotes } from './sync-votes';
 
 process.env.RIKSDAG_API_URL = 'https://data.riksdagen.se';
@@ -19,11 +19,27 @@ test(
         assert.equal(result.choiceCount, 349);
       }
       assert.notEqual(ids[0], ids[1]);
+      const { unzipSync, zipSync } = await import('fflate');
+      const repacked = zipSync(unzipSync(fixtureArchive()), {
+        mtime: new Date('2020-01-01'),
+      });
+      const checked = await syncVotes(async () => repacked, true);
+      assert.equal(checked.runId, ids[1]);
+      assert.equal(checked.unchanged, true);
+      const changedRows = fixtureRows();
+      changedRows[1].rost = 'Nej';
+      const corrected = await syncVotes(
+        async () => fixtureArchive(changedRows),
+        true,
+      );
+      assert.equal(corrected.unchanged, false);
+      assert.notEqual(corrected.runId, checked.runId);
+      ids.push(corrected.runId);
       const { rows } = await pgPool.query(
         `SELECT run_id, count(*)::int AS choices FROM vote_choices WHERE run_id = ANY($1::uuid[]) GROUP BY run_id`,
         [ids],
       );
-      assert.deepEqual(rows.map((row) => row.choices).sort(), [349, 349]);
+      assert.deepEqual(rows.map((row) => row.choices).sort(), [349, 349, 349]);
       const runs = await pgPool.query(
         'SELECT completed_at FROM vote_import_runs WHERE id = ANY($1::uuid[])',
         [ids],

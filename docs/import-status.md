@@ -33,7 +33,7 @@ Import time is not the source's last-change time, proof of current source comple
 
 ## Frontend
 
-Footer navigation links to `/datastatus`; it has branded Swedish SSR/browser/Open Graph metadata and a sitemap entry. Coverage bars have accessible labels and exact counts. Attempt outcomes and history are readable at desktop/mobile widths; history pagination is URL-preserved and data can be refreshed/retried. Loading, unavailable API, missing snapshots and empty history are separate states. Timestamps use `Intl` with `Europe/Stockholm` including daylight saving, identically in SSR and the browser. The page states that imports remain manual and links primary sources and the repository methodology.
+Footer navigation links to `/datastatus`; it has branded Swedish SSR/browser/Open Graph metadata and a sitemap entry. Coverage bars have accessible labels and exact counts. Attempt outcomes and history are readable at desktop/mobile widths; history pagination is URL-preserved and data can be refreshed/retried. Loading, unavailable API, missing snapshots and empty history are separate states. Timestamps use `Intl` with `Europe/Stockholm` including daylight saving, identically in SSR and the browser. The page now distinguishes manual and scheduled attempts and unchanged checks, without claiming that a scheduler is currently running, and links primary sources and the repository methodology.
 
 ## Verification and deployment acceptance
 
@@ -50,4 +50,8 @@ PR #18 passed all three CI workflows, including PostgreSQL 18 tests and containe
 
 Before starting the updated API or worker, build images and apply migrations using the existing [deployment runbook](deployment.md). Readiness now checks `import_attempts`, so an old schema does not appear ready. No new environment variables are required. Do not run a bulk live import merely to test this page.
 
-On the host, verify the footer route, source-linked coverage, Swedish times and existing successful snapshot times. Run one normal bounded import and compare worker output, newest attempt and snapshot count/time. Verify a safe failing fixture locally/CI; do not deliberately disrupt the live source. Repeated bounded catalog batches remain the supported manual way to expand report status coverage; schedulers, correction cadence, alerts and retention policy are follow-up M4.3/M4.4 work.
+On the host, verify the footer route, source-linked coverage, Swedish times and existing successful snapshot times. Run one normal bounded import and compare worker output, newest attempt and snapshot count/time. Verify a safe failing fixture locally/CI; do not deliberately disrupt the live source. Repeated bounded catalog batches remain the supported manual way to expand report status coverage. The scheduler slice implements opt-in scheduling and bounded corrections; see [scheduled imports](scheduled-imports.md). Alerts and retention policy remain M4.4 work.
+
+## Scheduled-import extension
+
+Migration `0007` adds public `trigger` and `unchanged` fields; the new `refresh-decisions` job uses the same decisions dataset. Scheduled source checks and publication times remain distinct. See [policy, deployment and separate host acceptance](scheduled-imports.md).

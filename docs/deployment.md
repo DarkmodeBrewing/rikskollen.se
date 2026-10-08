@@ -104,3 +104,7 @@ This framework/Node/configuration change needs the affected HTTPS, direct-link/h
 ## Import status slice (M4.3)
 
 The import status slice adds migration `0006` (`import_attempts`). Follow the build → database → migrate → API/web order above before using the updated worker. Readiness requires this table. `/datastatus` displays existing published coverage immediately; new attempt history begins with the first updated worker invocation. Check `/api/data-status` through the web proxy and compare its counts/times with one bounded manual job. A killed worker has no proven final outcome, so its public attempt remains “Slutstatus saknas”. No schedule, retention pruning or new environment setting is enabled. See [acceptance and failure semantics](import-status.md).
+
+## Opt-in scheduled imports
+
+After migration `0007`, the separate `scheduled-imports` profile can run the worker scheduler. It is disabled by default and starts live source checks and bounded backfill when explicitly enabled. Follow [the scheduling policy, activation/disable commands and acceptance record](scheduled-imports.md).
