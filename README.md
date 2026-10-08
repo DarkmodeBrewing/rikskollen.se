@@ -2,7 +2,7 @@
 
 Rikskollen is a proposed public, independent view of what happens in the Swedish Riksdag. It uses the Riksdag's open data to make members, assignments, recorded votes, decisions and their source documents easier to explore. The aim is to answer factual questions such as “How did this member vote on this proposal?” and “Which votes recorded this member as absent?” without assigning political scores or guessing motives.
 
-**Status (2026-10-05):** M0–M3 and M4.0 are merged. Staging deployment at https://rikskollen.se passed the [M4.0 acceptance protocol](docs/m4.0-test-protocol.md). Imports remain manual; report-status coverage is partial. M4.1 adds deterministic Playwright tests; scheduling, backup/restore and public-release review remain later gates. See [project brief](docs/product.md), [methodology](docs/data-methodology.md), [roadmap](docs/roadmap.md) and [deployment runbook](docs/deployment.md).
+**Status (2026-10-08):** M0–M3, M4.0 and the M4 frontend slices are merged. Staging passed the [M4.0 protocol](docs/m4.0-test-protocol.md) and [import-status host checks](docs/m4.3-test-protocol.md). This slice adds opt-in scheduled imports and bounded corrections; activation and scheduler acceptance remain separate. Report-status coverage is partial. Backup/restore and public-release review remain later gates. See [project brief](docs/product.md), [methodology](docs/data-methodology.md), [roadmap](docs/roadmap.md) and [deployment runbook](docs/deployment.md).
 
 ## Product principles
 
@@ -54,7 +54,7 @@ Following staging acceptance, [M4.1/M4.2](docs/frontend-plan.md) plan a Playwrig
 
 ## M1 member directory
 
-After the migration, set `RIKSDAG_API_URL=https://data.riksdagen.se` and run `corepack pnpm --filter @rikskollen/worker sync:persons`. The command fetches the Riksdag's unfiltered serving list, then its party-filtered batches, verifies each batch count and every stable ID against the roster, and writes one completed run and its persons in a transaction. Failed or incomplete fetches do not publish a run. Repeating the command updates source values by `intressent_id` without duplicating people. This is a manual import; no schedule or public deployment is configured.
+After the migration, set `RIKSDAG_API_URL=https://data.riksdagen.se` and run `corepack pnpm --filter @rikskollen/worker sync:persons`. The command fetches the Riksdag's unfiltered serving list, then its party-filtered batches, verifies each batch count and every stable ID against the roster, and writes one completed run and its persons in a transaction. Failed or incomplete fetches do not publish a run. Repeating the command updates source values by `intressent_id` without duplicating people. This command is a manual import; automatic execution requires explicitly enabling the scheduler.
 
 `/api/persons?q=&page=1&limit=30` returns a searchable page and total count from the **latest completed run**; `/api/persons/:id` returns its member, including the source's assignment dates as text; `/api/import-status` reports the last run and its coverage. The Angular UI at `/` and `/ledamot/:id` uses these routes. Run the API on port 3000 and `pnpm dev:web` on port 4200; the dev server proxies `/api`. The SSR server on port 4000 proxies the same paths; set `API_BASE_URL` if the API is not at `http://localhost:3000` on the server. Empty state is expected before the first import.
 
@@ -78,7 +78,7 @@ After building and migrating, import the source document status for the first wo
 pnpm --filter @rikskollen/worker sync:decision HD01TU8
 ```
 
-The worker accepts one 2025/26 committee report document ID at a time. It fetches `dokumentstatus/HD01TU8.json`, validates every proposal point, and atomically publishes a versioned report snapshot with the source SHA-256. A later import of the same ID publishes a new version; the previous one remains stored. The service does not store the raw response or HTML, so exact historical replay requires saving the source response separately. No import is scheduled.
+The worker accepts one 2025/26 committee report document ID at a time. It fetches `dokumentstatus/HD01TU8.json`, validates every proposal point, and atomically publishes a versioned report snapshot with the source SHA-256. A later import of the same ID publishes a new version; the previous one remains stored. The service does not store the raw response or HTML, so exact historical replay requires saving the source response separately. Automatic status checks require explicitly enabling the scheduler.
 
 `/api/decisions/HD01TU8` and `/arende/HD01TU8` display the source's proposal text, point, decision type, winner where given, and source vote ID. A link to Rikskollen's vote detail appears only if the latest M2 snapshot contains that same document, point, and vote ID. Points labeled `acklamation` show that source classification and no vote link. If M2 or M3 has not been imported, no local connection is claimed. This first slice does not claim full session coverage or publish vote-pattern statistics.
 
@@ -117,4 +117,6 @@ See [the E2E runbook](docs/e2e.md) for fresh-checkout commands, fixture isolatio
 
 `/datastatus` shows source-scoped coverage, successful data import times, latest attempts per worker job and paginated history. Its read-only API is `/api/data-status?page=1`. All six existing import commands now record attempts, including source fetch failures and partially completed report batches. Older successful snapshots still supply coverage; history starts with the new tracking and cannot reconstruct past failures.
 
-Apply migration `0006` before running the updated API/worker; API readiness checks the new table. No new environment variables or automatic scheduling are introduced. See [import count definitions and acceptance](docs/import-status.md) and the [deployment runbook](docs/deployment.md).
+Apply migrations through `0007` before running the updated API/worker; API readiness checks the attempt table and its scheduling fields. Scheduling remains opt-in. See [import count definitions and acceptance](docs/import-status.md) and the [deployment runbook](docs/deployment.md).
+
+Scheduled imports are opt-in; see [cadence, bounded corrections and activation](docs/scheduled-imports.md). Ordinary stack startup does not enable them.

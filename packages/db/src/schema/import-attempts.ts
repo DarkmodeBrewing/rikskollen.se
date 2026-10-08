@@ -1,4 +1,5 @@
 import {
+  boolean,
   index,
   integer,
   pgTable,
@@ -17,6 +18,8 @@ export const importAttempts = pgTable(
     job: text('job').notNull(),
     session: text('session'),
     documentId: text('document_id'),
+    trigger: text('trigger').notNull().default('manual'),
+    unchanged: boolean('unchanged').notNull().default(false),
     status: text('status').notNull().default('running'),
     expectedCount: integer('expected_count'),
     importedCount: integer('imported_count').notNull().default(0),
@@ -29,5 +32,11 @@ export const importAttempts = pgTable(
   (table) => [
     index('import_attempts_started_idx').on(table.startedAt),
     index('import_attempts_job_idx').on(table.job, table.startedAt),
+    index('import_attempts_document_check_idx').on(
+      table.job,
+      table.documentId,
+      table.status,
+      table.finishedAt,
+    ),
   ],
 );

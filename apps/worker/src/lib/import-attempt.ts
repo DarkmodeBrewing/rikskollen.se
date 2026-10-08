@@ -1,3 +1,4 @@
+import { withImportLock, isScheduledImport } from './import-lock';
 import type { ImportJob } from '@rikskollen/shared-types';
 import { createDatabaseClient, importAttempts } from '@rikskollen/db';
 import { eq } from 'drizzle-orm';
@@ -16,13 +17,23 @@ interface AttemptScope {
 export async function recordImportAttempt<T>(
   scope: AttemptScope,
   work: (progress: AttemptProgress) => Promise<T>,
-  summary: (result: T) => { importedCount: number; snapshotId?: string },
+  summary: (result: T) => {
+    importedCount: number;
+    snapshotId?: string;
+    unchanged?: boolean;
+  },
 ): Promise<T> {
   const { db, pgPool } = createDatabaseClient();
   let id: string | undefined;
   let workCompleted = false;
   try {
-    const [attempt] = await db.insert(importAttempts).values(scope).returning();
+    const [attempt] = await db
+      .insert(importAttempts)
+      .values({
+        ...scope,
+        trigger: isScheduledImport() ? 'scheduled' : 'manual',
+      })
+      .returning();
     id = attempt.id;
     const progress: AttemptProgress = {
       expected: async (expectedCount) => {
@@ -38,7 +49,7 @@ export async function recordImportAttempt<T>(
           .where(eq(importAttempts.id, attempt.id));
       },
     };
-    const result = await work(progress);
+    const result = await withImportLock(() => work(progress));
     workCompleted = true;
     await db
       .update(importAttempts)

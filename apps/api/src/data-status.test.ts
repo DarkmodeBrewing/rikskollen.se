@@ -82,6 +82,8 @@ test(
         status.coverage.find((r) => r.dataset === 'catalog')!.lastSuccessfulAt,
         '2030-01-01T00:00:00.000Z',
       );
+      assert.equal(status.history.items[0].trigger, 'manual');
+      assert.equal(status.history.items[0].unchanged, false);
       assert.equal(status.history.items.length, 20);
       assert.equal(status.history.total, empty.history.total + 21);
       assert.equal(

@@ -50,6 +50,13 @@
       "when": 1791226923478,
       "tag": "0006_grey_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791476451033,
+      "tag": "0007_brave_santa_claus",
+      "breakpoints": true
     }
   ]
 }

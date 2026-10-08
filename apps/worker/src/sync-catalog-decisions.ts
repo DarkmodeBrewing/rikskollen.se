@@ -12,10 +12,12 @@ import {
 export async function syncCatalogDecisions(
   limit = 10,
   load = downloadDecisionStatus,
+  continueOnFailure = false,
 ) {
   return recordImportAttempt(
     { dataset: 'decisions', job: 'catalog-decisions', session: '2025/26' },
-    (progress) => executeSyncCatalogDecisions(limit, load, progress),
+    (progress) =>
+      executeSyncCatalogDecisions(limit, load, progress, continueOnFailure),
     (result) => ({ importedCount: result.imported.length }),
   );
 }
@@ -24,6 +26,7 @@ async function executeSyncCatalogDecisions(
   limit = 10,
   load = downloadDecisionStatus,
   progress: AttemptProgress,
+  continueOnFailure: boolean,
 ) {
   const { pgPool } = createDatabaseClient();
   let catalogRunId: string;
@@ -56,6 +59,7 @@ async function executeSyncCatalogDecisions(
     selection.candidates,
     load,
     progress.published,
+    continueOnFailure,
   );
   return {
     catalogRunId,

@@ -184,11 +184,12 @@ export const dataStatus: import('../packages/shared-types/src/data-status').Data
       expectedCount: 2, importedCount: 1, complete: false, lastSuccessfulAt: timestamp, oldestSuccessfulAt: '2026-01-01T12:00:00Z', secondaryCount: 2 },
   ],
   latestAttempts: [{ id: '00000000-0000-0000-0000-000000000021', dataset: 'decisions', job: 'catalog-decisions', session: '2025/26', documentId: null,
-    status: 'failed', expectedCount: 2, importedCount: 1, snapshotId: null, startedAt: timestamp, finishedAt: timestamp, durationSeconds: 0 }],
+    trigger: 'manual', unchanged: false, status: 'failed', expectedCount: 2, importedCount: 1, snapshotId: null, startedAt: timestamp, finishedAt: timestamp, durationSeconds: 0 }],
   history: { page: 1, limit: 20, total: 21,
     items: Array.from({ length: 21 }, (_, i) => ({
       id: `00000000-0000-0000-0000-${String(i+1).padStart(12,'0')}`, dataset: 'decisions', job: 'catalog-decisions', session: '2025/26', documentId: null,
-      status: i === 0 ? 'running' : 'failed', expectedCount: 2, importedCount: 1, snapshotId: null,
+      status: i === 0 ? 'running' : i === 1 ? 'succeeded' : 'failed', expectedCount: 2, importedCount: i === 1 ? 0 : 1, snapshotId: null,
+      trigger: 'scheduled', unchanged: i === 1,
       startedAt: timestamp, finishedAt: i === 0 ? null : timestamp, durationSeconds: i === 0 ? null : 0,
     })) },
 };

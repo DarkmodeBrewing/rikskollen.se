@@ -8,7 +8,7 @@ import type {
 type Pool = ReturnType<typeof createDatabaseClient>['pgPool'];
 type PoolClient = Pick<Pool, 'query'>;
 
-const attempts = `SELECT id, dataset, job, session, document_id AS "documentId", status,
+const attempts = `SELECT id, dataset, job, session, document_id AS "documentId", status, trigger, unchanged,
   expected_count AS "expectedCount", imported_count AS "importedCount", snapshot_id AS "snapshotId",
   started_at AS "startedAt", finished_at AS "finishedAt",
   CASE WHEN finished_at IS NOT NULL THEN greatest(0, extract(epoch FROM finished_at - started_at))::float END AS "durationSeconds"

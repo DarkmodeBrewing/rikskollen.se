@@ -36,6 +36,8 @@ jobs:
           dc run --rm migrate
           dc up -d --wait api web
           dc run --rm worker --version
+          # Validate the packaged scheduler without performing source requests.
+          dc run --rm worker dist/scheduler.js --check
           node scripts/smoke-deployment.mjs --empty
           dc restart api web
           dc up -d --wait api web

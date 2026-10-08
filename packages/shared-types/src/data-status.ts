@@ -5,7 +5,8 @@ export type ImportJob =
   | 'report-catalog'
   | 'decision'
   | 'catalog-decisions'
-  | 'vote-linked-decisions';
+  | 'vote-linked-decisions'
+  | 'refresh-decisions';
 export interface PublishedCoverage {
   dataset: ImportDataset;
   session: string | null;
@@ -24,6 +25,8 @@ export interface PublicImportAttempt {
   job: ImportJob;
   session: string | null;
   documentId: string | null;
+  trigger: 'manual' | 'scheduled';
+  unchanged: boolean;
   status: 'running' | 'succeeded' | 'failed';
   expectedCount: number | null;
   importedCount: number;

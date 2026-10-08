@@ -19,6 +19,7 @@ import {
 export async function syncDecision(
   documentId: string,
   load = downloadDecisionStatus,
+  onlyChanged = false,
 ) {
   return recordImportAttempt(
     {
@@ -29,8 +30,12 @@ export async function syncDecision(
         ? documentId.toUpperCase()
         : undefined,
     },
-    (progress) => executeSyncDecision(documentId, load, progress),
-    (result) => ({ importedCount: 1, snapshotId: result.runId }),
+    (progress) => executeSyncDecision(documentId, load, progress, onlyChanged),
+    (result) => ({
+      importedCount: result.unchanged ? 0 : 1,
+      snapshotId: result.runId,
+      unchanged: result.unchanged,
+    }),
   );
 }
 
@@ -38,6 +43,7 @@ async function executeSyncDecision(
   documentId: string,
   load = downloadDecisionStatus,
   progress: AttemptProgress,
+  onlyChanged: boolean,
 ) {
   const id = documentIdSchema.parse(documentId);
   await progress.expected(1);
@@ -45,6 +51,37 @@ async function executeSyncDecision(
   const parsed = parseDecisionStatus(await load(sourceUrl), id);
   const { db, pgPool } = createDatabaseClient();
   try {
+    if (onlyChanged) {
+      const previous = await pgPool.query<{
+        id: string;
+        source_hash: string;
+        expected_points: number;
+        actual: number;
+        documents: number;
+      }>(
+        `
+        SELECT r.*, (SELECT count(*)::int FROM decision_points WHERE run_id = r.id) AS actual,
+          (SELECT count(*)::int FROM decision_documents WHERE run_id = r.id AND session = '2025/26') AS documents
+        FROM decision_import_runs r WHERE document_id = $1 AND completed_at IS NOT NULL
+        ORDER BY completed_at DESC, id DESC LIMIT 1`,
+        [id],
+      );
+      const run = previous.rows[0];
+      if (
+        run &&
+        run.documents === 1 &&
+        run.source_hash === parsed.sourceHash &&
+        run.actual === parsed.points.length &&
+        run.expected_points === run.actual
+      )
+        return {
+          runId: run.id,
+          documentId: id,
+          pointCount: parsed.points.length,
+          sourceHash: parsed.sourceHash,
+          unchanged: true,
+        };
+    }
     // One transaction publishes the complete report. Previous versions remain auditable.
     return await db.transaction(async (tx) => {
       const [run] = await tx
@@ -71,6 +108,7 @@ async function executeSyncDecision(
         documentId: id,
         pointCount: parsed.points.length,
         sourceHash: parsed.sourceHash,
+        unchanged: false,
       };
     });
   } finally {
