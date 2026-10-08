@@ -1,6 +1,6 @@
 # M4.3 first slice — import status from worker to UI
 
-Implemented locally on `m4/import-status` after page identity/sharing PR #17 merged. This slice adds durable operational history, a read API and `/datastatus`. It does not enable a scheduler, change the source sessions, run live imports or complete the host's pending report statuses.
+Merged through PR #18 after page identity/sharing PR #17. Functional host acceptance was confirmed by Lars on 2026-10-08; see [the deployment check record](m4.3-test-protocol.md). This slice adds durable operational history, a read API and `/datastatus`. It does not enable a scheduler, change the source sessions, run live imports or complete the host's pending report statuses.
 
 ## Worker contract
 
@@ -46,7 +46,7 @@ Local verification:
 - All seven migrations applied on an empty PGlite database and replayed without duplicate changes using the production Drizzle migrator.
 - Desktop/mobile coverage captures were reviewed with synthetic fixture counts: [desktop](design/m4.3/datastatus-desktop.png), [mobile](design/m4.3/datastatus-mobile.png).
 
-GitHub PostgreSQL 18 CI, container rebuild and real host acceptance remain pending publication/deployment. Temporary PGlite/Chromium adapters are outside the deliverable and are not project dependencies.
+PR #18 passed all three CI workflows, including PostgreSQL 18 tests and container checks. Functional host checks passed on 2026-10-08; [the acceptance record](m4.3-test-protocol.md) distinguishes observed results from deployment metadata not supplied. Temporary PGlite/Chromium adapters are outside the deliverable and are not project dependencies.
 
 Before starting the updated API or worker, build images and apply migrations using the existing [deployment runbook](deployment.md). Readiness now checks `import_attempts`, so an old schema does not appear ready. No new environment variables are required. Do not run a bulk live import merely to test this page.
 
