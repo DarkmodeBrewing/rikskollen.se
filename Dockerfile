@@ -28,6 +28,9 @@ CMD ["node", "server/server.mjs"]
 
 FROM runtime AS worker
 COPY --from=build --chown=node:node /out/worker/ ./
+USER root
+RUN install -d -o node -g node -m 700 /app/monitor-state
+USER node
 ENTRYPOINT ["node"]
 # Imports are explicit one-off jobs; starting the profile alone does no ingestion.
 CMD ["--version"]

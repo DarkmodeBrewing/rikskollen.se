@@ -122,3 +122,5 @@ Apply migrations through `0007` before running the updated API/worker; API readi
 Scheduled imports are opt-in; see [cadence, bounded corrections and activation](docs/scheduled-imports.md). Ordinary stack startup does not enable them.
 
 M4.4 recovery work starts with [database backups and isolated restore verification](docs/backup-restore.md). Scripts preserve complete database history/provenance and restore only into disposable resources; off-host durability, alerts and host recovery acceptance remain open.
+
+[Operational monitoring and webhook alerts](docs/monitoring-alerts.md) use the optional `monitoring` profile. It checks health and expected import jobs with persisted failure/recovery delivery; ordinary startup does not enable notifications. Host receiver acceptance and independent outage detection remain separate.

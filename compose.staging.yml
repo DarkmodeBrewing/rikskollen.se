@@ -119,5 +119,27 @@ services:
         condition: service_healthy
     logging: *logging
 
+  monitor:
+    image: rikskollen-worker:${IMAGE_TAG:-staging}
+    build:
+      <<: *build
+      target: worker
+    profiles: [monitoring]
+    command: ["dist/monitor.js"]
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    environment:
+      MONITOR_BASE_URL: ${MONITOR_BASE_URL:-http://web:4000}
+      MONITOR_WEBHOOK_URL: ${MONITOR_WEBHOOK_URL:-}
+      MONITOR_TICK_SECONDS: ${MONITOR_TICK_SECONDS:-300}
+      MONITOR_DAILY_HOURS: ${MONITOR_DAILY_HOURS:-26}
+      MONITOR_BATCH_HOURS: ${MONITOR_BATCH_HOURS:-3}
+      MONITOR_RUNNING_MINUTES: ${MONITOR_RUNNING_MINUTES:-45}
+    volumes:
+      - monitor_state:/app/monitor-state
+    logging: *logging
+
 volumes:
   db_data:
+  monitor_state:

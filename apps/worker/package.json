@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node ./dist/index.js",
-    "build": "tsup src/index.ts src/sync-persons.ts src/sync-votes.ts src/sync-decisions.ts src/sync-vote-linked-decisions.ts src/sync-report-catalog.ts src/sync-catalog-decisions.ts src/scheduler.ts --format esm --clean --target node20",
+    "build": "tsup src/index.ts src/sync-persons.ts src/sync-votes.ts src/sync-decisions.ts src/sync-vote-linked-decisions.ts src/sync-report-catalog.ts src/sync-catalog-decisions.ts src/scheduler.ts src/monitor.ts --format esm --clean --target node20",
     "sync:persons": "node dist/sync-persons.js",
     "sync:votes": "node dist/sync-votes.js",
     "sync:decision": "node dist/sync-decisions.js",

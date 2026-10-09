@@ -112,3 +112,7 @@ After migration `0007`, the separate `scheduled-imports` profile can run the wor
 ## Backup and isolated restore (M4.4)
 
 Use the [backup/restore runbook](backup-restore.md) before migrations. It provides a private custom-format database archive, checksum and restore into an independent PostgreSQL container/volume. It does not overwrite the running database or automate cutover, off-host storage or retention. Record real restore evidence before claiming recovery acceptance.
+
+## Opt-in operational monitor (M4.4)
+
+The separate `monitoring` profile checks web health and import outcomes and persists failure/recovery notifications to a generic webhook. See [signals, thresholds, activation and acceptance](monitoring-alerts.md). A receiver URL is secret configuration; monitoring is disabled by default and real delivery must be verified separately.
