@@ -71,17 +71,17 @@ Disable with `dc stop scheduler`; confirm the container stopped before changing 
 
 Implementation checks use source fixtures; they never run live scheduled passes. CI's Verify workflow runs the migration and database tests against PostgreSQL 18, including independent-session contention and nested-lock/release behaviour. Local PGlite checks can exercise publication/query behaviour but **cannot validate PostgreSQL session locks**. Browser tests cover SSR and hydrated desktop/mobile manual/scheduled/unchanged labels with unchanged coverage times.
 
-Local verification on 2026-10-08: workspace build and worker/E2E type checks passed; the PGlite-backed full fixture suite passed 30 tests with the independent-session lock test skipped. The subsequently expanded scheduler suite passed six tests with that same lock test skipped, including persisted due-time restart behaviour. All 46 Chromium desktop/mobile browser tests passed. Migration history applied to a fresh PGlite database and replayed without change. The temporary adapter bypassed advisory-lock calls; these results are publication/query evidence, not PostgreSQL lock or Compose acceptance. CI/host results for this branch are not yet recorded.
+Local verification on 2026-10-08: workspace build and worker/E2E type checks passed; the PGlite-backed full fixture suite passed 30 tests with the independent-session lock test skipped. The subsequently expanded scheduler suite passed six tests with that same lock test skipped, including persisted due-time restart behaviour. All 46 Chromium desktop/mobile browser tests passed. Migration history applied to a fresh PGlite database and replayed without change. The temporary adapter bypassed advisory-lock calls; these results are publication/query evidence, not PostgreSQL lock or Compose acceptance. CI results for this slice are not recorded here. Subsequent host observations are recorded in the [M4.3 test protocol](m4.3-test-protocol.md#scheduled-import-slice--host-verification-2026-10-0809).
 
 | Host check | Status | Required evidence |
 | --- | --- | --- |
-| Exact deployed commit/images and migration `0007` | NOT RUN | Host command output/revision |
-| Opt-in service and one bounded scheduled pass | NOT RUN | Logs, batch limit, actual job attempt IDs and starts |
-| Restart respects successful-job due times | NOT RUN | No duplicate fresh-job attempts after restart |
-| Manual/scheduled overlap performs no second fetch | NOT RUN | Busy/failed outcome while lock is held |
-| Changed and unchanged checks preserve correct freshness | NOT RUN | Snapshot IDs, source hashes/counts and attempt timestamps |
-| Failure preserves completed data and retries are bounded | NOT RUN | Controlled fixture failure, existing coverage and retry timing |
-| Recent/older correction selection and pending backfill | NOT RUN | Selected source dates, last checks and bounded counts |
-| `/datastatus` on desktop/mobile and disable/restart | NOT RUN | Labels, publication times, no overflow and stopped service |
+| Exact deployed commit/images and migration `0007` | PARTIAL | Migration completed and readiness recovered; exact revision/images and journal/replay not recorded. |
+| Opt-in service and one bounded scheduled pass | PASS | Limit 1 initial pass and overnight backfill; recreated daemon confirmed limit 10 and published a 10-report batch. |
+| Restart respects successful-job due times | PASS (observed paths) | Empty immediate/recreated passes, followed by due member retry and missing-report batches. |
+| Manual/scheduled overlap performs no second fetch | PARTIAL | Scheduled contender returned `busy`; manual overlap/source-request instrumentation not performed on host. |
+| Changed and unchanged checks preserve correct freshness | PASS (observed paths) | TU8 reuse preserved all API coverage objects; votes published then reused the new snapshot. Mobile history confirms zero new versions on the vote repeat; its coverage timestamp was not separately captured. |
+| Failure preserves completed data and retries are bounded | PARTIAL | Earlier controlled manual member failure preserved coverage; scheduler retry succeeded after cooldown. Scheduled partial failure/deadline not induced. |
+| Recent/older correction selection and pending backfill | PARTIAL | Bounded backfill verified; all 28 imported reports were ineligible for correction. Eligible selection/rotation pending. |
+| `/datastatus` on desktop/mobile and disable/restart | PARTIAL | Desktop labels and mobile unchanged history readable; recreation verified, explicit disable not recorded. Known report singular wording defect remains open. |
 
-Record deployed results here before describing scheduled imports as operational. Review measured lag and request/storage load over several days before choosing an accepted cadence or alert threshold.
+The daemon was observed operating on October 8–9; acceptance remains partial with the boundaries above. Review measured lag and request/storage load over several days before choosing an accepted cadence or alert threshold.
