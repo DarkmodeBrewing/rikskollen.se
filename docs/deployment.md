@@ -108,3 +108,7 @@ The import status slice adds migration `0006` (`import_attempts`). Follow the bu
 ## Opt-in scheduled imports
 
 After migration `0007`, the separate `scheduled-imports` profile can run the worker scheduler. It is disabled by default and starts live source checks and bounded backfill when explicitly enabled. Follow [the scheduling policy, activation/disable commands and acceptance record](scheduled-imports.md).
+
+## Backup and isolated restore (M4.4)
+
+Use the [backup/restore runbook](backup-restore.md) before migrations. It provides a private custom-format database archive, checksum and restore into an independent PostgreSQL container/volume. It does not overwrite the running database or automate cutover, off-host storage or retention. Record real restore evidence before claiming recovery acceptance.

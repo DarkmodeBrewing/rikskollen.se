@@ -120,3 +120,5 @@ See [the E2E runbook](docs/e2e.md) for fresh-checkout commands, fixture isolatio
 Apply migrations through `0007` before running the updated API/worker; API readiness checks the attempt table and its scheduling fields. Scheduling remains opt-in. See [import count definitions and acceptance](docs/import-status.md) and the [deployment runbook](docs/deployment.md).
 
 Scheduled imports are opt-in; see [cadence, bounded corrections and activation](docs/scheduled-imports.md). Ordinary stack startup does not enable them.
+
+M4.4 recovery work starts with [database backups and isolated restore verification](docs/backup-restore.md). Scripts preserve complete database history/provenance and restore only into disposable resources; off-host durability, alerts and host recovery acceptance remain open.

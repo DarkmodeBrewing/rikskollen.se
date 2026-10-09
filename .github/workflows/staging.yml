@@ -38,6 +38,25 @@ jobs:
           dc run --rm worker --version
           # Validate the packaged scheduler without performing source requests.
           dc run --rm worker dist/scheduler.js --check
+          # Restore known source/provenance and operational rows into a separate
+          # container/volume with no network. No live upstream requests.
+          dc exec -T db psql -U rikskollen -d rikskollen -v ON_ERROR_STOP=1 < scripts/fixtures/recovery-seed.sql
+          mkdir -p backups
+          bash scripts/backup-db.sh backups/ci -p rikskollen-ci -f compose.staging.yml
+          bash scripts/verify-restore.sh backups/ci scripts/fixtures/recovery-assert.sql
+          # A failure after restore must also release the disposable resources.
+          if bash scripts/verify-restore.sh backups/ci scripts/fixtures/recovery-fail.sql; then
+            echo 'Expected restore assertion failure' >&2; exit 1
+          fi
+          test -z "$(docker ps -aq --filter name=rikskollen-restore-)"
+          test -z "$(docker volume ls -q --filter name=rikskollen-restore-)"
+          cp -r backups/ci backups/corrupt
+          printf 'corruption' >> backups/corrupt/database.dump
+          if bash scripts/verify-restore.sh backups/corrupt; then
+            echo 'Expected checksum rejection' >&2; exit 1
+          fi
+          # Return the smoke database to its empty migrated state.
+          dc exec -T db psql -U rikskollen -d rikskollen -v ON_ERROR_STOP=1 -c 'TRUNCATE import_attempts, vote_import_runs CASCADE'
           node scripts/smoke-deployment.mjs --empty
           dc restart api web
           dc up -d --wait api web

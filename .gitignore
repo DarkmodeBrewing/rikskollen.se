@@ -142,3 +142,6 @@ vite.config.ts.timestamp-*
 # Playwright reports and traces
 /playwright-report/
 /test-results/
+
+# Private database archives and restore reports
+/backups/
