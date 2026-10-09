@@ -38,6 +38,16 @@ jobs:
           dc run --rm worker --version
           # Validate the packaged scheduler without performing source requests.
           dc run --rm worker dist/scheduler.js --check
+          # Config validation performs no checks or notifications.
+          dc run --rm worker dist/monitor.js --check
+          # The empty migrated fixture intentionally has missing jobs/coverage.
+          # Verify the opt-in container can persist state as the Node user.
+          set +e
+          dc --profile monitoring run --rm --no-deps monitor dist/monitor.js --once
+          monitor_exit=$?
+          set -e
+          test "$monitor_exit" -eq 1
+          dc --profile monitoring run --rm --no-deps monitor -e "const fs=require('node:fs'); const s=JSON.parse(fs.readFileSync('/app/monitor-state/state.json','utf8')); if(s.active.length!==8 || s.pending) process.exit(1)"
           # Restore known source/provenance and operational rows into a separate
           # container/volume with no network. No live upstream requests.
           dc exec -T db psql -U rikskollen -d rikskollen -v ON_ERROR_STOP=1 < scripts/fixtures/recovery-seed.sql

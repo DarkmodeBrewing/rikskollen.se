@@ -54,6 +54,8 @@ PR #18 merged the `m4/import-status` slice, which adds durable attempts for all 
 
 M4.3 scheduled-import host observations are recorded in the [test protocol](m4.3-test-protocol.md), with correction selection and other unperformed checks still explicit. M4.4 starts with [database backup and isolated restore verification](backup-restore.md); monitoring/alerts, off-host durability and measured recovery/retention targets remain following work. The M4.3 report singular wording defect remains tracked rather than being silently marked fixed.
 
+The next M4.4 implementation slice adds [opt-in monitoring and webhook failure/recovery alerts](monitoring-alerts.md). Local fixtures do not establish live delivery or outage detection; off-host backups and independent monitor coverage remain open acceptance items.
+
 The M0–M4 milestones above remain the authoritative delivery history and public-release gate. The following sequence captures the product direction agreed on 2026-10-06 without weakening the existing evidence, accessibility, privacy or operational requirements.
 
 Rikskollen should make Swedish parliamentary activity understandable, traceable and easy to follow. It should present public political activity and source-backed derived facts without profiling visitors or assigning politicians opaque grades.
