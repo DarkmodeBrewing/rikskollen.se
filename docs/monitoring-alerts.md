@@ -95,3 +95,11 @@ dc --profile monitoring run --rm --no-deps \
 ```
 
 If other incidents are raised, inspect their evidence rather than resetting state. Exit 2 means the configuration, state or delivery failed, so it is not a successful notification test. Capture receiver payloads/acknowledgements, delivery IDs and times; verify a retry/restart against the receiver separately. Keep endpoint secrets and source rows out of test records. Record delivery and recovery observations before declaring alerts operational. The M4.3 wording defect, eligible correction rotation and off-host backup checks remain open in their respective records.
+
+### Host observations, 2026-10-09 / 2026-10-11
+
+On `darkmode01`, the packaged `--check` reported tick 300 seconds, daily 26 hours, batch three hours, running 45 minutes and `webhookConfigured:false`. A logs-only pass using `/app/monitor-state/acceptance.json` detected one `job:catalog-decisions` incident and persisted its state. The failure delivery ID was `4b0c6a90da3fab6a6c00b255b134aec69db1bbe6ada21c95f4b986cdc7b7efb3`. The operator repeated the same command on 2026-10-11: it printed only `monitor-check` with `incidents:1`, with no duplicate transition payload. This verifies packaged configuration, writable persisted state and logs-only deduplication across separate containers. Shell exit codes and deployed SHA were not supplied in these outputs.
+
+The detected attempt `a8360a5e-ae74-4917-b12d-4521c374c5a8` was a scheduled catalog batch, failed on 2026-10-09 at 14:04:04.811 UTC after publishing eight of ten planned reports. Logs identified CU21's acclamation/motivation-vote parser rejection and FiU10's missing structured points. The [source-shape review](data-methodology.md#source-shape-review-2026-10-11) distinguishes the parser fix from the unresolved compilation-only source limitation. The incident is valid and must not be cleared by resetting state or declaring missing source points successfully imported.
+
+Actual receiver delivery, failure/retry acknowledgements and recovery remain **NOT RUN**. The persistent catalog incident means a healthy-endpoint pass may still exit 1; endpoint recovery and job recovery are separate transitions. This is partial host acceptance, not operational alert-delivery acceptance.

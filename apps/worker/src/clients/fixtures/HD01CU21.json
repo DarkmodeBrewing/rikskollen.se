@@ -1,0 +1,77 @@
+{
+  "_fixture": {
+    "sourceUrl": "https://data.riksdagen.se/dokumentstatus/HD01CU21.json",
+    "observedOn": "2026-10-11",
+    "fullResponseSha256": "8f64c57e74b202f0bc8daa58147ce4c4bff976168c0906e0cb04ce7567d51269",
+    "note": "Reduced source excerpt; HTML document body and unrelated fields omitted. CU21 vote captions retained to explain motivation versus substantive votes."
+  },
+  "dokumentstatus": {
+    "dokument": {
+      "dok_id": "HD01CU21",
+      "rm": "2025/26",
+      "beteckning": "CU21",
+      "titel": "Elektronisk inlämning av bouppteckningar",
+      "status": "Webbpublicering",
+      "doktyp": "bet"
+    },
+    "dokutskottsforslag": {
+      "utskottsforslag": [
+        {
+          "punkt": "1",
+          "rubrik": "Regeringens lagförslag",
+          "forslag": "Riksdagen antar regeringens f&ouml;rslag till lag om &auml;ndring i &auml;rvdabalken.<br /><BR/>Därmed bifaller riksdagen proposition 2025/26:46.<BR/><BR/>",
+          "beslutstyp": "acklamation",
+          "vinnare": "utskottet",
+          "votering_id": "",
+          "votering_sammanfattning_html": ""
+        },
+        {
+          "punkt": "2",
+          "rubrik": "Riksdagens tillkännagivande om kvalitetssäkring i vårdnadsutredningar",
+          "forslag": "<BR/>Riksdagen avslår motion \n\n2025/26:3848 av Martina Johansson m.fl. (C) yrkande 1.<BR/><BR/>",
+          "beslutstyp": "acklamation",
+          "vinnare": "utskottet",
+          "votering_id": "62FBD172-047F-402B-B878-F5BA1A07005B",
+          "votering_sammanfattning_html": {
+            "table": {
+              "caption": {
+                "b": "Omröstning i motivfrågan",
+                "br": null,
+                "#text": "Utskottets förslag mot reservation 2 (S)"
+              }
+            }
+          }
+        },
+        {
+          "punkt": "3",
+          "rubrik": "Riksdagens tillkännagivande om digital bekräftelse av föräldraskap",
+          "forslag": "<BR/>Riksdagen avslår motionerna \n\n2025/26:3188 av Martina Johansson m.fl. (C) yrkande 3 och \n\n2025/26:3848 av Martina Johansson m.fl. (C) yrkande 2.<BR/><BR/>",
+          "beslutstyp": "röstning",
+          "vinnare": "utskottet",
+          "votering_id": "055c92e2-ebb4-41b5-8740-52119aa63acc",
+          "votering_sammanfattning_html": {
+            "table": {
+              "caption": {
+                "b": "Omröstning i sakfrågan",
+                "br": null,
+                "#text": "Utskottets förslag mot reservation 3 (C)"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "dokuppgift": {
+      "uppgift": [
+        {
+          "kod": "beslutdatumtid",
+          "text": "2026-03-11 00:00:00"
+        },
+        {
+          "kod": "beslutssammanfattningusk",
+          "text": "Bifall till propositionen. Avslag på samtliga motionsyrkanden."
+        }
+      ]
+    }
+  }
+}
