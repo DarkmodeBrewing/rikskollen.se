@@ -163,6 +163,42 @@ const jobs: Record<ImportJob, string> = {
           }
         </div>
       </section>
+      @if (data.sourceAvailability; as availability) {
+        <section class="panel" aria-labelledby="availability-title">
+          <h2 id="availability-title">Strukturerade beslutsunderlag saknas i källan</h2>
+          <p>
+            {{ availability.unavailableCount }}
+            {{ unit('decisions', availability.unavailableCount) }} i den senaste katalogen saknade
+            strukturerade förslagspunkter vid senaste kontrollen. De ingår fortfarande i täckningens
+            urval. Saknade punkter betyder inte att ärendet har noll beslut.
+          </p>
+          <ul class="status-runs">
+            @for (item of availability.items; track item.documentId) {
+              <li>
+                <a [href]="item.sourceUrl" target="_blank" rel="noopener"
+                  >{{ item.title }} · {{ item.documentId }} ↗</a
+                >
+                <span
+                  >Strukturerade detaljer saknas · kontrollerad
+                  {{ item.checkedAt | stockholmDate }}</span
+                >
+                @if (item.hasPublishedDetails) {
+                  <span
+                    >Tidigare importerade underlag finns kvar; senaste källkontrollen saknade
+                    punkter.</span
+                  >
+                }
+              </li>
+            }
+          </ul>
+          @if (availability.unavailableCount > availability.limit) {
+            <p>De {{ availability.limit }} äldsta kontrollerna visas.</p>
+          }
+          <p>
+            Kontrollerna upprepas schemalagt. En lyckad källkontroll är inte en publicerad import.
+          </p>
+        </section>
+      }
       <section class="panel" aria-labelledby="attempts-title">
         <h2 id="attempts-title">Senaste försök per importjobb</h2>
         <p>
@@ -224,6 +260,18 @@ const jobs: Record<ImportJob, string> = {
                   <p>
                     Slut: {{ attempt.finishedAt | stockholmDate: true }} ·
                     {{ attempt.durationSeconds | number: '1.0-1' : 'sv' }} sekunder
+                  </p>
+                }
+                @if (attempt.unavailableCount) {
+                  <p>
+                    {{ attempt.unavailableCount }}
+                    {{
+                      attempt.unavailableCount === 1
+                        ? 'kontrollerat betänkande'
+                        : 'kontrollerade betänkanden'
+                    }}
+                    saknade strukturerade förslagspunkter i källan. Inga nya beslutsunderlag
+                    publicerades för dessa betänkanden.
                   </p>
                 }
                 @if (attempt.status === 'succeeded' && attempt.unchanged) {
@@ -344,6 +392,8 @@ export class DataStatusComponent {
       : datasets[key].unit;
   }
   outcome(attempt: PublicImportAttempt) {
+    if (attempt.status === 'succeeded' && attempt.unavailableCount)
+      return 'Kontrollerad – källuppgifter saknas';
     if (attempt.status === 'succeeded' && attempt.unchanged) return 'Kontrollerad – oförändrad';
     return { running: 'Slutstatus saknas', succeeded: 'Slutförd', failed: 'Misslyckad' }[
       attempt.status

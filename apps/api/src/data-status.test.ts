@@ -77,6 +77,71 @@ test(
       assert.equal(reports.importedCount, 1);
       assert.equal(reports.expectedCount, 2);
       assert.equal(reports.secondaryCount, 1); // Corrected version; pending and older versions excluded.
+      const checkIds: string[] = [];
+      try {
+        for (const [documentId, session] of [
+          ['HD01TU9', '2025/26'],
+          ['HD01TU8', '2024/25'],
+          ['HD01TU991', '2025/26'],
+        ] as const) {
+          checkIds.push(
+            (
+              await pgPool.query(
+                `INSERT INTO decision_source_checks (document_id,session,availability,reason,source_url,source_hash)
+            VALUES ($1,$2,'unavailable','structured-points-missing','https://data.riksdagen.se/dokumentstatus/' || $1 || '.json','fixture') RETURNING id`,
+                [documentId, session],
+              )
+            ).rows[0].id,
+          );
+        }
+        const known = await readDataStatus(pgPool, 1);
+        assert.equal(known.sourceAvailability!.unavailableCount, 1);
+        assert.equal(known.sourceAvailability!.items[0].documentId, 'HD01TU9');
+        assert.equal(
+          known.sourceAvailability!.items[0].hasPublishedDetails,
+          false,
+        );
+        assert.equal(
+          known.coverage.find((r) => r.dataset === 'decisions')!.expectedCount,
+          2,
+        );
+        assert.equal(
+          known.coverage.find((r) => r.dataset === 'decisions')!.importedCount,
+          1,
+        );
+        checkIds.push(
+          (
+            await pgPool.query(`INSERT INTO decision_source_checks (document_id,session,availability,source_url,source_hash)
+          VALUES ('HD01TU9','2025/26','available','fixture','fixture') RETURNING id`)
+          ).rows[0].id,
+        );
+        assert.equal(
+          (await readDataStatus(pgPool, 1)).sourceAvailability!
+            .unavailableCount,
+          0,
+        );
+        checkIds.push(
+          (
+            await pgPool.query(`INSERT INTO decision_source_checks (document_id,session,availability,reason,source_url,source_hash)
+          VALUES ('HD01TU8','2025/26','unavailable','structured-points-missing','fixture','fixture') RETURNING id`)
+          ).rows[0].id,
+        );
+        const retained = await readDataStatus(pgPool, 1);
+        assert.equal(
+          retained.sourceAvailability!.items[0].hasPublishedDetails,
+          true,
+        );
+        assert.equal(
+          retained.coverage.find((row) => row.dataset === 'decisions')!
+            .importedCount,
+          1,
+        );
+      } finally {
+        await pgPool.query(
+          'DELETE FROM decision_source_checks WHERE id = ANY($1::uuid[])',
+          [checkIds],
+        );
+      }
       assert.equal(reports.lastSuccessfulAt, '2026-01-02T00:00:00.000Z');
       assert.equal(
         status.coverage.find((r) => r.dataset === 'catalog')!.lastSuccessfulAt,

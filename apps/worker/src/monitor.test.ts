@@ -56,6 +56,19 @@ const data = (): DataStatus => ({
 test('fresh unchanged checks and partial decision backfill are healthy despite old publication', () => {
   assert.deepEqual(evaluateStatus(data(), [], config, now), []);
 });
+test('a successful batch with unavailable source points recovers execution failure without claiming complete coverage', () => {
+  const d = data();
+  d.latestAttempts[3] = attempt('catalog-decisions', { status: 'failed' });
+  const previous = evaluateStatus(d, [], config, now);
+  d.latestAttempts[3] = attempt('catalog-decisions', {
+    unchanged: false,
+    unavailableCount: 1,
+  });
+  const current = evaluateStatus(d, previous, config, now);
+  assert.deepEqual(current, []);
+  assert.equal(d.coverage[3].complete, false);
+  assert.equal(transitions(previous, current)[0].outcome, 'recovery');
+});
 test('failed job remains unresolved during retry, then recovers only after success', () => {
   const d = data();
   d.latestAttempts[1] = attempt('votes', { status: 'failed' });

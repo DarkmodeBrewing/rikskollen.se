@@ -249,7 +249,7 @@ test(
         () => refreshDecisions(2, async () => fixture('HD01TU991'), now),
         true,
       );
-      assert.deepEqual(checked, { checked: 1, published: 0 });
+      assert.deepEqual(checked, { checked: 1, published: 0, unavailable: 0 });
       const child = (
         await pgPool.query(
           "SELECT * FROM import_attempts WHERE job = 'decision' AND document_id = 'HD01TU991' ORDER BY started_at DESC, id DESC LIMIT 1",
@@ -273,7 +273,7 @@ test(
           ),
         true,
       );
-      assert.deepEqual(fresh, { checked: 0, published: 0 });
+      assert.deepEqual(fresh, { checked: 0, published: 0, unavailable: 0 });
     } finally {
       if (catalogId)
         await pgPool.query('DELETE FROM report_catalog_runs WHERE id = $1', [

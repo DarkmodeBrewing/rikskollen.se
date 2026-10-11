@@ -87,11 +87,14 @@ export async function refreshDecisions(
       }
       await progress.expected(selected.length);
       let published = 0;
+      let unavailable = 0;
       const failed: string[] = [];
       for (const id of selected) {
         try {
           const result = await syncDecision(id, load, true);
-          if (!result.unchanged) {
+          if (result.availability === 'unavailable') {
+            await progress.unavailable(++unavailable);
+          } else if (!result.unchanged) {
             published++;
             await progress.published(published);
           }
@@ -104,11 +107,15 @@ export async function refreshDecisions(
         throw new Error(
           `Correction batch failed for ${failed.join(', ')}; completed reports remain published`,
         );
-      return { checked: selected.length, published };
+      return { checked: selected.length, published, unavailable };
     },
     (result) => ({
       importedCount: result.published,
-      unchanged: result.checked > 0 && result.published === 0,
+      unavailableCount: result.unavailable,
+      unchanged:
+        result.checked > 0 &&
+        result.published === 0 &&
+        result.unavailable === 0,
     }),
   );
 }

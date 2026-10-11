@@ -31,11 +31,24 @@ export interface PublicImportAttempt {
   expectedCount: number | null;
   importedCount: number;
   snapshotId: string | null;
+  unavailableCount?: number;
   startedAt: string;
   finishedAt: string | null;
   durationSeconds: number | null;
 }
 export interface DataStatus {
+  sourceAvailability?: {
+    unavailableCount: number;
+    limit: number;
+    items: Array<{
+      documentId: string;
+      title: string;
+      sourceUrl: string;
+      checkedAt: string;
+      reason: 'structured-points-missing';
+      hasPublishedDetails: boolean;
+    }>;
+  };
   generatedAt: string;
   trackingStartedAt: string | null;
   coverage: PublishedCoverage[];

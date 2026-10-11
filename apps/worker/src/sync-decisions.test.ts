@@ -17,6 +17,7 @@ test(
           'HD01TU8',
           async () => decisionFixture,
         );
+        assert.ok(result.runId);
         ids.push(result.runId);
         assert.equal(result.pointCount, 2);
       }
@@ -47,10 +48,12 @@ test(
       );
       const missingPoints = JSON.parse(decisionFixture);
       delete missingPoints.dokumentstatus.dokutskottsforslag;
-      await assert.rejects(
-        syncDecision('HD01TU8', async () => JSON.stringify(missingPoints)),
-        /Structured proposal points unavailable/,
+      const unavailableResult = await syncDecision('HD01TU8', async () =>
+        JSON.stringify(missingPoints),
       );
+      assert.equal(unavailableResult.availability, 'unavailable');
+      assert.equal(unavailableResult.runId, null);
+      assert.equal(unavailableResult.pointCount, null);
       const rows = await pgPool.query(
         'SELECT r.id, r.completed_at, count(p.point)::int AS points FROM decision_import_runs r JOIN decision_points p ON p.run_id = r.id WHERE r.id = ANY($1::uuid[]) GROUP BY r.id',
         [ids],
@@ -63,13 +66,16 @@ test(
           'DELETE FROM decision_import_runs WHERE id = ANY($1::uuid[])',
           [ids],
         );
+      await pgPool.query(
+        "DELETE FROM decision_source_checks WHERE document_id IN ('HD01TU8','HD01CU21','HD01FIU10')",
+      );
       await pgPool.end();
     }
   },
 );
 
 test(
-  'CU21 is published with both source fields while FiU10 records failure without a snapshot',
+  'CU21 publishes both source fields while FiU10 records explicit unavailability without a snapshot',
   { skip: !process.env.DATABASE_URL },
   async () => {
     const { pgPool } = createDatabaseClient();
@@ -80,6 +86,7 @@ test(
         'utf8',
       );
       const result = await syncDecision('HD01CU21', async () => raw);
+      assert.ok(result.runId);
       runId = result.runId;
       assert.equal(result.pointCount, 3);
       const point = await pgPool.query(
@@ -98,27 +105,33 @@ test(
         'SELECT count(*)::int AS count FROM decision_import_runs WHERE upper(document_id) = $1',
         ['HD01FIU10'],
       );
-      await assert.rejects(
-        syncDecision('HD01FiU10', async () => unavailable),
-        /Structured proposal points unavailable/,
+      const unavailableResult = await syncDecision(
+        'HD01FiU10',
+        async () => unavailable,
       );
+      assert.equal(unavailableResult.availability, 'unavailable');
+      assert.equal(unavailableResult.runId, null);
       const after = await pgPool.query(
         'SELECT count(*)::int AS count FROM decision_import_runs WHERE upper(document_id) = $1',
         ['HD01FIU10'],
       );
       assert.deepEqual(after.rows, before.rows);
       const attempt = await pgPool.query(
-        "SELECT status, imported_count FROM import_attempts WHERE document_id = 'HD01FIU10' ORDER BY started_at DESC, id DESC LIMIT 1",
+        "SELECT status, imported_count, unavailable_count FROM import_attempts WHERE document_id = 'HD01FIU10' ORDER BY started_at DESC, id DESC LIMIT 1",
       );
       assert.deepEqual(attempt.rows[0], {
-        status: 'failed',
+        status: 'succeeded',
         imported_count: 0,
+        unavailable_count: 1,
       });
     } finally {
       if (runId)
         await pgPool.query('DELETE FROM decision_import_runs WHERE id = $1', [
           runId,
         ]);
+      await pgPool.query(
+        "DELETE FROM decision_source_checks WHERE document_id IN ('HD01TU8','HD01CU21','HD01FIU10')",
+      );
       await pgPool.end();
     }
   },

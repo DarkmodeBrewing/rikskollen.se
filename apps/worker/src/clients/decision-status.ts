@@ -42,6 +42,16 @@ export const documentIdSchema = z
   .regex(/^HD01[A-Za-zÅÄÖåäö]{1,4}\d{1,3}$/i);
 const uuidSchema = z.uuid();
 
+export class StructuredPointsUnavailable extends Error {
+  constructor(
+    readonly documentId: string,
+    readonly session: string,
+    readonly sourceHash: string,
+  ) {
+    super(`Structured proposal points unavailable for ${documentId}`);
+  }
+}
+
 export function decisionStatusUrl(documentId: string) {
   return `https://data.riksdagen.se/dokumentstatus/${documentId}.json`;
 }
@@ -102,13 +112,17 @@ export function parseDecisionStatus(raw: string, requestedId: string) {
   )
     throw new Error(`Unexpected document ${document.dok_id} / ${document.rm}`);
   if (!source.dokutskottsforslag)
-    throw new Error(
-      `Structured proposal points unavailable for ${document.dok_id}; no decision snapshot published`,
+    throw new StructuredPointsUnavailable(
+      document.dok_id,
+      document.rm,
+      createHash('sha256').update(raw).digest('hex'),
     );
   const items = asArray(source.dokutskottsforslag.utskottsforslag);
   if (!items.length)
-    throw new Error(
-      `Structured proposal points unavailable for ${document.dok_id}; no decision snapshot published`,
+    throw new StructuredPointsUnavailable(
+      document.dok_id,
+      document.rm,
+      createHash('sha256').update(raw).digest('hex'),
     );
   const seen = new Set<string>();
   const points = items.map((item) => {

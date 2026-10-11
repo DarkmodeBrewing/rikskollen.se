@@ -65,6 +65,8 @@ An M3 vote link inside Rikskollen requires a match on document ID, proposal poin
 
 Reduced fixtures identify the source URL, observation date and full-response SHA-256 in `apps/worker/src/clients/fixtures`. Raw responses were inspected read-only; no live database import formed part of implementation verification.
 
+The following [source-availability slice](source-availability.md) supersedes the failed-attempt handling for validated missing/empty points: it records an explicit unavailable observation and a successful source check with no published snapshot. Malformed replies still fail. Catalog coverage retains the report; absence is never turned into zero decisions. Earlier failed attempts are not rewritten.
+
 ## M3 vote-linked import coverage
 
 The bounded batch's candidate set comes from distinct, non-null committee report IDs in the **latest completed 2025/26 M2 vote snapshot**. The batch validates every candidate ID before fetching, imports at most 25 missing reports per invocation, and stops at the first source/mapping failure. Each successful report is a separate atomic versioned import; rerunning skips completed IDs. The snapshot's source URL and run ID identify the provenance of the candidate set. Report JSON may change between runs, and historical response bytes are not stored.

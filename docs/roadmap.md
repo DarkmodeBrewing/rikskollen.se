@@ -56,6 +56,8 @@ M4.3 scheduled-import host observations are recorded in the [test protocol](m4.3
 
 The next M4.4 implementation slice adds [opt-in monitoring and webhook failure/recovery alerts](monitoring-alerts.md). Local fixtures do not establish live delivery or outage detection; off-host backups and independent monitor coverage remain open acceptance items.
 
+The [structured source-availability slice](source-availability.md) distinguishes checked reports with unavailable points from execution failures, preserves incomplete coverage, and adds bounded rechecks and public source-gap information. Migration, database/browser CI and deployed acceptance remain separate gates. CU21 import/API verification is recorded in the monitoring runbook; webhook delivery, source-gap host acceptance, the plain-text entity defect and report singular wording remain open.
+
 The M0–M4 milestones above remain the authoritative delivery history and public-release gate. The following sequence captures the product direction agreed on 2026-10-06 without weakening the existing evidence, accessibility, privacy or operational requirements.
 
 Rikskollen should make Swedish parliamentary activity understandable, traceable and easy to follow. It should present public political activity and source-backed derived facts without profiling visitors or assigning politicians opaque grades.

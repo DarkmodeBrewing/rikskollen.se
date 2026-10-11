@@ -47,7 +47,12 @@ async function executeSyncCatalogDecisions(
     );
     sourceIds = source.rows.map((row) => row.document_id);
     const completed = await pgPool.query<{ document_id: string }>(
-      'SELECT DISTINCT document_id FROM decision_import_runs WHERE completed_at IS NOT NULL',
+      `SELECT DISTINCT document_id FROM decision_import_runs WHERE completed_at IS NOT NULL
+       UNION SELECT document_id FROM (
+         SELECT DISTINCT ON (document_id) document_id, availability, checked_at
+         FROM decision_source_checks WHERE session = '2025/26'
+         ORDER BY document_id, checked_at DESC, id DESC
+       ) checks WHERE availability = 'unavailable' AND checked_at > now() - interval '24 hours'`,
     );
     completedIds = completed.rows.map((row) => row.document_id);
   } finally {
@@ -55,17 +60,23 @@ async function executeSyncCatalogDecisions(
   }
   const selection = selectPendingReports(sourceIds, completedIds, limit);
   await progress.expected(selection.candidates.length);
+  let unavailableCount = 0;
   const imported = await importPendingReports(
     selection.candidates,
     load,
     progress.published,
     continueOnFailure,
+    async (count) => {
+      unavailableCount = count;
+      await progress.unavailable(count);
+    },
   );
   return {
     catalogRunId,
     sourceDocumentCount: selection.sourceDocumentCount,
     pendingBefore: selection.pendingBefore,
     imported,
+    unavailableCount,
     pendingAfter: selection.pendingBefore - imported.length,
   };
 }
