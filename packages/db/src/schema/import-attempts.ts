@@ -23,6 +23,7 @@ export const importAttempts = pgTable(
     status: text('status').notNull().default('running'),
     expectedCount: integer('expected_count'),
     importedCount: integer('imported_count').notNull().default(0),
+    unavailableCount: integer('unavailable_count').notNull().default(0),
     snapshotId: uuid('snapshot_id'),
     startedAt: timestamp('started_at', { withTimezone: true })
       .notNull()

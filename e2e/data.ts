@@ -173,6 +173,7 @@ export const decisions: DecisionList = {
 // Operational data is synthetic; counts never claim real deployment coverage.
 export const dataStatus: import('../packages/shared-types/src/data-status').DataStatus = {
   generatedAt: timestamp, trackingStartedAt: timestamp,
+  sourceAvailability: { unavailableCount: 1, limit: 20, items: [{ documentId: 'TESTUNAVAILABLE', title: 'Syntetiskt underlag utan strukturerade punkter', sourceUrl: 'https://data.riksdagen.se/dokumentstatus/TESTUNAVAILABLE.json', checkedAt: timestamp, reason: 'structured-points-missing', hasPublishedDetails: false }] },
   coverage: [
     { dataset: 'members', session: null, snapshotId: '00000000-0000-0000-0000-000000000001', sourceUrl: member.sourceUrl,
       expectedCount: 31, importedCount: 31, complete: true, lastSuccessfulAt: timestamp, oldestSuccessfulAt: timestamp, secondaryCount: null },

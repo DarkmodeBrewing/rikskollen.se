@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 export interface AttemptProgress {
   expected(count: number): Promise<void>;
   published(count: number): Promise<void>;
+  unavailable(count: number): Promise<void>;
 }
 interface AttemptScope {
   dataset: 'members' | 'votes' | 'catalog' | 'decisions';
@@ -19,6 +20,7 @@ export async function recordImportAttempt<T>(
   work: (progress: AttemptProgress) => Promise<T>,
   summary: (result: T) => {
     importedCount: number;
+    unavailableCount?: number;
     snapshotId?: string;
     unchanged?: boolean;
   },
@@ -36,6 +38,12 @@ export async function recordImportAttempt<T>(
       .returning();
     id = attempt.id;
     const progress: AttemptProgress = {
+      unavailable: async (unavailableCount) => {
+        await db
+          .update(importAttempts)
+          .set({ unavailableCount })
+          .where(eq(importAttempts.id, attempt.id));
+      },
       expected: async (expectedCount) => {
         await db
           .update(importAttempts)

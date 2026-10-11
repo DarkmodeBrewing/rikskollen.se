@@ -1,6 +1,22 @@
 import { test, expect } from './fixtures';
 import { member, events, trail } from './data';
 
+test('source availability is explicit in SSR without reducing the catalog denominator', async ({
+  request,
+  app,
+}) => {
+  const html = await (await request.get(`${app.url}/datastatus`)).text();
+  expect(html).toContain('Strukturerade beslutsunderlag saknas i källan');
+  expect(html).toContain('Syntetiskt underlag utan strukturerade punkter');
+  expect(html).toContain(
+    'Saknade punkter betyder inte att ärendet har noll beslut',
+  );
+  expect(html).toContain('1 betänkande saknar beslutsunderlag');
+  expect(html).toContain(
+    'https://data.riksdagen.se/dokumentstatus/TESTUNAVAILABLE.json',
+  );
+});
+
 test('SSR delivers data and controlled failure states without a browser', async ({
   app,
   request,

@@ -4,6 +4,8 @@ Merged through PR #18 after page identity/sharing PR #17. Functional host accept
 
 ## Worker contract
 
+The [source-availability extension](source-availability.md) adds `unavailableCount` to attempts and a source-gap summary to Datastatus. A verified response without structured points is a successful check with no snapshot/publication, not a successful data import. These reports remain in the coverage denominator and are rechecked. Real fetch/validation errors still fail; historical attempts are not rewritten.
+
 Migration `0006` adds `import_attempts`, independent of the existing published snapshot tables. Every invocation of the six import functions records its job, dataset, optional session/document ID and start time before fetching or selecting candidates. A normal finish records `succeeded`, end time, published count and the snapshot ID where there is one. Source/mapping/persistence failures record `failed`; technical exception text stays in worker stderr and is not stored or published.
 
 The planned count is null until the source/selection has established it. Counts mean members for `persons`, vote events for `votes`, catalog reports for `report-catalog`, and report statuses for the three decision jobs. A report's proposal-point count is a separate coverage statistic. Source validation and snapshot publication rules remain unchanged. Votes staged before an abort are removed and count as zero published events.

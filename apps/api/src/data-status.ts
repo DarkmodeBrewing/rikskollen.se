@@ -9,7 +9,7 @@ type Pool = ReturnType<typeof createDatabaseClient>['pgPool'];
 type PoolClient = Pick<Pool, 'query'>;
 
 const attempts = `SELECT id, dataset, job, session, document_id AS "documentId", status, trigger, unchanged,
-  expected_count AS "expectedCount", imported_count AS "importedCount", snapshot_id AS "snapshotId",
+  expected_count AS "expectedCount", imported_count AS "importedCount", unavailable_count AS "unavailableCount", snapshot_id AS "snapshotId",
   started_at AS "startedAt", finished_at AS "finishedAt",
   CASE WHEN finished_at IS NOT NULL THEN greatest(0, extract(epoch FROM finished_at - started_at))::float END AS "durationSeconds"
   FROM import_attempts`;
@@ -34,6 +34,19 @@ export async function readDataStatus(
       'BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
     );
     const coverage = await readCoverage(client);
+    const unavailable = await client.query(`
+      WITH catalog AS (SELECT id FROM report_catalog_runs WHERE session = '2025/26' AND completed_at IS NOT NULL ORDER BY completed_at DESC, id DESC LIMIT 1),
+      latest AS (SELECT DISTINCT ON (document_id) * FROM decision_source_checks WHERE session = '2025/26' ORDER BY document_id, checked_at DESC, id DESC)
+      SELECT l.document_id AS "documentId", c.title, l.source_url AS "sourceUrl", l.checked_at AS "checkedAt", l.reason,
+        EXISTS (SELECT 1 FROM decision_import_runs r JOIN decision_documents d ON d.run_id = r.id
+          WHERE upper(r.document_id) = l.document_id AND d.session = l.session AND r.completed_at IS NOT NULL) AS "hasPublishedDetails",
+        count(*) OVER ()::int AS total
+      FROM latest l JOIN report_catalog_entries c ON upper(c.document_id) = l.document_id JOIN catalog ON c.run_id = catalog.id
+      WHERE l.availability = 'unavailable' ORDER BY l.checked_at, l.document_id LIMIT 20`);
+    if (unavailable.rows.length) {
+      const decisions = coverage.find((row) => row.dataset === 'decisions');
+      if (decisions) decisions.complete = false;
+    }
     const history = await client.query<AttemptRow>(
       `${attempts} ORDER BY started_at DESC, id DESC LIMIT 20 OFFSET $1`,
       [(page - 1) * 20],
@@ -53,6 +66,14 @@ export async function readDataStatus(
       trackingStartedAt:
         totals.rows[0].trackingStartedAt?.toISOString() ?? null,
       coverage,
+      sourceAvailability: {
+        unavailableCount: unavailable.rows[0]?.total ?? 0,
+        limit: 20,
+        items: unavailable.rows.map(({ total, checkedAt, ...row }) => ({
+          ...row,
+          checkedAt: checkedAt.toISOString(),
+        })),
+      },
       latestAttempts: latest.rows.map(publicAttempt),
       history: {
         items: history.rows.map(publicAttempt),

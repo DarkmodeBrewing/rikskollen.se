@@ -8,12 +8,14 @@ import {
   decisionDocuments,
   decisionImportRuns,
   decisionPoints,
+  decisionSourceChecks,
 } from '@rikskollen/db';
 import {
   decisionStatusUrl,
   documentIdSchema,
   downloadDecisionStatus,
   parseDecisionStatus,
+  StructuredPointsUnavailable,
 } from './clients/decision-status';
 
 export async function syncDecision(
@@ -32,8 +34,10 @@ export async function syncDecision(
     },
     (progress) => executeSyncDecision(documentId, load, progress, onlyChanged),
     (result) => ({
-      importedCount: result.unchanged ? 0 : 1,
-      snapshotId: result.runId,
+      importedCount:
+        result.availability === 'unavailable' || result.unchanged ? 0 : 1,
+      unavailableCount: result.availability === 'unavailable' ? 1 : 0,
+      snapshotId: result.runId ?? undefined,
       unchanged: result.unchanged,
     }),
   );
@@ -48,7 +52,34 @@ async function executeSyncDecision(
   const id = documentIdSchema.parse(documentId);
   await progress.expected(1);
   const sourceUrl = decisionStatusUrl(id);
-  const parsed = parseDecisionStatus(await load(sourceUrl), id);
+  const raw = await load(sourceUrl);
+  let parsed: ReturnType<typeof parseDecisionStatus>;
+  try {
+    parsed = parseDecisionStatus(raw, id);
+  } catch (error) {
+    if (!(error instanceof StructuredPointsUnavailable)) throw error;
+    const { db, pgPool } = createDatabaseClient();
+    try {
+      await db.insert(decisionSourceChecks).values({
+        documentId: id.toUpperCase(),
+        session: error.session,
+        availability: 'unavailable',
+        reason: 'structured-points-missing',
+        sourceUrl,
+        sourceHash: error.sourceHash,
+      });
+      return {
+        availability: 'unavailable' as const,
+        runId: null,
+        documentId: id,
+        pointCount: null,
+        sourceHash: error.sourceHash,
+        unchanged: false,
+      };
+    } finally {
+      await pgPool.end();
+    }
+  }
   const { db, pgPool } = createDatabaseClient();
   try {
     if (onlyChanged) {
@@ -73,14 +104,25 @@ async function executeSyncDecision(
         run.source_hash === parsed.sourceHash &&
         run.actual === parsed.points.length &&
         run.expected_points === run.actual
-      )
+      ) {
+        await db
+          .insert(decisionSourceChecks)
+          .values({
+            documentId: id.toUpperCase(),
+            session: parsed.document.session,
+            availability: 'available',
+            sourceUrl,
+            sourceHash: parsed.sourceHash,
+          });
         return {
+          availability: 'available' as const,
           runId: run.id,
           documentId: id,
           pointCount: parsed.points.length,
           sourceHash: parsed.sourceHash,
           unchanged: true,
         };
+      }
     }
     // One transaction publishes the complete report. Previous versions remain auditable.
     return await db.transaction(async (tx) => {
@@ -103,7 +145,17 @@ async function executeSyncDecision(
         .update(decisionImportRuns)
         .set({ completedAt: new Date() })
         .where(eq(decisionImportRuns.id, run.id));
+      await tx
+        .insert(decisionSourceChecks)
+        .values({
+          documentId: id.toUpperCase(),
+          session: parsed.document.session,
+          availability: 'available',
+          sourceUrl,
+          sourceHash: parsed.sourceHash,
+        });
       return {
+        availability: 'available' as const,
         runId: run.id,
         documentId: id,
         pointCount: parsed.points.length,

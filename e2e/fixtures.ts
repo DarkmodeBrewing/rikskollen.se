@@ -47,6 +47,7 @@ export const test = base.extend<{ app: FixtureApp }>({
       else if (path === '/api/data-status') {
         const empty = app.scenario === 'empty';
         body = { ...dataStatus, coverage: empty ? [] : dataStatus.coverage,
+          sourceAvailability: empty ? { unavailableCount: 0, limit: 20, items: [] } : dataStatus.sourceAvailability,
           latestAttempts: empty ? [] : dataStatus.latestAttempts, trackingStartedAt: empty ? null : dataStatus.trackingStartedAt,
           history: { ...paged(empty ? [] : dataStatus.history.items), limit: 20,
             items: empty ? [] : dataStatus.history.items.slice((page-1)*20, page*20) } };

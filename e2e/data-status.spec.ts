@@ -10,6 +10,7 @@ test('datastatus is linked, rendered by SSR, and shows scoped coverage and attem
   expect(html).toContain('<title>Datastatus | Rikskollen</title>');
   expect(html).toContain('1 betänkande saknar beslutsunderlag');
   expect(html).toContain('Ingen slutstatus har registrerats');
+  expect(html).toContain('Syntetiskt underlag utan strukturerade punkter');
   expect(html).toContain(
     'property="og:title" content="Datastatus | Rikskollen"',
   );
@@ -25,6 +26,16 @@ test('datastatus is linked, rendered by SSR, and shows scoped coverage and attem
   await expect(reports.getByRole('progressbar')).toHaveAttribute('max', '2');
   await expect(reports).toContainText('Äldsta importerade underlag');
   await expect(reports).toContainText('Senast importerade underlag');
+  const availability = page.getByRole('region', {
+    name: 'Strukturerade beslutsunderlag saknas i källan',
+  });
+  await expect(availability).toContainText(
+    'Saknade punkter betyder inte att ärendet har noll beslut',
+  );
+  await expect(availability.getByRole('link')).toHaveAttribute(
+    'href',
+    'https://data.riksdagen.se/dokumentstatus/TESTUNAVAILABLE.json',
+  );
   await expect(
     page.getByText('Importerna kan startas manuellt eller schemalagt.', {
       exact: false,
