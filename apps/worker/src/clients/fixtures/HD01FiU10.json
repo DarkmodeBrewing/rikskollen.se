@@ -1,0 +1,30 @@
+{
+  "_fixture": {
+    "sourceUrl": "https://data.riksdagen.se/dokumentstatus/HD01FiU10.json",
+    "observedOn": "2026-10-11",
+    "fullResponseSha256": "56b5facfb6e6eb1154defd4bb823b9102f02e50093ef73af5d01a178da08210c",
+    "note": "Reduced source excerpt; HTML document body and unrelated fields omitted. CU21 vote captions retained to explain motivation versus substantive votes."
+  },
+  "dokumentstatus": {
+    "dokument": {
+      "dok_id": "HD01FiU10",
+      "rm": "2025/26",
+      "beteckning": "FiU10",
+      "titel": "Statens budget för 2026",
+      "status": "Webbpublicering",
+      "doktyp": "bet"
+    },
+    "dokuppgift": {
+      "uppgift": [
+        {
+          "kod": "beslutdatumtid",
+          "text": "2025-12-18 00:00:00"
+        },
+        {
+          "kod": "beslutssammanfattningusk",
+          "text": "Anmälan av sammanställning av beslut om statens budget för 2026."
+        }
+      ]
+    }
+  }
+}
