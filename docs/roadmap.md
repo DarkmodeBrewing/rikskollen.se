@@ -1,5 +1,26 @@
 # Roadmap
 
+## Release direction (2026-10-13): finish v1.0, then maintenance mode
+
+**Decision:** Complete a bounded **Rikskollen v1.0** release in 2026, then freeze feature development and prioritize Gremlin. Revisit product expansion as **v2.0 in 2027 or later**; no v2.0 work is committed or scheduled. Existing M0–M4 history and acceptance evidence remain authoritative. This release plan supersedes the previous post-M4 R0.1–R0.5+ sequence as an *immediate delivery plan*; those ideas are candidates for v2.0, not v1.0 blockers.
+
+### v1.0 release gates (all required)
+
+1. **Finish and verify existing Riksdagen synchronization:** complete bounded decided-report status backfill, reconcile catalog/vote/member counts and missing or unavailable source records, verify scheduled imports and correction windows on the host. Scope is the **existing imported datasets and 2025/26 session**, not every Riksdagen endpoint or all historical sessions. Preserve source identifiers, provenance, import timestamps and visible coverage.
+2. **Useful, factual statistics:** publish a small set of aggregate voting/decision measures supported by imported records, with period, denominator, exclusions, source links and methodology. Avoid opaque grades, unsupported attendance claims, political rankings or inferred motives.
+3. **Understandable homepage and navigation:** clearly explain what Rikskollen covers, make member/vote/matter discovery obvious, display real recent records and a few understandable statistics, and verify desktop/mobile and keyboard journeys. Do not block release on a full-text search engine or calendar.
+4. **Transparency and data status:** complete `/om`, `/datastatus`, source/methodology/privacy explanations, AI-assisted development disclosure, coverage gaps and freshness indicators. Preserve correct metadata, canonical URLs, sitemap and attribution.
+5. **Public, anonymous website analytics:** choose and document a minimal privacy-preserving analytics deployment (evaluate Plausible/Umami), with no cookies, persistent visitor identifiers or political-interest profiles. Expose an **open aggregate visitor/usage dashboard** (visits, page views, popular pages, trends and available referrers), document what is collected and retained, and validate privacy and public access. Parliamentary statistics and visitor statistics must be clearly distinguished.
+6. **Production acceptance:** CI and Playwright regression tests, deployed source-backed checks, monitoring and failure/recovery alerts, off-host backup and tested restore, accessibility/mobile review, personal-data/photograph rights review, SEO/indexing checks, and a short operational handover. Record PASS/BLOCKED evidence; do not silently waive unresolved gates.
+
+### After v1.0
+
+**Maintenance mode:** keep the site and existing import scheduler operating. Only fix broken imports, security issues, data integrity problems and essential operational failures. Do not start new product features by default. Record known limitations, recovery/deployment steps and future ideas in the handover.
+
+**v2.0 (2027+, explicitly deferred):** additional sessions/history; calendar and Atom/watch feeds; motions, speeches, questions and broader activity; deeper voting analysis and relationship views; Valmyndigheten, SCB and other external sources; broader search and public API commitments. These are *candidates*, not promises. Reassess scope and maintenance cost when the project resumes.
+
+---
+
 Status as of 2026-10-05. This is an ordered proposal, not a delivery schedule. Each milestone must leave a demonstrable, source-linked result.
 
 | Milestone | Outcome | Acceptance gate |
