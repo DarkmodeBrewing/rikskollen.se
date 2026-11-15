@@ -1,5 +1,8 @@
 # Rikskollen
 
+**Release decision (2026-10-13):** Ship a bounded **v1.0 in 2026**, then enter maintenance mode while development attention moves to Gremlin. v1.0 includes completing existing import coverage/scheduling, factual statistics, a clearer homepage, transparent source/data status, **public anonymous visitor analytics**, and production acceptance. Calendar, subscriptions, additional sources and broader analysis are deferred to **v2.0 (2027 or later)**, with no committed delivery date. See [the release plan](docs/roadmap.md#release-direction-2026-10-13-finish-v10-then-maintenance-mode).
+
+
 Rikskollen is a proposed public, independent view of what happens in the Swedish Riksdag. It uses the Riksdag's open data to make members, assignments, recorded votes, decisions and their source documents easier to explore. The aim is to answer factual questions such as “How did this member vote on this proposal?” and “Which votes recorded this member as absent?” without assigning political scores or guessing motives.
 
 **Status (2026-10-08):** M0–M3, M4.0 and the M4 frontend slices are merged. Staging passed the [M4.0 protocol](docs/m4.0-test-protocol.md) and [import-status host checks](docs/m4.3-test-protocol.md). This slice adds opt-in scheduled imports and bounded corrections; activation and scheduler acceptance remain separate. Report-status coverage is partial. Backup/restore and public-release review remain later gates. See [project brief](docs/product.md), [methodology](docs/data-methodology.md), [roadmap](docs/roadmap.md) and [deployment runbook](docs/deployment.md).
