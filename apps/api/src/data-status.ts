@@ -8,21 +8,11 @@ import type {
 type Pool = ReturnType<typeof createDatabaseClient>['pgPool'];
 type PoolClient = Pick<Pool, 'query'>;
 
-const attempts = `SELECT a.id, dataset, job, session, document_id AS "documentId",
-  COALESCE(
-    (SELECT e.title FROM report_catalog_entries e
-      JOIN report_catalog_runs r ON r.id = e.run_id
-      WHERE upper(e.document_id) = upper(a.document_id) AND r.session = a.session AND r.completed_at IS NOT NULL
-      ORDER BY r.completed_at DESC, r.id DESC LIMIT 1),
-    (SELECT d.title FROM decision_documents d
-      JOIN decision_import_runs r ON r.id = d.run_id
-      WHERE upper(d.document_id) = upper(a.document_id) AND d.session = a.session AND r.completed_at IS NOT NULL
-      ORDER BY r.completed_at DESC, r.id DESC LIMIT 1)
-  ) AS "documentTitle", status, trigger, unchanged,
+const attempts = `SELECT id, dataset, job, session, document_id AS "documentId", status, trigger, unchanged,
   expected_count AS "expectedCount", imported_count AS "importedCount", unavailable_count AS "unavailableCount", snapshot_id AS "snapshotId",
   started_at AS "startedAt", finished_at AS "finishedAt",
   CASE WHEN finished_at IS NOT NULL THEN greatest(0, extract(epoch FROM finished_at - started_at))::float END AS "durationSeconds"
-  FROM import_attempts a`;
+  FROM import_attempts`;
 type AttemptRow = Omit<PublicImportAttempt, 'startedAt' | 'finishedAt'> & {
   startedAt: Date;
   finishedAt: Date | null;
@@ -70,6 +60,50 @@ export async function readDataStatus(
     const latest = await client.query<AttemptRow>(
       `SELECT DISTINCT ON (job) * FROM (${attempts}) a ORDER BY job, "startedAt" DESC, id DESC`,
     );
+    // Resolve titles only after paging/latest selection. Enriching the entire
+    // attempt table before DISTINCT ON repeatedly scans versioned source data.
+    const selected = [...history.rows, ...latest.rows];
+    const documents = [
+      ...new Map(
+        selected
+          .filter((row) => row.documentId && row.session)
+          .map((row) => [
+            JSON.stringify([row.documentId!.toUpperCase(), row.session]),
+            { documentId: row.documentId!.toUpperCase(), session: row.session },
+          ]),
+      ).values(),
+    ];
+    const titles = new Map<string, string | null>();
+    if (documents.length) {
+      const result = await client.query<{
+        documentId: string;
+        session: string;
+        title: string | null;
+      }>(
+        `
+        SELECT wanted."documentId", wanted.session, COALESCE(
+          (SELECT e.title FROM report_catalog_entries e
+            JOIN report_catalog_runs r ON r.id = e.run_id
+            WHERE upper(e.document_id) = wanted."documentId" AND r.session = wanted.session AND r.completed_at IS NOT NULL
+            ORDER BY r.completed_at DESC, r.id DESC LIMIT 1),
+          (SELECT d.title FROM decision_documents d
+            JOIN decision_import_runs r ON r.id = d.run_id
+            WHERE upper(d.document_id) = wanted."documentId" AND d.session = wanted.session AND r.completed_at IS NOT NULL
+            ORDER BY r.completed_at DESC, r.id DESC LIMIT 1)
+        ) AS title
+        FROM jsonb_to_recordset($1::jsonb) AS wanted("documentId" text, session text)`,
+        [JSON.stringify(documents)],
+      );
+      for (const row of result.rows)
+        titles.set(JSON.stringify([row.documentId, row.session]), row.title);
+    }
+    for (const row of selected)
+      row.documentTitle =
+        row.documentId && row.session
+          ? (titles.get(
+              JSON.stringify([row.documentId.toUpperCase(), row.session]),
+            ) ?? null)
+          : null;
     await client.query('COMMIT');
     return {
       generatedAt: new Date().toISOString(),
