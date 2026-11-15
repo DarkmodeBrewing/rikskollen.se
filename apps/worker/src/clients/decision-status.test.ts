@@ -44,6 +44,10 @@ test('CU21 preserves acclamation and its separate motivation vote without relabe
   );
   const result = parseDecisionStatus(raw, 'HD01CU21');
   assert.equal(result.points.length, 3);
+  assert.equal(
+    result.points[0].proposalText,
+    'Riksdagen antar regeringens förslag till lag om ändring i ärvdabalken. Därmed bifaller riksdagen proposition 2025/26:46.',
+  );
   assert.equal(result.points[0].sourceVoteId, null);
   assert.equal(result.points[1].decisionType, 'acklamation');
   assert.equal(
@@ -76,4 +80,16 @@ test('FiU10 missing structured points stays unavailable rather than becoming a z
   assert.throws(() => parseDecisionStatus(JSON.stringify(empty), 'HD01TU8'));
   empty.dokumentstatus.dokutskottsforslag = null;
   assert.throws(() => parseDecisionStatus(JSON.stringify(empty), 'HD01TU8'));
+});
+
+// Synthetic variants of the documented TU8 fixture test text conversion only.
+test('decodes case-sensitive named and numeric entities once, preserving encoded markup as text', () => {
+  const source = JSON.parse(decisionFixture);
+  source.dokumentstatus.dokutskottsforslag.utskottsforslag[0].forslag =
+    '<p>&Aring; &aring; &Auml; &auml; &Ouml; &ouml; &eacute; &#246; &#x1F600; &nbsp; &amp;ouml; &lt;script&gt;alert(1)&lt;/script&gt; &unknown;</p>';
+  const result = parseDecisionStatus(JSON.stringify(source), 'HD01TU8');
+  assert.equal(
+    result.points[0].proposalText,
+    'Å å Ä ä Ö ö é ö 😀 &ouml; <script>alert(1)</script> &unknown;',
+  );
 });

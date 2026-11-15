@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
+import { decodeHTMLStrict } from 'entities';
 
 const pointSchema = z.object({
   punkt: z.string().min(1),
@@ -74,30 +75,8 @@ function asArray<T>(value: T | T[]): T[] {
 
 // The source embeds presentation HTML. Store plain text and render it only as text.
 function plainText(html: string): string {
-  const entities: Record<string, string> = {
-    amp: '&',
-    lt: '<',
-    gt: '>',
-    quot: '"',
-    apos: "'",
-    nbsp: ' ',
-  };
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
-      if (entity.startsWith('#')) {
-        const number =
-          entity[1]?.toLowerCase() === 'x'
-            ? parseInt(entity.slice(2), 16)
-            : parseInt(entity.slice(1), 10);
-        return number > 0 &&
-          number <= 0x10ffff &&
-          !(number >= 0xd800 && number <= 0xdfff)
-          ? String.fromCodePoint(number)
-          : match;
-      }
-      return entities[entity.toLowerCase()] ?? match;
-    })
+  // Strip source markup before decoding: encoded tags must remain literal text.
+  return decodeHTMLStrict(html.replace(/<[^>]*>/g, ' '))
     .replace(/\s+/g, ' ')
     .trim();
 }

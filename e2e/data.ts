@@ -188,8 +188,9 @@ export const dataStatus: import('../packages/shared-types/src/data-status').Data
     trigger: 'manual', unchanged: false, status: 'failed', expectedCount: 2, importedCount: 1, snapshotId: null, startedAt: timestamp, finishedAt: timestamp, durationSeconds: 0 }],
   history: { page: 1, limit: 20, total: 21,
     items: Array.from({ length: 21 }, (_, i) => ({
-      id: `00000000-0000-0000-0000-${String(i+1).padStart(12,'0')}`, dataset: 'decisions', job: 'catalog-decisions', session: '2025/26', documentId: null,
-      status: i === 0 ? 'running' : i === 1 ? 'succeeded' : 'failed', expectedCount: 2, importedCount: i === 1 ? 0 : 1, snapshotId: null,
+      id: `00000000-0000-0000-0000-${String(i+1).padStart(12,'0')}`, dataset: i === 4 ? 'votes' : 'decisions', job: 'decision', session: '2025/26', documentId: i === 0 ? 'TESTREPORT' : i === 2 ? 'TESTUNKNOWN' : null,
+      documentTitle: i === 0 ? 'Syntetiskt betänkande med en lång rubrik för läsbar importhistorik' : null,
+      status: i === 0 ? 'running' : i === 1 ? 'succeeded' : 'failed', expectedCount: i === 2 || i === 4 ? 1 : 2, importedCount: i === 1 ? 0 : 1, snapshotId: null,
       trigger: 'scheduled', unchanged: i === 1,
       startedAt: timestamp, finishedAt: i === 0 ? null : timestamp, durationSeconds: i === 0 ? null : 0,
     })) },

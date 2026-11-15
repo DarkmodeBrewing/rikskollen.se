@@ -8,11 +8,21 @@ import type {
 type Pool = ReturnType<typeof createDatabaseClient>['pgPool'];
 type PoolClient = Pick<Pool, 'query'>;
 
-const attempts = `SELECT id, dataset, job, session, document_id AS "documentId", status, trigger, unchanged,
+const attempts = `SELECT a.id, dataset, job, session, document_id AS "documentId",
+  COALESCE(
+    (SELECT e.title FROM report_catalog_entries e
+      JOIN report_catalog_runs r ON r.id = e.run_id
+      WHERE upper(e.document_id) = upper(a.document_id) AND r.session = a.session AND r.completed_at IS NOT NULL
+      ORDER BY r.completed_at DESC, r.id DESC LIMIT 1),
+    (SELECT d.title FROM decision_documents d
+      JOIN decision_import_runs r ON r.id = d.run_id
+      WHERE upper(d.document_id) = upper(a.document_id) AND d.session = a.session AND r.completed_at IS NOT NULL
+      ORDER BY r.completed_at DESC, r.id DESC LIMIT 1)
+  ) AS "documentTitle", status, trigger, unchanged,
   expected_count AS "expectedCount", imported_count AS "importedCount", unavailable_count AS "unavailableCount", snapshot_id AS "snapshotId",
   started_at AS "startedAt", finished_at AS "finishedAt",
   CASE WHEN finished_at IS NOT NULL THEN greatest(0, extract(epoch FROM finished_at - started_at))::float END AS "durationSeconds"
-  FROM import_attempts`;
+  FROM import_attempts a`;
 type AttemptRow = Omit<PublicImportAttempt, 'startedAt' | 'finishedAt'> & {
   startedAt: Date;
   finishedAt: Date | null;

@@ -278,3 +278,27 @@ test(
     }
   },
 );
+
+test('recovery describes a cleared incident without attributing it to the failed attempt', () => {
+  const previous = [
+    {
+      key: 'job:votes',
+      reason: 'Latest import attempt failed',
+      attemptId: 'old-failure',
+    },
+    { key: 'endpoint', reason: 'unavailable' },
+    { key: 'coverage:members', reason: 'incomplete' },
+  ];
+  const events = transitions(previous, []);
+  assert.equal(events.length, 3);
+  for (const event of events) {
+    assert.equal(event.outcome, 'recovery');
+    assert.equal(
+      event.reason,
+      'Previously reported incident is no longer active',
+    );
+    assert.equal('attemptId' in event, false);
+  }
+  assert.deepEqual(transitions([], []), []);
+  assert.equal(previous[0].attemptId, 'old-failure');
+});

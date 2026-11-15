@@ -10,6 +10,10 @@ test('datastatus is linked, rendered by SSR, and shows scoped coverage and attem
   expect(html).toContain('<title>Datastatus | Rikskollen</title>');
   expect(html).toContain('1 betänkande saknar beslutsunderlag');
   expect(html).toContain('Ingen slutstatus har registrerats');
+  expect(html).toContain(
+    'Syntetiskt betänkande med en lång rubrik för läsbar importhistorik',
+  );
+  expect(html).toContain('publicerat');
   expect(html).toContain('Syntetiskt underlag utan strukturerade punkter');
   expect(html).toContain(
     'property="og:title" content="Datastatus | Rikskollen"',
@@ -22,6 +26,25 @@ test('datastatus is linked, rendered by SSR, and shows scoped coverage and attem
   const reports = page.getByRole('article').filter({
     has: page.getByRole('heading', { name: 'Beslutsunderlag', exact: true }),
   });
+  const history = page.getByRole('region', {
+    name: 'Importhistorik',
+    exact: true,
+  });
+  await expect(history.getByRole('listitem').nth(0)).toContainText(
+    'TESTREPORT · Syntetiskt betänkande med en lång rubrik för läsbar importhistorik',
+  );
+  await expect(history.getByRole('listitem').nth(2)).toContainText(
+    'TESTUNKNOWN',
+  );
+  await expect(history.getByRole('listitem').nth(2)).toContainText(
+    '1 publicerat betänkande i detta försök av 1 planerat.',
+  );
+  await expect(history.getByRole('listitem').nth(3)).toContainText(
+    '1 publicerat betänkande i detta försök av 2 planerade.',
+  );
+  await expect(history.getByRole('listitem').nth(4)).toContainText(
+    '1 publicerad votering i detta försök av 1 planerad.',
+  );
   await expect(reports.getByRole('progressbar')).toHaveAttribute('value', '1');
   await expect(reports.getByRole('progressbar')).toHaveAttribute('max', '2');
   await expect(reports).toContainText('Äldsta importerade underlag');
