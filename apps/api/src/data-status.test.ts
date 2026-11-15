@@ -62,12 +62,20 @@ test(
       }
       for (let i = 0; i < 21; i++) {
         const row = await pgPool.query(
-          `INSERT INTO import_attempts (dataset,job,session,status,started_at,finished_at,imported_count)
-          VALUES ('catalog','report-catalog','2025/26',$1,$2,$3,0) RETURNING id`,
+          `INSERT INTO import_attempts (dataset,job,session,status,started_at,finished_at,imported_count,document_id)
+          VALUES ('catalog','report-catalog',$5,$1,$2,$3,0,$4) RETURNING id`,
           [
             i === 20 ? 'running' : 'failed',
             new Date(Date.UTC(2030, 0, 1, 0, i)),
             i === 20 ? null : new Date(Date.UTC(2030, 0, 1, 0, i, 5)),
+            i === 20
+              ? 'hd01tu8'
+              : i === 19 || i === 16
+                ? 'HD01TU9'
+                : i === 18
+                  ? 'HD01TU999'
+                  : null,
+            i === 16 ? '2024/25' : '2025/26',
           ],
         );
         attemptIds.push(row.rows[0].id);
@@ -147,6 +155,17 @@ test(
         status.coverage.find((r) => r.dataset === 'catalog')!.lastSuccessfulAt,
         '2030-01-01T00:00:00.000Z',
       );
+      // Titles are current source context, case-insensitive and session-scoped.
+      assert.equal(status.history.items[0].documentTitle, 'Source example');
+      assert.equal(
+        status.latestAttempts.find((r) => r.job === 'report-catalog')!
+          .documentTitle,
+        'Source example',
+      );
+      assert.equal(status.history.items[1].documentTitle, 'Synthetic missing');
+      assert.equal(status.history.items[2].documentTitle, null);
+      assert.equal(status.history.items[3].documentTitle, null);
+      assert.equal(status.history.items[4].documentTitle, 'Source example'); // Other-session completed report fallback.
       assert.equal(status.history.items[0].trigger, 'manual');
       assert.equal(status.history.items[0].unchanged, false);
       assert.equal(status.history.items.length, 20);

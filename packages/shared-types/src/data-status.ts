@@ -25,6 +25,8 @@ export interface PublicImportAttempt {
   job: ImportJob;
   session: string | null;
   documentId: string | null;
+  // Current source-backed title in this attempt's session, not a historical snapshot.
+  documentTitle?: string | null;
   trigger: 'manual' | 'scheduled';
   unchanged: boolean;
   status: 'running' | 'succeeded' | 'failed';

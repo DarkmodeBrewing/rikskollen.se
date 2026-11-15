@@ -231,7 +231,8 @@ const jobs: Record<ImportJob, string> = {
               ? (data.trackingStartedAt | stockholmDate)
               : 'nästa importförsök'
           }}. Äldre slutförda dataimporter visas i täckningen ovan. Tidigare misslyckade försök kan
-          inte återskapas.
+          inte återskapas. Betänkandenas rubriker visar senast importerade källuppgifter, inte
+          nödvändigtvis rubriken vid försökets tidpunkt.
         </p>
         <ol class="status-history">
           @for (attempt of data.history.items; track attempt.id) {
@@ -242,6 +243,9 @@ const jobs: Record<ImportJob, string> = {
                   {{ attempt.session || 'Tjänstgöringslista' }}
                   @if (attempt.documentId) {
                     · {{ attempt.documentId }}
+                    @if (attempt.documentTitle) {
+                      · {{ attempt.documentTitle }}
+                    }
                   }
                 </p>
               </div>
@@ -282,11 +286,11 @@ const jobs: Record<ImportJob, string> = {
                 } @else {
                   <p>
                     {{ attempt.importedCount }}
-                    {{ attempt.importedCount === 1 ? 'publicerad' : 'publicerade' }}
+                    {{ agreement(attempt.dataset, attempt.importedCount, 'publicerad') }}
                     {{ unit(attempt.dataset, attempt.importedCount) }} i detta försök
                     @if (attempt.expectedCount !== null) {
                       av {{ attempt.expectedCount }}
-                      {{ attempt.expectedCount === 1 ? 'planerad' : 'planerade' }}.
+                      {{ agreement(attempt.dataset, attempt.expectedCount, 'planerad') }}.
                     } @else {
                       · Planerat antal är okänt.
                     }
@@ -390,6 +394,10 @@ export class DataStatusComponent {
           key
         ]
       : datasets[key].unit;
+  }
+  agreement(key: ImportDataset, count: number, word: 'publicerad' | 'planerad') {
+    if (count !== 1) return word + 'e';
+    return key === 'catalog' || key === 'decisions' ? word.slice(0, -1) + 't' : word;
   }
   outcome(attempt: PublicImportAttempt) {
     if (attempt.status === 'succeeded' && attempt.unavailableCount)

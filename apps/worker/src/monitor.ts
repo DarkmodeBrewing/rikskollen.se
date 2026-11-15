@@ -197,7 +197,11 @@ export function transitions(
       .map((i) => ({ ...i, outcome: 'failure' as const })),
     ...previous
       .filter((i) => !current.some((p) => p.key === i.key))
-      .map((i) => ({ ...i, outcome: 'recovery' as const })),
+      .map((i) => ({
+        key: i.key,
+        reason: 'Previously reported incident is no longer active',
+        outcome: 'recovery' as const,
+      })),
   ];
 }
 export async function observe(

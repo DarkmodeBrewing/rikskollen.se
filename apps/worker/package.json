@@ -31,6 +31,7 @@
     "@rikskollen/db": "workspace:*",
     "@rikskollen/shared-types": "workspace:*",
     "drizzle-orm": "^0.44.7",
+    "entities": "8.1.0",
     "fflate": "^0.8.3"
   },
   "devDependencies": {
