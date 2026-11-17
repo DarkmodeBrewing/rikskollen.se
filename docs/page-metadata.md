@@ -27,3 +27,7 @@ The SVG favicon and multi-size ICO fallback use green `#087963`, cream `#f7f5ef`
 GitHub CI, deployed URL/image reachability and actual social-platform preview rendering remain unverified until publication/deployment. No new environment settings, data imports or migrations are required.
 
 Preview: [social card](../apps/webapp/public/social-preview.png).
+
+## Homepage and directory routes (2026-11-17)
+
+The root `/` now describes the 2025/26 overview and uses its own title/canonical URL. The directory has moved to `/ledamoter`; its search results remain noindex and consolidate to the directory canonical, while unfiltered directory pagination retains `page`. Old root `q`/`page` links redirect with their queries preserved. The sitemap includes both the homepage and directory alongside the existing discovery/transparency routes. The homepage remains indexable during an overview API failure because its static scope, search and discovery links remain useful; failed counts are not rendered as zero. Existing detail/error-page metadata rules are unchanged.
