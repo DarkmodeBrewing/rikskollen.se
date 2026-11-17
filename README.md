@@ -7,6 +7,8 @@ Rikskollen is a proposed public, independent view of what happens in the Swedish
 
 **Status (2026-10-08):** M0–M3, M4.0 and the M4 frontend slices are merged. Staging passed the [M4.0 protocol](docs/m4.0-test-protocol.md) and [import-status host checks](docs/m4.3-test-protocol.md). This slice adds opt-in scheduled imports and bounded corrections; activation and scheduler acceptance remain separate. Report-status coverage is partial. Backup/restore and public-release review remain later gates. See [project brief](docs/product.md), [methodology](docs/data-methodology.md), [roadmap](docs/roadmap.md) and [deployment runbook](docs/deployment.md).
 
+The `/om` transparency page explains scope, methods, privacy and AI-assisted development, with source and contact links. See [slice details and acceptance boundaries](docs/about-transparency.md). Deployment acceptance is separate.
+
 ## Product principles
 
 - Show the original Riksdag source and retrieval/update time alongside interpreted data.

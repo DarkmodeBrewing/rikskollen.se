@@ -22,7 +22,7 @@ describe('App', () => {
     const navigation = compiled.querySelector('nav[aria-label="Huvudnavigation"]');
     expect(
       Array.from(navigation!.querySelectorAll('a'), (link) => link.getAttribute('href')),
-    ).toEqual(['/', '/voteringar', '/arenden']);
+    ).toEqual(['/', '/voteringar', '/arenden', '/om']);
     expect(compiled.querySelector('footer')?.textContent).toContain('Källa: Sveriges riksdag');
     expect(compiled.querySelector('footer')?.textContent).toContain('oberoende');
   });

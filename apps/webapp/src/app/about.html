@@ -1,0 +1,187 @@
+<header class="intro">
+  <p class="eyebrow">Oberoende · Källbelagt · Öppet för granskning</p>
+  <h1>Om Rikskollen</h1>
+  <p>
+    Rikskollen gör riksdagens offentliga uppgifter lättare att utforska. Hitta en ledamot, följ en
+    registrerad votering och läs underlaget bakom ett beslut — med vägen till originalkällan kvar.
+  </p>
+</header>
+<div class="about-layout">
+  <nav class="about-contents" aria-label="På denna sida">
+    <p class="eyebrow">På denna sida</p>
+    <a routerLink="/om" fragment="oberoende">Vem står bakom?</a>
+    <a routerLink="/om" fragment="kallor">Källor och omfattning</a>
+    <a routerLink="/om" fragment="metod">Så räknar vi</a>
+    <a routerLink="/om" fragment="datakvalitet">Aktualitet och luckor</a>
+    <a routerLink="/om" fragment="integritet">Integritet och besöksstatistik</a>
+    <a routerLink="/om" fragment="utveckling">Utveckling och källkod</a>
+    <a routerLink="/om" fragment="kontakt">Frågor och rättelser</a>
+  </nav>
+  <article class="about-copy" aria-label="Om tjänsten">
+    <section id="oberoende" tabindex="-1" aria-labelledby="independence-title">
+      <h2 id="independence-title">Vem står bakom?</h2>
+      <p>
+        Rikskollen drivs av <a href="https://github.com/DarkmodeBrewing">DarkmodeBrewing</a>. Det är
+        ett fristående projekt, oberoende av Sveriges riksdag. Sveriges riksdag står inte bakom
+        tjänsten.
+      </p>
+      <p>
+        Vi visar källuppgifter och förklarar våra beräkningar. Vi sätter inga politiska betyg,
+        rangordnar inte ledamöter och drar inga slutsatser om deras motiv.
+      </p>
+    </section>
+    <section id="kallor" tabindex="-1" aria-labelledby="sources-title">
+      <h2 id="sources-title">Källor och omfattning</h2>
+      <p>Källa: Sveriges riksdag. Tjänsten bygger på följande delar av riksdagens öppna data:</p>
+      <ul>
+        <li>
+          <a href="https://www.riksdagen.se/sv/dokument-och-lagar/riksdagens-oppna-data/ledamoter/"
+            >Ledamöter och uppdrag</a
+          >
+          från den importerade tjänstgöringslistan. Tidigare uppdrag kan ingå i en källpost.
+        </li>
+        <li>
+          <a href="https://data.riksdagen.se/dataset/votering/votering-202526.json.zip"
+            >Registrerade voteringar för 2025/26</a
+          >
+          och ledamöternas röster i dessa voteringar.
+        </li>
+        <li>
+          <a
+            href="https://data.riksdagen.se/dokumentlista/?a=s&amp;doktyp=bet&amp;rm=2025/26&amp;beslutad=1&amp;utformat=json&amp;sort=datum&amp;sortorder=asc&amp;p=1"
+            >Beslutade betänkanden för 2025/26</a
+          >
+          samt importerade beslutsunderlag med förslagspunkter och källans beslutssätt.
+        </li>
+      </ul>
+      <p>
+        Detta är ett avgränsat urval, inte en fullständig bild av allt arbete i riksdagen. Kalender,
+        tal, motioner och andra riksmöten ingår inte i det nuvarande urvalet. Många beslut fattas
+        utan registrerad votering.
+      </p>
+      <p>
+        Originalhandlingarna gäller som källa. Följ källänken vid varje uppgift och se
+        <a
+          href="https://www.riksdagen.se/sv/dokument-och-lagar/riksdagens-oppna-data/anvandarstod/anvandningsvillkor/"
+          >riksdagens användningsvillkor</a
+        >. Riksdagens källmaterial och Rikskollens programkod har skilda villkor.
+      </p>
+    </section>
+    <section id="metod" tabindex="-1" aria-labelledby="method-title">
+      <h2 id="method-title">Så räknar vi</h2>
+      <p>
+        Källvärden som Ja, Nej, Avstår och Frånvarande kommer från riksdagen. Antal, diagram och
+        sammanställningar beräknas av Rikskollen utifrån de importerade posterna.
+      </p>
+      <ul>
+        <li>
+          <strong>En ledamots röster:</strong> vi räknar personens källposter i det importerade
+          voteringsarkivet för 2025/26. Filtrering ändrar listan, men inte sammanställningens
+          underlag. Voteringar som saknar en post för personen räknas separat som saknade uppgifter.
+        </li>
+        <li>
+          <strong>Beslutssätt:</strong> vi räknar källans markeringar på förslagspunkter i
+          importerade beslutsunderlag inom betänkandekatalogen. Ej importerade punkter är okända och
+          ingår inte i den summan.
+        </li>
+      </ul>
+      <p class="about-note">
+        Frånvarande betyder registrerad som frånvarande i just den voteringen. Det säger inte hur
+        många arbetsdagar personen varit borta eller varför en röst saknas. En votering är inte
+        samma sak som hela beslutet i ett ärende.
+      </p>
+      <p>
+        Period, antal och avgränsningar visas vid sammanställningarna. Läs
+        <a
+          href="https://github.com/DarkmodeBrewing/rikskollen.se/blob/main/docs/data-methodology.md"
+          >den fullständiga metoden med källänkade räkneexempel</a
+        >.
+      </p>
+    </section>
+    <section id="datakvalitet" tabindex="-1" aria-labelledby="quality-title">
+      <h2 id="quality-title">Aktualitet och luckor</h2>
+      <p>
+        Rikskollen hämtar och kontrollerar källorna schemalagt. Källans identitet, länkar,
+        kontrollsummor och importtider gör det möjligt att granska hur uppgifterna har hämtats. En
+        kontrollsumma kan däremot inte återskapa en äldre källfil; råfilerna arkiveras inte här.
+      </p>
+      <p>
+        En lyckad kontroll kan innebära att källan är oförändrad. Då behåller vi den tidigare
+        publicerade versionen. Ett misslyckat försök ersätter inte redan publicerade uppgifter. En
+        importtid är inte ett besked om när riksdagen senast ändrade uppgiften.
+      </p>
+      <p>
+        Saknade uppgifter är okända, inte noll. Vissa betänkanden saknar strukturerade
+        förslagspunkter i källan. Täckning, källuckor och senaste kontroller finns på
+        <a routerLink="/datastatus">Datastatus</a>.
+      </p>
+    </section>
+    <section id="integritet" tabindex="-1" aria-labelledby="privacy-title">
+      <h2 id="privacy-title">Integritet</h2>
+      <p>
+        Du behöver inget konto för att använda Rikskollen. Applikationen sätter inga kakor och
+        sparar inga beständiga besökaridentifierare i din webbläsare. Sökning och filter ligger i
+        sidans adress, så tänk på vad du delar vidare.
+      </p>
+      <p>
+        Webbtrafiken går via Cloudflare och tjänstens webbservrar. Tekniska trafikuppgifter, till
+        exempel IP-adress och begärd adress, kan behandlas där för att leverera och skydda tjänsten.
+        Verifierade uppgifter om driftloggarnas lagringstider och åtkomst återstår att publicera. Vi
+        lovar därför inte att ett besök är helt anonymt genom hela leveranskedjan.
+      </p>
+      <p>
+        Ledamöternas namn, uppdrag och röstposter är offentliga personuppgifter från riksdagen. Det
+        är något annat än uppgifter om dig som besökare. Frågor om uppgifterna kan ställas via
+        <a routerLink="/om" fragment="kontakt">kontaktvägen nedan</a>. Publicera inte känsliga
+        personuppgifter i ett öppet ärende.
+      </p>
+      <h3 id="besoksstatistik">Besöksstatistik</h3>
+      <p>
+        Ingen besöksanalys är installerad i applikationen och någon publik besöksdashboard finns
+        ännu inte. Röst- och beslutsstatistik på Rikskollen beskriver riksdagens källposter, inte
+        webbplatsens besökare.
+      </p>
+      <p>
+        En framtida lösning för aggregerad besöksstatistik är planerad. Vad den samlar in, hur länge
+        uppgifterna sparas och hur den publika översikten nås ska beskrivas innan den tas i bruk.
+      </p>
+    </section>
+    <section id="utveckling" tabindex="-1" aria-labelledby="development-title">
+      <h2 id="development-title">Utveckling och källkod</h2>
+      <p>
+        Rikskollen utvecklas med AI-assisterade kodverktyg och kodagenter. De används för
+        programmering, testning och dokumentation, inte som källa till politiska fakta.
+        Källuppgifter och beräkningar ska kunna granskas oberoende av verktygen som byggt tjänsten.
+      </p>
+      <p>
+        Webbplatsen använder Angular, ett läs-API och PostgreSQL med separata importjobb.
+        <a href="https://github.com/DarkmodeBrewing/rikskollen.se"
+          >Programkoden och dokumentationen finns på GitHub</a
+        >, tillsammans med ändringshistorik och tester. Lämna gärna felrapporter och
+        förbättringsförslag där.
+      </p>
+      <p>
+        Projektet har ännu ingen uttrycklig kodlicens i arkivet. Att koden går att läsa innebär inte
+        i sig att den är fritt licensierad. Kontakta projektet före återanvändning om villkoren är
+        oklara.
+      </p>
+    </section>
+    <section id="kontakt" tabindex="-1" aria-labelledby="contact-title">
+      <h2 id="contact-title">Frågor och rättelser</h2>
+      <p>
+        <a href="https://github.com/DarkmodeBrewing/rikskollen.se/issues"
+          >Rapportera fel eller ställ en fråga via GitHub Issues</a
+        >. Det kräver ett GitHub-konto och är offentligt. Beskriv vad du såg och vad du förväntade
+        dig. Bifoga gärna sidlänk, dokument- eller voterings-ID och vilken tid du såg uppgiften.
+      </p>
+      <p>
+        Skilj gärna mellan ett fel i Rikskollens visning och ett fel i originalkällan. För frågor om
+        själva källmaterialet finns kontaktuppgifter hos
+        <a
+          href="https://www.riksdagen.se/sv/dokument-och-lagar/riksdagens-oppna-data/anvandarstod/anvandningsvillkor/#kontakt"
+          >riksdagsinformation</a
+        >. Länkar till andra webbplatser leder till deras egna villkor.
+      </p>
+    </section>
+  </article>
+</div>

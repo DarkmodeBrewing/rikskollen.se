@@ -2,16 +2,22 @@
   <a routerLink="/" class="brand">Riks<span>kollen</span><span class="brand-dot">.</span></a
   ><span>En oberoende överblick över riksdagens öppna data</span>
   <nav aria-label="Huvudnavigation">
-    <a routerLink="/">Ledamöter</a><a routerLink="/voteringar">Voteringar</a><a routerLink="/arenden">Ärenden</a>
+    <a routerLink="/">Ledamöter</a><a routerLink="/voteringar">Voteringar</a
+    ><a routerLink="/arenden">Ärenden</a><a routerLink="/om">Om Rikskollen</a>
   </nav>
 </header>
 <main class="container"><router-outlet /></main>
 <footer class="site-footer">
   <div class="container">
-    <a routerLink="/datastatus">Datastatus</a>
-    Rikskollen är oberoende av Sveriges riksdag. Källa: Sveriges riksdag.
-    <a href="https://www.riksdagen.se/sv/dokument-och-lagar/riksdagens-oppna-data/ledamoter/"
-      >Om öppna data ↗</a
-    >
+    <p>Rikskollen är oberoende av Sveriges riksdag. Källa: Sveriges riksdag.</p>
+    <nav aria-label="Om tjänsten">
+      <a routerLink="/om">Om Rikskollen</a>
+      <a routerLink="/datastatus">Datastatus</a>
+      <a routerLink="/om" fragment="integritet">Integritet och besöksstatistik</a>
+      <a href="https://github.com/DarkmodeBrewing/rikskollen.se">Källkod på GitHub ↗</a>
+      <a href="https://www.riksdagen.se/sv/dokument-och-lagar/riksdagens-oppna-data/"
+        >Riksdagens öppna data ↗</a
+      >
+    </nav>
   </div>
 </footer>
