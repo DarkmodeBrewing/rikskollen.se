@@ -7,6 +7,7 @@ test('SSR serves descriptive titles, canonical URLs and social cards before Java
 }) => {
   for (const [path, title] of [
     ['/', 'Ledamöter | Rikskollen'],
+    ['/om', 'Om Rikskollen | Rikskollen'],
     ['/voteringar', 'Registrerade voteringar | Rikskollen'],
     ['/arenden', 'Ärenden och beslutspunkter | Rikskollen'],
     [

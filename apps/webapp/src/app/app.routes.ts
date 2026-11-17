@@ -1,4 +1,5 @@
 import { DataStatusComponent } from './data-status';
+import { AboutComponent } from './about';
 import { Routes } from '@angular/router';
 import { MemberListComponent } from './member-list';
 import { MemberDetailComponent } from './member-detail';
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'arende/:id', component: DecisionDetailComponent },
   { path: 'arenden', component: DecisionListComponent },
   { path: 'datastatus', component: DataStatusComponent },
+  { path: 'om', component: AboutComponent },
   { path: '**', redirectTo: '' },
 ];

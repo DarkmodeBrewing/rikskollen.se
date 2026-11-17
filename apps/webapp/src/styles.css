@@ -202,9 +202,13 @@ h2 {
   padding: 30px 0;
   font-size: 13px;
 }
-.site-footer a {
-  margin-left: 10px;
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
 }
+.site-footer nav a { padding-block: 8px; }
+.site-footer a:focus-visible { outline-color: #d8e8dd; }
 @media (max-width: 700px) {
   .site-header > span {
     display: none;
@@ -229,6 +233,7 @@ h2 {
 
 .site-header nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 24px;
   font-size: 14px;
   font-weight: 700;
