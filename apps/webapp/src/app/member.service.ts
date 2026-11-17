@@ -1,3 +1,4 @@
+import type { Overview } from '../../../../packages/shared-types/src/overview';
 import type { DataStatus } from '../../../../packages/shared-types/src/data-status';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
@@ -47,6 +48,7 @@ export class MemberService {
   private readonly base = isPlatformServer(inject(PLATFORM_ID))
     ? process.env['API_BASE_URL'] || 'http://localhost:3000'
     : '';
+  overview() { return this.http.get<Overview>(`${this.base}/api/overview`); }
   list(q: string, page: number) {
     return this.http.get<MemberList>(`${this.base}/api/persons`, {
       params: { q, page, limit: 30 },

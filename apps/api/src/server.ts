@@ -18,6 +18,7 @@ import {
   listDecisions,
   checkDatabaseReady,
   getDataStatus,
+  getOverview,
 } from './db';
 
 const env = apiEnv();
@@ -83,6 +84,13 @@ app.get('/api/persons/:id', async (request, reply) => {
   return person ?? reply.code(404).send({ error: 'Person not found' });
 });
 app.get('/api/import-status', getImportStatus);
+app.get('/api/overview', async (request, reply) => {
+  try { return await getOverview(); }
+  catch (error) {
+    request.log.error({ err: error }, 'Overview read failed');
+    return reply.code(503).send({ error: 'Overview unavailable' });
+  }
+});
 app.get('/api/data-status', async (request, reply) => {
   const query = z.object({ page: z.coerce.number().int().min(1).max(10000).default(1) }).safeParse(request.query);
   if (!query.success) return reply.code(400).send({ error: 'Invalid query' });

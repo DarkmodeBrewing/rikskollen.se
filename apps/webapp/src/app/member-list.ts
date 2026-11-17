@@ -42,7 +42,7 @@ import { MemberService, type ImportStatus, type MemberList } from './member.serv
     } @else {
       <aside class="notice" role="alert">Importstatus kunde inte hämtas.</aside>
     }
-    <form action="/" method="get" class="search">
+    <form action="/ledamoter" method="get" class="search">
       <label for="q">Sök namn, parti eller valkrets</label>
       <div>
         <input id="q" name="q" [value]="params().q" placeholder="Till exempel Stockholm" /><button
@@ -72,7 +72,7 @@ import { MemberService, type ImportStatus, type MemberList } from './member.serv
       </ul>
       <nav class="pagination" aria-label="Sidindelning">
         @if (result.page > 1) {
-          <a [routerLink]="['/']" [queryParams]="{ q: params().q, page: result.page - 1 }"
+          <a [routerLink]="['/ledamoter']" [queryParams]="{ q: params().q, page: result.page - 1 }"
             >← Föregående</a
           >
         }
@@ -80,7 +80,7 @@ import { MemberService, type ImportStatus, type MemberList } from './member.serv
           >Sida {{ result.page }} av {{ Math.max(1, Math.ceil(result.total / result.limit)) }}</span
         >
         @if (result.page * result.limit < result.total) {
-          <a [routerLink]="['/']" [queryParams]="{ q: params().q, page: result.page + 1 }"
+          <a [routerLink]="['/ledamoter']" [queryParams]="{ q: params().q, page: result.page + 1 }"
             >Nästa →</a
           >
         }

@@ -9,6 +9,8 @@ Rikskollen is a proposed public, independent view of what happens in the Swedish
 
 The `/om` transparency page explains scope, methods, privacy and AI-assisted development, with source and contact links. See [slice details and acceptance boundaries](docs/about-transparency.md). Deployment acceptance is separate.
 
+The homepage overview links dated imported reports and scoped source-backed counts for 2025/26. The member directory is `/ledamoter`; old root search/paging URLs remain supported. See [scope, methods and acceptance](docs/home-overview.md).
+
 ## Product principles
 
 - Show the original Riksdag source and retrieval/update time alongside interpreted data.

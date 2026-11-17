@@ -28,7 +28,8 @@ if (empty) {
 await request('/api/persons?page=0', 400);
 await request('/api/votes', 405, { method: 'POST' });
 const pages = [
-  ['/', 'Utforska riksdagens ledamöter'],
+  ['/', 'Följ besluten.'],
+  ['/ledamoter', 'Utforska riksdagens ledamöter'],
   ['/voteringar', 'Registrerade voteringar'],
   ['/arenden', 'Ärenden och beslutspunkter'],
 ];
