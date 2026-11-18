@@ -1,4 +1,4 @@
-import { privateLogSerializers } from './logging';
+import { privateLogHooks, privateLogSerializers } from './logging';
 import Fastify from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import {
@@ -28,8 +28,8 @@ export const app = Fastify({
   disableRequestLogging: true,
   logger:
     env.NODE_ENV === 'development'
-      ? { serializers: privateLogSerializers, transport: { target: 'pino-pretty', options: { colorize: true } } }
-      : { serializers: privateLogSerializers },
+      ? { serializers: privateLogSerializers, hooks: privateLogHooks, transport: { target: 'pino-pretty', options: { colorize: true } } }
+      : { serializers: privateLogSerializers, hooks: privateLogHooks },
 }).withTypeProvider<ZodTypeProvider>();
 
 // ✨ Tell Fastify how to deal with Zod:
