@@ -1,0 +1,15 @@
+{
+  "tag": "v3.2.1",
+  "revision": "e4f5a87a5570bd61605217e7ceb376636db8eddb",
+  "files": {
+    "lib/plausible/clickhouse_event_v2.ex": "5a9165ff2e9591317cce455eee4de11592b34f98fcae27cc2ec89b2ed26fb6eb",
+    "lib/plausible/clickhouse_session_v2.ex": "a0a9c4ea46bc7db8b0b1dc532b0fc76365adb5c773fcc110b4098e3474a49c23",
+    "priv/ingest_repo/structure.sql": "de97158fef124de75606c787f86e7bbf9829627e679dfd2d02a64cc3747939d7",
+    "lib/plausible/purge.ex": "c9a0238345bfe8e5762ba4620d3b395bfea119f3a4c30decc4c5fbc102e74de3",
+    "lib/plausible/session/salts.ex": "aa9f0da8690ed8f00338eb26259bd2682537c235c72248b79ee88b9aa96c5706",
+    "lib/plausible/session/cache_store.ex": "3805923c51d98273b631512a1f5df1aec0c5029fde6b8172a548a3b6b86c2372",
+    "lib/plausible/ingestion/event.ex": "20e1d872849a5b84c00e0b1174a184e157421ef1d3e7947c262a9939521a9dd0",
+    "config/runtime.exs": "f706810f2d40a8246509faa2cf13275f4ebd4d57e3db7e6372cf95ac1e47cc4b",
+    "priv/ingest_repo/migrations/20240222082911_sessions_v2_versioned_collapsing_merge_tree.exs": "1023840c3093820a18f0623b8d94b1383d098277ab93878c722465b13def127c"
+  }
+}
