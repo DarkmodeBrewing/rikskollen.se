@@ -36,3 +36,21 @@ Record the approved policy separately from observed enforcement. `/om` describes
 ### Operator observation during review
 
 The operator reported more Cloudflare logging/analytics than anticipated. Treat that as a reason to inventory the actual zone/account products, not as evidence of particular retention durations or fields. Built-in provider traffic/security analytics are separate from an application-installed analytics script and from the planned public aggregate dashboard. Before release, document each enabled feature, purpose, fields, retention/export and permitted viewers; propose disabling optional visitor analytics while preserving necessary security protections. Do not claim dashboard settings erase provider-held records or disable security collection without verification. No Cloudflare change was made.
+
+## Public-facing Cloudflare findings — November 18
+
+The operator supplied screenshots while inspecting the authenticated dashboard without changes. This summary excludes personal account information, credential inventories and infrastructure-access details.
+
+- The dashboard provides aggregate traffic/visitor statistics and individual HTTP request rows with timestamps, method, requested path and status. Its client-field list includes source IP and client information; field availability does not prove every field is populated.
+- Seven- and thirty-day queries succeeded with historical chart data. This does not establish individual-event availability throughout the period or deletion afterward.
+- Rikskollen is absent from the complete optional Web Analytics site list. Optional browser analytics and built-in edge analytics are separate.
+- Adding datasets opens paid Log Explorer activation. No service was activated. Logpush shows a subscription screen and OpenTelemetry reports no configured destinations; this is not an exhaustive audit of every possible export method.
+- Access is not represented as limited to a single dashboard login: authorized accounts and API permissions can provide access. Specific account/token details are intentionally excluded from this public document.
+
+[Cloudflare dataset documentation](https://developers.cloudflare.com/observability/logs/datasets/) distinguishes opt-in full Log Explorer storage from built-in sampled `httpRequestsAdaptive`, available on all plans without enablement and documented as retained for **at least 31 days**. The [October 2 analytics change](https://developers.cloudflare.com/changelog/post/2026-10-02-30-days-analytics-on-every-plan/) documents up to 30 days per query. These are provider statements, not a verified deletion deadline for this zone or all provider records. The observed view strongly fits the built-in sampled dataset; the dashboard did not expose its technical identifier.
+
+[Log Explorer controls](https://developers.cloudflare.com/observability/logs/log-explorer/manage-datasets/) and [legacy Logpull retention controls](https://developers.cloudflare.com/logs/logpull/enabling-log-retention/) concern their respective optional services. They do not establish a switch for built-in sampled analytics. No such switch was found during the walkthrough; impossibility has not been established. No Cloudflare setting or credential was changed.
+
+The operator agreed to disclosure if built-in collection cannot be disabled. This remains conditional acceptance, not a waiver of the unresolved disable question. `/om` discloses observed processing and avoids anonymity/seven-day deletion promises across the delivery chain. The remaining decision is whether residual provider processing is acceptable once its available controls are clarified, alongside the previously proposed host diagnostic policy.
+
+Next: ask Cloudflare whether built-in `httpRequestsAdaptive` collection/retention can be disabled or reduced for a Free zone while preserving proxy/tunnel delivery. No support message has been sent; no logs or credentials are needed for that question.

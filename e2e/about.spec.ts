@@ -18,7 +18,7 @@ test('transparency is server rendered, indexable and available without the data 
   expect(html).toContain('Frånvarande betyder registrerad som frånvarande');
   expect(html).toContain('DarkmodeTools');
   expect(html).toContain(
-    'Cloudflares kontoinställningar',
+    'uppgifter om enskilda HTTP-förfrågningar',
   );
   expect(html).toContain('AGPL-3.0-only');
   expect(html).toContain('https://github.com/DarkmodeTools/rikskollen.se/blob/main/LICENSE');

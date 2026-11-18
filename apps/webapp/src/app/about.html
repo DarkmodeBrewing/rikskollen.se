@@ -129,9 +129,18 @@
         API-tjänsten skriver inte rutinmässiga besöksloggar. Dess diagnostik begränsas till
         uppgifter utan besökarens adress, sökfrågor eller HTTP-rubriker. Driftloggar på
         applikationsservern roteras efter storlek, inte efter en garanterad tidsgräns, och kan läsas
-        av behöriga serveradministratörer. Cloudflares kontoinställningar och den fullständiga
-        leveranskedjans lagringstider återstår att verifiera. Vi lovar därför inte att ett besök är
-        helt anonymt genom hela leveranskedjan.
+        av behöriga serveradministratörer.
+      </p>
+      <p>
+        Cloudflares kontrollpanel visar trafikstatistik och uppgifter om enskilda HTTP-förfrågningar,
+        bland annat tidpunkt och begärd sökväg. Gränssnittet erbjuder även fält för IP-adress och
+        klientinformation. Behöriga konton och API-behörigheter kan ge åtkomst till trafikuppgifterna.
+        Cloudflare beskriver den inbyggda HTTP-analysen som stickprovsbaserad och anger minst
+        31 dagars lagring för detta dataset. Det är ingen garanti om radering efter 31 dagar.
+        <a href="https://developers.cloudflare.com/observability/logs/datasets/">Cloudflares dokumentation om trafikdata och lagring</a>.
+        Den exakta lagringstiden för samtliga led och möjligheten att stänga av den inbyggda
+        insamlingen är inte verifierade. Vi lovar därför inte att ett besök är helt anonymt
+        genom hela leveranskedjan.
       </p>
       <p>
         Ledamöternas namn, uppdrag och röstposter är offentliga personuppgifter från riksdagen. Det
@@ -142,8 +151,9 @@
       <h3 id="besoksstatistik">Besöksstatistik</h3>
       <p>
         Ingen separat besöksanalys är installerad i applikationen och någon publik besöksdashboard
-        finns ännu inte. Cloudflare kan sammanställa trafik- och säkerhetsstatistik som en del av
-        leveransen; dess omfattning och lagringstider återstår att verifiera. Röst- och
+        finns ännu inte. Vid kontrollen den 18 november 2026 var Rikskollen inte registrerad i
+        Cloudflare Web Analytics. Cloudflares inbyggda trafik- och säkerhetsanalys är en separat
+        behandling och finns ändå tillgänglig i kontrollpanelen. Röst- och
         beslutsstatistik på Rikskollen beskriver riksdagens källposter, inte webbplatsens besökare.
       </p>
       <p>
