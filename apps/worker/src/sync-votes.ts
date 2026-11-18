@@ -1,3 +1,4 @@
+import { downloadVoteDetail } from './clients/vote-detail';
 import {
   recordImportAttempt,
   type AttemptProgress,
@@ -22,10 +23,11 @@ import {
 export async function syncVotes(
   loadArchive = downloadVoteArchive,
   onlyChanged = false,
+  loadDetail = downloadVoteDetail,
 ) {
   return recordImportAttempt(
     { dataset: 'votes', job: 'votes', session: '2025/26' },
-    (progress) => executeSyncVotes(loadArchive, progress, onlyChanged),
+    (progress) => executeSyncVotes(loadArchive, progress, onlyChanged, loadDetail),
     (result) => ({
       importedCount: result.unchanged ? 0 : result.eventCount,
       unchanged: result.unchanged,
@@ -38,6 +40,7 @@ async function executeSyncVotes(
   loadArchive = downloadVoteArchive,
   progress: AttemptProgress,
   onlyChanged: boolean,
+  loadDetail: typeof downloadVoteDetail,
 ) {
   const url = archiveUrl();
   const bytes = await loadArchive(url);
@@ -46,6 +49,13 @@ async function executeSyncVotes(
   const { db, pgPool } = createDatabaseClient();
   let runId: string | undefined;
   try {
+    // Read metadata only for archive events without date or verified report context.
+    // Fail closed if the source changes beyond this deliberately small correction set.
+    const details = new Map<string, Awaited<ReturnType<typeof downloadVoteDetail>>>();
+    const candidates = names.map(name => parseVoteFile(name, files[name], url).event)
+      .filter(event => !event.voteDate || !event.documentId);
+    if (candidates.length > 20) throw new Error('Vote detail candidate limit exceeded');
+    for (const event of candidates) details.set(event.voteId, await loadDetail(event));
     if (onlyChanged) {
       const previous = await pgPool.query<{
         id: string;
@@ -74,8 +84,10 @@ async function executeSyncVotes(
         const events = await pgPool.query<{
           source_file: string;
           source_hash: string;
+          vote_id: string;
+          detail_source_hash: string | null;
         }>(
-          'SELECT source_file, source_hash FROM vote_events WHERE run_id = $1',
+          'SELECT source_file, source_hash, vote_id, detail_source_hash FROM vote_events WHERE run_id = $1',
           [run.id],
         );
         const hashes = new Map(
@@ -83,6 +95,7 @@ async function executeSyncVotes(
         );
         // ZIP metadata can change every day without a single source row changing.
         if (
+          events.rows.every(event => (details.get(event.vote_id)?.detailSourceHash ?? null) === event.detail_source_hash) &&
           names.every(
             (name) =>
               hashes.get(name) ===
@@ -119,7 +132,7 @@ async function executeSyncVotes(
         throw new Error(`Duplicate vote ID ${event.voteId}`);
       seen.add(event.voteId);
       await db.transaction(async (tx) => {
-        await tx.insert(voteEvents).values({ ...event, runId: run.id });
+        await tx.insert(voteEvents).values({ ...event, ...details.get(event.voteId), runId: run.id });
         await tx
           .insert(voteChoices)
           .values(choices.map((choice) => ({ ...choice, runId: run.id })));

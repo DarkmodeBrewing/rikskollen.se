@@ -64,6 +64,13 @@
       "when": 1791742895560,
       "tag": "0008_next_kabuki",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795026886299,
+      "tag": "0009_vote-detail-metadata",
+      "breakpoints": true
     }
   ]
 }

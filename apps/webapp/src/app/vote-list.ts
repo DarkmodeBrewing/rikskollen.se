@@ -59,7 +59,7 @@ import { MemberService, type VoteStatus, type VoteList } from './member.service'
                   {{ vote.session }}</small
                 >
                 <span
-                  >{{ vote.voteDate || 'Datum saknas i källan' }} · {{ vote.subjectType }} ·
+                  >{{ vote.voteDate || vote.detailDate || 'Datum inte verifierat' }} · {{ vote.subjectType }} ·
                   {{ vote.mainVoteType }}</span
                 >
               </div>

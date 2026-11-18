@@ -29,7 +29,7 @@ import { MemberService, type VoteDetail } from './member.service';
           {{ vote.event.proposalPoint }}
         </p>
         <p>
-          {{ vote.event.voteDate || 'Datum saknas i källan' }} · {{ vote.event.subjectType }} ·
+          {{ vote.event.voteDate || vote.event.detailDate || 'Datum inte verifierat' }} · {{ vote.event.subjectType }} ·
           {{ vote.event.mainVoteType }}
         </p>
       </section>
@@ -49,6 +49,14 @@ import { MemberService, type VoteDetail } from './member.service';
         }
         <a [href]="vote.event.sourceUrl" target="_blank" rel="noopener">Voteringens källa ↗</a>
       </aside>
+      @if (vote.event.detailSourceUrl) {
+        <aside class="notice">
+          Rubrik och kompletterande datum från riksdagens voteringspost, hämtad
+          {{ vote.event.detailFetchedAt | date: 'yyyy-MM-dd HH:mm' }}.
+          Arkivets ursprungliga datum: {{ vote.event.voteDate || 'saknas i arkivet' }}.
+          <a [href]="vote.event.detailSourceUrl" target="_blank" rel="noopener">Kompletterande källa ↗</a>
+        </aside>
+      }
       @if (vote.event.context; as context) {
         @if (context.titleSourceUrl) {
           <aside class="notice">

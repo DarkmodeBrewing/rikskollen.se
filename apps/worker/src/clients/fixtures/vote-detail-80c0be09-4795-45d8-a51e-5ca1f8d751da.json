@@ -1,0 +1,35 @@
+{
+  "votering": {
+    "dokument": {
+      "hangar_id": "5296740",
+      "dok_id": "HD190311-1",
+      "rm": "2025/26",
+      "beteckning": "0311-1",
+      "typ": "votering",
+      "subtyp": "huvudvotering",
+      "doktyp": "votering",
+      "typrubrik": "Omröstning 2025/26:0311-1",
+      "dokumentnamn": "Omröstning",
+      "debattnamn": "Omröstning",
+      "tempbeteckning": "0",
+      "organ": "-",
+      "mottagare": "",
+      "nummer": "1",
+      "slutnummer": "0",
+      "datum": "2026-03-11 00:00:00",
+      "systemdatum": "2026-09-09 12:21:01",
+      "publicerad": "2026-09-09 12:21:00",
+      "titel": "Omröstning: Motion väckt med anledning av en händelse av större vikt enligt 9 kap. 15 § RO",
+      "subtitel": "",
+      "status": "",
+      "htmlformat": "html",
+      "relaterat_id": "",
+      "source": "RIM-vot",
+      "sourceid": "80C0BE09-4795-45D8-A51E-5CA1F8D751DA",
+      "dokument_url_text": "https://data.riksdagen.se/dokument/HD190311-1/text",
+      "dokument_url_html": "https://data.riksdagen.se/dokument/HD190311-1",
+      "dokumentstatus_url_xml": "https://data.riksdagen.se/dokumentstatus/HD190311-1",
+      "html": null
+    }
+  }
+}

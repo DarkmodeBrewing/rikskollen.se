@@ -6,3 +6,7 @@ describe('voteLabel', () => {
     expect(voteLabel({})).toBe('Votering utan importerad rubrik');
   });
 });
+
+it('prefers the verified vote-specific title over general report context', () => {
+  expect(voteLabel({ detailTitle: 'Omröstning: Källans rubrik', context: { pointHeading: 'Punkt', reportTitle: 'Rapport' } })).toBe('Omröstning: Källans rubrik');
+});

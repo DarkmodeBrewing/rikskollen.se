@@ -16,7 +16,7 @@ export function fixtureRows(count = 349) {
     rost: i === 0 ? 'Frånvarande' : 'Ja',
     avser: 'sakfrågan',
     votering: 'huvud',
-    datum: '2026-03-04',
+    datum: '2026-03-04' as string | null,
   }));
 }
 export function fixtureArchive(rows = fixtureRows()) {

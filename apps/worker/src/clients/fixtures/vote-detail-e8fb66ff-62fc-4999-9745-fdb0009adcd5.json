@@ -1,0 +1,35 @@
+{
+  "votering": {
+    "dokument": {
+      "hangar_id": "5296743",
+      "dok_id": "HD190604-1",
+      "rm": "2025/26",
+      "beteckning": "0604-1",
+      "typ": "votering",
+      "subtyp": "huvudvotering",
+      "doktyp": "votering",
+      "typrubrik": "Omröstning 2025/26:0604-1",
+      "dokumentnamn": "Omröstning",
+      "debattnamn": "Omröstning",
+      "tempbeteckning": "0",
+      "organ": "-",
+      "mottagare": "",
+      "nummer": "1",
+      "slutnummer": "0",
+      "datum": "2026-06-04 00:00:00",
+      "systemdatum": "2026-09-09 12:31:21",
+      "publicerad": "2026-09-09 12:31:21",
+      "titel": "Omröstning: Fråga om hänvisning av motion till utskott",
+      "subtitel": "",
+      "status": "",
+      "htmlformat": "html",
+      "relaterat_id": "",
+      "source": "RIM-vot",
+      "sourceid": "E8FB66FF-62FC-4999-9745-FDB0009ADCD5",
+      "dokument_url_text": "https://data.riksdagen.se/dokument/HD190604-1/text",
+      "dokument_url_html": "https://data.riksdagen.se/dokument/HD190604-1",
+      "dokumentstatus_url_xml": "https://data.riksdagen.se/dokumentstatus/HD190604-1",
+      "html": null
+    }
+  }
+}

@@ -99,6 +99,7 @@ export const closeDatabase = () => pgPool.end();
 // Readiness requires connectivity and the latest applied schema, not imported data.
 export async function checkDatabaseReady() {
   await pgPool.query('SELECT trigger, unchanged, unavailable_count FROM import_attempts LIMIT 0');
+  await pgPool.query('SELECT detail_source_hash FROM vote_events LIMIT 0');
   await pgPool.query('SELECT availability FROM decision_source_checks LIMIT 0');
 }
 
@@ -129,7 +130,7 @@ export async function listVotes(page: number, limit: number) {
     .from(voteEvents)
     .where(eq(voteEvents.runId, run.id))
     .orderBy(
-      desc(voteEvents.voteDate),
+      sql`coalesce(${voteEvents.voteDate}, ${voteEvents.detailDate}) DESC NULLS LAST`,
       asc(voteEvents.designation),
       asc(voteEvents.proposalPoint),
     )
@@ -348,7 +349,7 @@ export async function getMemberVotes(
     (SELECT count(*)::int FROM vote_events WHERE run_id = $1) AS "sourceEvents",
     (SELECT count(*)::int FROM vote_choices c JOIN vote_events v
       ON v.run_id = c.run_id AND v.vote_id = c.vote_id
-      WHERE c.run_id = $1 AND c.person_id = $2 AND v.vote_date IS NULL) AS "eventsWithoutDate"`,
+      WHERE c.run_id = $1 AND c.person_id = $2 AND coalesce(v.vote_date, v.detail_date) IS NULL) AS "eventsWithoutDate"`,
     [run.id, personId]);
   const coverage = coverageResult.rows[0];
   const recordedEvents = choices.reduce((sum, row) => sum + row.count, 0);
@@ -365,7 +366,7 @@ export async function getMemberVotes(
     )
     .where(where)
     .orderBy(
-      desc(voteEvents.voteDate),
+      sql`coalesce(${voteEvents.voteDate}, ${voteEvents.detailDate}) DESC NULLS LAST`,
       asc(voteEvents.designation),
       asc(voteEvents.proposalPoint),
       asc(voteEvents.voteId),
