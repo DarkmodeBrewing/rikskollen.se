@@ -199,3 +199,7 @@ This post-M4 roadmap is intentionally ordered by product leverage: make the exis
 ## November 18 correction priority before the next rollout
 
 Merged homepage/rename PRs #33/#34 await live acceptance. Complete [vote metadata mapping investigation, scroll restoration, and AGPL/privacy correction](import-navigation-triage.md) before that rollout. Anonymous public analytics remains the following planned feature slice; calendar, broader datasets and deeper analysis remain deferred. Privacy retention/account verification and the separate operational recovery gates are not waived by completing implementation.
+
+## Visitor analytics evaluation — November 18
+
+The [Plausible/Umami evaluation and proposed collection contract](visitor-analytics-evaluation.md) recommends a bounded Plausible CE prototype with page-category-only events, temporary identifier disclosure and a verified retention/public-access gate. This is a proposal, not an installed collector. Exact pinned CE behavior, data expiry and public-view isolation remain to be tested before rollout. The #33–#35 implementation is deployed at `f4bbd2a`; production acceptance is recorded separately from the earlier pre-rollout notes.
