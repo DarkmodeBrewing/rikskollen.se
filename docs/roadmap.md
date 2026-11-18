@@ -195,3 +195,7 @@ These ideas are useful but are not current delivery work:
 - [page-metadata.md](page-metadata.md) remains the baseline for page identity and sharing; homepage/navigation changes must preserve its canonical/share semantics.
 
 This post-M4 roadmap is intentionally ordered by product leverage: make the existing data understandable, make it timely/followable, derive transparent analysis, then add external datasets.
+
+## November 18 correction priority before the next rollout
+
+Merged homepage/rename PRs #33/#34 await live acceptance. Complete [vote metadata mapping investigation, scroll restoration, and AGPL/privacy correction](import-navigation-triage.md) before that rollout. Anonymous public analytics remains the following planned feature slice; calendar, broader datasets and deeper analysis remain deferred. Privacy retention/account verification and the separate operational recovery gates are not waived by completing implementation.

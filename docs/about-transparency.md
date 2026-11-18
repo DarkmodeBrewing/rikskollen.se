@@ -38,3 +38,7 @@ Web build and E2E TypeScript check: PASS. Frontend unit tests: seven passed. Ful
 ### GitHub account rename — 2026-11-18
 
 Public operator/profile, repository, Issues and methodology links now use `DarkmodeTools`. The footer, homepage, Datastatus and older roadmap issue links are updated alongside `/om`. The local development remote now points to `https://github.com/DarkmodeTools/rikskollen.se.git`. No account-qualified image registry, workflow or deployment references were found in `.github`, `deploy` or the README. The VPS checkout remote still needs verification during the next approved rollout; this change does not modify the host or deploy the site. Existing code-licence and infrastructure log-retention decisions above remain open.
+
+### Licence/privacy correction — 2026-11-18
+
+The operator selected AGPL-3.0-only. The repository now carries the official licence text and `/om` explains corresponding-source access separately from parliamentary data rights. This supersedes the earlier no-explicit-licence baseline above. Routine API request logging is disabled in the pending implementation and error/request serialization is minimized. [Verified hosting facts and proposed seven-day/access policy](privacy-operations.md) distinguish present size-based limits from unverified provider retention. No hosting setting or production log was changed. Cloudflare/account-level review remains a release gate.

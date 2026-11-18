@@ -87,7 +87,7 @@ import { MemberService } from './member.service';
                 }
                 <small>{{ row.event.designation }} · punkt {{ row.event.proposalPoint }}</small>
               </div>
-              <span>{{ row.event.voteDate || 'Datum okänt' }} · {{ row.choice }}</span>
+              <span>{{ row.event.voteDate || row.event.detailDate || 'Datum inte verifierat' }} · {{ row.choice }}</span>
             </li>
           } @empty {
             <li>Inga källposter för detta ID med det valda filtret.</li>

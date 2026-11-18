@@ -131,3 +131,9 @@ Scheduled imports are opt-in; see [cadence, bounded corrections and activation](
 M4.4 recovery work starts with [database backups and isolated restore verification](docs/backup-restore.md). Scripts preserve complete database history/provenance and restore only into disposable resources; off-host durability, alerts and host recovery acceptance remain open.
 
 [Operational monitoring and webhook alerts](docs/monitoring-alerts.md) use the optional `monitoring` profile. It checks health and expected import jobs with persisted failure/recovery delivery; ordinary startup does not enable notifications. Host receiver acceptance and independent outage detection remain separate.
+
+## Licence and visitor privacy
+
+Rikskollen's original code is licensed under **AGPL-3.0-only**; see [LICENSE](LICENSE). Modified network versions must offer their corresponding source as required by that licence. Existing third-party notices and licences remain applicable. Parliamentary source data is governed separately by [Riksdag terms](https://www.riksdagen.se/sv/dokument-och-lagar/riksdagens-oppna-data/anvandarstod/anvandningsvillkor/).
+
+The public footer links to the source repository. Keep that link pointed at the corresponding deployed source when hosting a modified version. See [privacy evidence and proposed operations policy](docs/privacy-operations.md) and [import/navigation triage](docs/import-navigation-triage.md).

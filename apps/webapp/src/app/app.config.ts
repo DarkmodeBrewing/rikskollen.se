@@ -1,7 +1,8 @@
+import { NavigationScroll } from './navigation-scroll';
 import { registerLocaleData } from '@angular/common';
 import sv from '@angular/common/locales/sv';
 registerLocaleData(sv);
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
@@ -15,7 +16,8 @@ import {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' })),
+    provideAppInitializer(() => { inject(NavigationScroll).start(); }),
+    provideRouter(routes, withInMemoryScrolling()),
     provideHttpClient(withFetch()),
     provideClientHydration(withEventReplay(), withNoIncrementalHydration()),
   ],

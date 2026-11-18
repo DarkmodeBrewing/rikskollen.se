@@ -126,8 +126,12 @@
       <p>
         Webbtrafiken går via Cloudflare och tjänstens webbservrar. Tekniska trafikuppgifter, till
         exempel IP-adress och begärd adress, kan behandlas där för att leverera och skydda tjänsten.
-        Verifierade uppgifter om driftloggarnas lagringstider och åtkomst återstår att publicera. Vi
-        lovar därför inte att ett besök är helt anonymt genom hela leveranskedjan.
+        API-tjänsten skriver inte rutinmässiga besöksloggar. Dess diagnostik begränsas till
+        uppgifter utan besökarens adress, sökfrågor eller HTTP-rubriker. Driftloggar på
+        applikationsservern roteras efter storlek, inte efter en garanterad tidsgräns, och kan läsas
+        av behöriga serveradministratörer. Cloudflares kontoinställningar och den fullständiga
+        leveranskedjans lagringstider återstår att verifiera. Vi lovar därför inte att ett besök är
+        helt anonymt genom hela leveranskedjan.
       </p>
       <p>
         Ledamöternas namn, uppdrag och röstposter är offentliga personuppgifter från riksdagen. Det
@@ -137,9 +141,10 @@
       </p>
       <h3 id="besoksstatistik">Besöksstatistik</h3>
       <p>
-        Ingen besöksanalys är installerad i applikationen och någon publik besöksdashboard finns
-        ännu inte. Röst- och beslutsstatistik på Rikskollen beskriver riksdagens källposter, inte
-        webbplatsens besökare.
+        Ingen separat besöksanalys är installerad i applikationen och någon publik besöksdashboard
+        finns ännu inte. Cloudflare kan sammanställa trafik- och säkerhetsstatistik som en del av
+        leveransen; dess omfattning och lagringstider återstår att verifiera. Röst- och
+        beslutsstatistik på Rikskollen beskriver riksdagens källposter, inte webbplatsens besökare.
       </p>
       <p>
         En framtida lösning för aggregerad besöksstatistik är planerad. Vad den samlar in, hur länge
@@ -161,9 +166,11 @@
         förbättringsförslag där.
       </p>
       <p>
-        Projektet har ännu ingen uttrycklig kodlicens i arkivet. Att koden går att läsa innebär inte
-        i sig att den är fritt licensierad. Kontakta projektet före återanvändning om villkoren är
-        oklara.
+        Rikskollens egen programkod licensieras under
+        <a href="https://github.com/DarkmodeTools/rikskollen.se/blob/main/LICENSE">GNU AGPL version 3 (AGPL-3.0-only)</a>.
+        Licensen kräver bland annat att användare av en modifierad nätverkstjänst erbjuds dess
+        motsvarande källkod. Tredjepartsberoenden har egna licenser. Riksdagens källuppgifter
+        omfattas av sina egna användningsvillkor, inte av kodlicensen.
       </p>
     </section>
     <section id="kontakt" tabindex="-1" aria-labelledby="contact-title">

@@ -1,0 +1,35 @@
+{
+  "votering": {
+    "dokument": {
+      "hangar_id": "5296744",
+      "dok_id": "HD191021-1",
+      "rm": "2025/26",
+      "beteckning": "1021-1",
+      "typ": "votering",
+      "subtyp": "huvudvotering",
+      "doktyp": "votering",
+      "typrubrik": "Omröstning 2025/26:1021-1",
+      "dokumentnamn": "Omröstning",
+      "debattnamn": "Omröstning",
+      "tempbeteckning": "0",
+      "organ": "-",
+      "mottagare": "",
+      "nummer": "1",
+      "slutnummer": "0",
+      "datum": "2025-10-21 00:00:00",
+      "systemdatum": "2026-09-09 12:33:06",
+      "publicerad": "2026-09-09 12:33:06",
+      "titel": "Omröstning: Prövning av yrkande om folkomröstning om vilande grundlagsförslag",
+      "subtitel": "",
+      "status": "",
+      "htmlformat": "html",
+      "relaterat_id": "",
+      "source": "RIM-vot",
+      "sourceid": "CA4CE393-FB64-4B3F-B78C-F77A6AD02228",
+      "dokument_url_text": "https://data.riksdagen.se/dokument/HD191021-1/text",
+      "dokument_url_html": "https://data.riksdagen.se/dokument/HD191021-1",
+      "dokumentstatus_url_xml": "https://data.riksdagen.se/dokumentstatus/HD191021-1",
+      "html": null
+    }
+  }
+}

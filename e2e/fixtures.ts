@@ -4,7 +4,7 @@ import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { member, events, history, trail, decisions, timestamp, dataStatus, overview } from './data';
 
-type Scenario = 'normal' | 'empty' | 'error' | 'missing' | 'no-context';
+type Scenario = 'normal' | 'empty' | 'error' | 'missing' | 'no-context' | 'vote-details';
 export interface FixtureApp {
   url: string;
   scenario: Scenario;
@@ -41,6 +41,11 @@ export const test = base.extend<{ app: FixtureApp }>({
         page,
         limit,
       });
+      const metadataEvent = app.scenario === 'vote-details' ? {
+        ...events[0], voteDate: null, documentId: null, context: undefined,
+        detailTitle: 'Omröstning: Källans kompletterande rubrik', detailDate: '2026-03-11',
+        detailSourceUrl: 'https://data.riksdagen.se/votering/test-vote-1/json', detailFetchedAt: timestamp,
+      } : events[0];
       let body: unknown;
       let status = 200;
       if (path === '/ready') body = { ok: true };
@@ -106,19 +111,19 @@ export const test = base.extend<{ app: FixtureApp }>({
               );
         body = {
           ...history,
-          ...paged(rows),
+          ...paged(rows.map(row => row.event.voteId === events[0].voteId ? { ...row, event: metadataEvent } : row)),
           choice,
           summary: app.scenario === 'empty' ? null : history.summary,
         };
       } else if (path === '/api/votes')
         body = {
-          ...paged(app.scenario === 'empty' ? [] : events),
+          ...paged(app.scenario === 'empty' ? [] : [metadataEvent, ...events.slice(1)]),
           session: '2025/26',
         };
       else if (path === `/api/votes/${events[0].voteId}`)
         body = {
-          event: events[0],
-          decisionTrailAvailable: app.scenario !== 'no-context',
+          event: metadataEvent,
+          decisionTrailAvailable: app.scenario !== 'no-context' && app.scenario !== 'vote-details',
           choices: [
             {
               ...member,

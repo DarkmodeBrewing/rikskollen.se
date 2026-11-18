@@ -102,6 +102,10 @@ export interface VoteEvent {
   subjectType: string;
   mainVoteType: string;
   voteDate: string | null;
+  detailTitle?: string | null;
+  detailDate?: string | null;
+  detailSourceUrl?: string | null;
+  detailFetchedAt?: string | null;
   sourceUrl: string;
   sourceFile: string;
 }

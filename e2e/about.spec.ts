@@ -18,8 +18,10 @@ test('transparency is server rendered, indexable and available without the data 
   expect(html).toContain('Frånvarande betyder registrerad som frånvarande');
   expect(html).toContain('DarkmodeTools');
   expect(html).toContain(
-    'Verifierade uppgifter om driftloggarnas lagringstider',
+    'Cloudflares kontoinställningar',
   );
+  expect(html).toContain('AGPL-3.0-only');
+  expect(html).toContain('https://github.com/DarkmodeTools/rikskollen.se/blob/main/LICENSE');
   const sitemap = await (await request.get(`${app.url}/sitemap.xml`)).text();
   expect(sitemap).toContain('<loc>https://rikskollen.se/om</loc>');
   expect(app.requests.filter((path) => path.startsWith('/api/'))).toEqual([]);
