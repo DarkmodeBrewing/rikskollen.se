@@ -1,0 +1,120 @@
+.home-intro {
+  margin-bottom: 2rem;
+}
+.home-intro h1 {
+  max-width: 15ch;
+}
+.home-period {
+  padding: 0.8rem 1rem;
+  border-left: 4px solid #c38a36;
+  background: #f1e9d8;
+  font-size: 0.9rem !important;
+}
+.home-explore {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.home-explore a {
+  padding: 1.4rem;
+  border: 1px solid #c9d4cc;
+  background: #fff;
+  text-decoration: none;
+}
+.home-explore strong {
+  display: block;
+  color: #096650;
+  margin-bottom: 0.8rem;
+  font-size: 1.15rem;
+}
+.home-explore span {
+  line-height: 1.6;
+  color: #52635d;
+}
+.home-search {
+  margin-block: 2rem 3rem;
+}
+.home-recent,
+.home-statistics {
+  margin-block: 3.5rem;
+}
+.home-reports {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-block: 1.5rem;
+}
+.home-reports li {
+  border-top: 2px solid #087963;
+  padding-top: 1rem;
+}
+.home-reports a {
+  color: #096650;
+}
+.home-reports h3 {
+  line-height: 1.5;
+}
+.home-stat-grid {
+  align-items: start;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.home-stat {
+  margin: 0;
+  padding: 1.75rem;
+}
+.home-stat > a {
+  display: block;
+  margin-block: 1rem;
+  color: #096650;
+}
+.home-stat .home-number {
+  font-size: 2.7rem;
+  font-weight: 750;
+  color: #162824;
+  line-height: 1.25;
+  margin-block: 1rem;
+}
+.home-number span {
+  display: block;
+  font-size: 1rem;
+  font-weight: 400;
+}
+.home-methods div {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding-block: 0.6rem;
+  border-bottom: 1px solid #d9dfd7;
+}
+.home-methods dd {
+  margin: 0;
+  font-weight: 750;
+}
+.home-stat details {
+  margin-block: 1rem;
+}
+.home-stat summary {
+  cursor: pointer;
+}
+.home-about a {
+  color: #096650;
+  font-weight: 700;
+}
+@media (max-width: 700px) {
+  .home-explore,
+  .home-reports,
+  .home-stat-grid {
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.home-stat summary:focus-visible {
+  outline: 3px solid #096e59;
+  outline-offset: 4px;
+}

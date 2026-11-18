@@ -31,11 +31,11 @@ export function bindPageMetadata(metadata: () => PageMetadata) {
     const url = new URL(routeUrl(), siteOrigin);
     // Keep paginated lists crawlable; consolidate filtered member histories by profile.
     const canonicalUrl = new URL(url.pathname, siteOrigin);
-    const isSearch = url.pathname === '/' && !!url.searchParams.get('q')?.trim();
+    const isSearch = url.pathname === '/ledamoter' && !!url.searchParams.get('q')?.trim();
     const pageNumber = Number(url.searchParams.get('page'));
     if (
       !isSearch &&
-      ['/', '/voteringar', '/arenden'].includes(url.pathname) &&
+      ['/ledamoter', '/voteringar', '/arenden'].includes(url.pathname) &&
       Number.isInteger(pageNumber) &&
       pageNumber > 1
     ) {

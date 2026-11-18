@@ -195,3 +195,17 @@ export const dataStatus: import('../packages/shared-types/src/data-status').Data
       startedAt: timestamp, finishedAt: i === 0 ? null : timestamp, durationSeconds: i === 0 ? null : 0,
     })) },
 };
+
+export const overview: import('../packages/shared-types/src/overview').Overview = {
+  session: '2025/26', generatedAt: timestamp,
+  votes: { runId: 'fixture-votes', sourceUrl: 'https://data.riksdagen.se/dataset/test.zip', importedAt: timestamp, events: 25, expectedEvents: 25 },
+  decisions: {
+    catalogRunId: 'fixture-catalog', sourceUrl: 'https://data.riksdagen.se/dokumentlista/?rm=2025/26',
+    catalogImportedAt: timestamp, latestReportImportedAt: timestamp,
+    reports: 1, sourceReports: 2, excludedReports: 1, sourceGaps: 1,
+    points: 5, methods: {recordedVote: 1, acclamation: 2, other: 1, unknown: 1},
+    sourceValues: [{value:'röstning',count:1},{value:'acklamation',count:2},{value:'Annat källvärde',count:1},{value:'',count:1}],
+    undatedReports: 0,
+    recent: [{documentId:'TESTREPORT',designation:'TEST1',title:trail.document.title,decisionDate:'2026-01-09',sourceUrl:trail.sourceUrl,importedAt:timestamp}],
+  },
+};

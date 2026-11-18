@@ -1,3 +1,4 @@
+import { readOverview } from './overview';
 import { readDataStatus } from './data-status';
 import { withVoteContext } from './vote-context';
 import {
@@ -399,3 +400,5 @@ export async function getVoteImportStatus() {
 }
 
 export const getDataStatus = (page: number) => readDataStatus(pgPool, page);
+
+export const getOverview = () => readOverview(pgPool);

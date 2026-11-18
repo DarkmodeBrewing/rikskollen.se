@@ -13,7 +13,7 @@ import { VoteHistoryComponent } from './vote-history';
   imports: [DatePipe, RouterLink, VoteHistoryComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a routerLink="/" class="back">← Alla ledamöter</a>
+    <a routerLink="/ledamoter" class="back">← Alla ledamöter</a>
     @let state = member();
     @if (state.status === 'ready') {
       @let member = state.data;

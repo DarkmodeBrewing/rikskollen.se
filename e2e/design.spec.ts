@@ -6,7 +6,7 @@ test('member layout has room to read and chart retains full counts after filteri
   request,
   app,
 }, testInfo) => {
-  await page.goto('/');
+  await page.goto('/ledamoter');
   const firstMember = page.locator('.member-directory a').first();
   const row = await firstMember.boundingBox();
   expect(row!.height).toBeGreaterThanOrEqual(100);

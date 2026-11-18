@@ -63,7 +63,7 @@ test('vote/report loading, missing and failed requests stay distinct and paging 
   app,
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/ledamoter');
   await expect(page.locator('.member-directory a').first()).toBeVisible();
   let release!: () => void;
   app.delay = new Promise<void>((resolve) => {

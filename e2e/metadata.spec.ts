@@ -6,7 +6,8 @@ test('SSR serves descriptive titles, canonical URLs and social cards before Java
   request,
 }) => {
   for (const [path, title] of [
-    ['/', 'Ledamöter | Rikskollen'],
+    ['/', 'Utforska riksdagens beslut | Rikskollen'],
+    ['/ledamoter', 'Ledamöter | Rikskollen'],
     ['/om', 'Om Rikskollen | Rikskollen'],
     ['/voteringar', 'Registrerade voteringar | Rikskollen'],
     ['/arenden', 'Ärenden och beslutspunkter | Rikskollen'],
@@ -76,14 +77,14 @@ test('client navigation replaces metadata, shares filters and does not index una
     'href',
     'https://rikskollen.se/voteringar?page=2',
   );
-  await page.goto('/?q=Test&page=2');
+  await page.goto('/ledamoter?q=Test&page=2');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
     'noindex, follow',
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
-    'https://rikskollen.se/',
+    'https://rikskollen.se/ledamoter',
   );
   app.scenario = 'missing';
   await page.goto(`/ledamot/${member.personId}`);

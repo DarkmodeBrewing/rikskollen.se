@@ -4,7 +4,7 @@ import { member, events, trail } from './data';
 test('member search, paging and keyboard navigation preserve the query', async ({
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/ledamoter');
   const search = page.getByRole('textbox', {
     name: 'Sök namn, parti eller valkrets',
   });
@@ -184,7 +184,7 @@ test('empty lists and unavailable imports are visible', async ({
   page,
 }) => {
   app.scenario = 'empty';
-  await page.goto('/');
+  await page.goto('/ledamoter');
   await expect(
     page.getByText('Inga träffar. Prova en annan sökning.'),
   ).toBeVisible();
@@ -230,7 +230,7 @@ test('API outage differs from empty data and refresh recovers', async ({
   page,
 }) => {
   app.scenario = 'error';
-  await page.goto('/');
+  await page.goto('/ledamoter');
   await expect(
     page.getByText(
       'Listan kunde inte hämtas. Kontrollera att API och databas körs.',
@@ -256,7 +256,7 @@ test('delayed browser API request completes without losing navigation', async ({
   app,
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/ledamoter');
   let release!: () => void;
   app.delay = new Promise<void>((resolve) => {
     release = resolve;
@@ -338,7 +338,7 @@ test('member profile loading and failure are distinct from missing data', async 
   app,
   page,
 }) => {
-  await page.goto('/');
+  await page.goto('/ledamoter');
   // Finish the directory's browser request before delaying profile requests.
   await expect(page.locator('.member-directory a').first()).toBeVisible();
   let release!: () => void;
@@ -381,7 +381,7 @@ test('failed member import status is not presented as an unimported directory', 
   page,
 }) => {
   app.scenario = 'error';
-  await page.goto('/');
+  await page.goto('/ledamoter');
   await expect(
     page
       .getByRole('alert')

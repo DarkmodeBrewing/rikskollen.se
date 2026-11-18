@@ -1,0 +1,205 @@
+<section class="intro home-intro">
+  <p class="eyebrow">Oberoende · Källa: Sveriges riksdag</p>
+  <h1>Följ besluten.<br />Se källorna.</h1>
+  <p>
+    Vad handlade ärendet om? Hur röstade ledamöterna? Rikskollen hjälper dig att följa uppgifterna
+    från överblick till originalhandling.
+  </p>
+  <p class="home-period">
+    Underlaget gäller riksmötet 2025/26. Det är inte ett nyhetsflöde för dagens riksdagsarbete.
+  </p>
+</section>
+<nav class="home-explore" aria-label="Utforska uppgifterna">
+  <a routerLink="/arenden"
+    ><strong>Ärenden och beslut →</strong
+    ><span>Läs betänkanden, förslagspunkter och beslutssätt.</span></a
+  >
+  <a routerLink="/voteringar"
+    ><strong>Registrerade voteringar →</strong
+    ><span>Se röstposterna och följ länken till underlaget.</span></a
+  >
+  <a routerLink="/ledamoter"
+    ><strong>Ledamöter →</strong
+    ><span>Hitta en person, uppdragen och de registrerade rösterna.</span></a
+  >
+</nav>
+<form action="/ledamoter" method="get" class="search home-search">
+  <label for="home-q">Hitta en ledamot efter namn, parti eller valkrets</label>
+  <div>
+    <input id="home-q" name="q" placeholder="Till exempel Stockholm" /><button type="submit">
+      Sök ledamot
+    </button>
+  </div>
+</form>
+@let state = result();
+@if (state.status === 'ready') {
+  @let data = state.data;
+  <section aria-labelledby="recent-title" class="home-recent">
+    <p class="eyebrow">Beslutade betänkanden · {{ data.session }}</p>
+    <h2 id="recent-title">Senast daterade beslutsunderlag i urvalet</h2>
+    <p>
+      Sorterat efter källans beslutsdatum, inte importtid. Här visas högst tre importerade underlag.
+    </p>
+    @if (data.decisions; as decisions) {
+      <ol class="home-reports">
+        @for (report of decisions.recent; track report.documentId) {
+          <li>
+            <p class="document-reference">
+              {{ data.session }}:{{ report.designation }} ·
+              <time [attr.datetime]="report.decisionDate">{{ report.decisionDate }}</time>
+            </p>
+            <h3>
+              <a [routerLink]="['/arende', report.documentId]">{{
+                report.title || report.documentId
+              }}</a>
+            </h3>
+            <a [href]="report.sourceUrl">Originalets dokumentstatus ↗</a>
+          </li>
+        } @empty {
+          <li>Inga daterade beslutsunderlag har importerats i urvalet ännu.</li>
+        }
+      </ol>
+      @if (decisions.undatedReports) {
+        <p>
+          {{ decisions.undatedReports }}
+          {{
+            decisions.undatedReports === 1 ? 'importerat underlag' : 'importerade underlag'
+          }}
+          saknar ett användbart beslutsdatum och visas inte i datumlistan.
+        </p>
+      }
+    } @else {
+      <p>Ingen fullständig betänkandekatalog har importerats ännu.</p>
+    }
+    <a routerLink="/arenden">Utforska alla importerade ärenden →</a>
+  </section>
+  <section aria-labelledby="overview-title" class="home-statistics">
+    <p class="eyebrow">Källbelagd överblick · {{ data.session }}</p>
+    <h2 id="overview-title">Vad finns i underlaget?</h2>
+    <div class="home-stat-grid">
+      <article class="panel home-stat" aria-labelledby="vote-count-title">
+        <h3 id="vote-count-title">Registrerade voteringar</h3>
+        @if (data.votes; as votes) {
+          <p class="home-number">{{ votes.events | number: '1.0-0' : 'sv' }}</p>
+          <p>
+            {{ votes.events }} av {{ votes.expectedEvents }}
+            {{ votes.expectedEvents === 1 ? 'voteringshändelse' : 'voteringshändelser' }} i det
+            importerade arkivet för {{ data.session }}. Varje händelse räknas en gång.
+          </p>
+          <p>
+            Detta omfattar registrerade voteringar, även om en motivering. Beslut utan registrerad
+            votering ingår inte.
+          </p>
+          <p>
+            Arkivet publicerat här {{ votes.importedAt | stockholmDate }} (Stockholm). En senare
+            oförändrad kontroll ändrar inte tiden.
+          </p>
+          <a [href]="votes.sourceUrl">Källans voteringsarkiv ↗</a>
+        } @else {
+          <p>Ingen slutförd voteringsimport för {{ data.session }} ännu. Antalet är okänt.</p>
+        }
+        <a routerLink="/voteringar">Utforska voteringarna →</a>
+      </article>
+      <article class="panel home-stat" aria-labelledby="method-count-title">
+        <h3 id="method-count-title">Beslutssätt på förslagspunkter</h3>
+        @if (data.decisions; as decisions) {
+          @if (decisions.reports > 0) {
+            <p class="home-number">
+              {{ decisions.points | number: '1.0-0' : 'sv' }}
+              <span>{{ decisions.points === 1 ? 'importerad punkt' : 'importerade punkter' }}</span>
+            </p>
+            <dl class="home-methods">
+              <div>
+                <dt>Röstning</dt>
+                <dd>{{ decisions.methods.recordedVote | number: '1.0-0' : 'sv' }}</dd>
+              </div>
+              <div>
+                <dt>Acklamation</dt>
+                <dd>{{ decisions.methods.acclamation | number: '1.0-0' : 'sv' }}</dd>
+              </div>
+              <div>
+                <dt>Annan beslutstyp</dt>
+                <dd>{{ decisions.methods.other | number: '1.0-0' : 'sv' }}</dd>
+              </div>
+              <div>
+                <dt>Beslutstyp saknas</dt>
+                <dd>{{ decisions.methods.unknown | number: '1.0-0' : 'sv' }}</dd>
+              </div>
+            </dl>
+            <p>
+              Grupperna summerar till {{ decisions.points }} {{ decisions.points === 1 ? 'importerad förslagspunkt' : 'importerade förslagspunkter' }}.
+              Beslutssättet är källans markering, inte antalet voteringshändelser.
+            </p>
+            @if (decisions.methods.other) {
+              <details>
+                <summary>Visa källans beslutstyper</summary>
+                <ul>
+                  @for (value of decisions.sourceValues; track value.value) {
+                    <li>{{ value.value || 'Saknat värde' }}: {{ value.count }}</li>
+                  }
+                </ul>
+              </details>
+            }
+          } @else {
+            <p>
+              Inga beslutsunderlag har importerats från katalogen ännu. Antalet beslutspunkter är
+              okänt.
+            </p>
+          }
+          <p>
+            Underlag för {{ decisions.reports }} av {{ decisions.sourceReports }} beslutade
+            betänkanden i {{ data.session }}. {{ decisions.excludedReports }} saknar importerade
+            underlag; deras okända antal punkter ingår inte.
+          </p>
+          @if (decisions.sourceGaps) {
+            <p>
+              {{ decisions.sourceGaps }}
+              {{
+                decisions.sourceGaps === 1
+                  ? 'betänkande har en kontrollerad källucka'
+                  : 'betänkanden har kontrollerade källuckor'
+              }}. Detta kan även gälla tidigare importerade underlag och är inget extra antal att
+              dra från täckningen.
+            </p>
+          }
+          <p>
+            Endast senaste publicerade versionen per betänkande i katalogen räknas. Andra riksmöten
+            och dokument utanför katalogen ingår inte.
+          </p>
+          <p>Katalog importerad {{ decisions.catalogImportedAt | stockholmDate }} (Stockholm).</p>
+          @if (decisions.latestReportImportedAt) {
+            <p>
+              Senaste underlag publicerat här
+              {{ decisions.latestReportImportedAt | stockholmDate }} (Stockholm). Det betyder inte
+              att alla underlag har uppdaterats då.
+            </p>
+          }
+          <a [href]="decisions.sourceUrl">Källans beslutade betänkanden ↗</a>
+        } @else {
+          <p>
+            Ingen fullständig betänkandekatalog har importerats ännu. Punktantal och täckning är
+            okända.
+          </p>
+        }
+        <a routerLink="/arenden">Läs underlagen och sammanställningen →</a>
+      </article>
+    </div>
+    <aside class="notice">
+      Sammanställningarna beskriver källposter, inte ledamöternas närvaro eller politiska
+      prestation. Saknade uppgifter betyder inte noll. Rikskollen är oberoende av Sveriges riksdag.
+      <a routerLink="/datastatus">Täckning, källuckor och kontroller</a>
+      <a
+        href="https://github.com/DarkmodeBrewing/rikskollen.se/blob/main/docs/data-methodology.md#homepage-overview-202526"
+        >Metod och räkneexempel ↗</a
+      >
+    </aside>
+  </section>
+} @else if (state.status === 'loading') {
+  <p role="status">Hämtar överblick…</p>
+} @else {
+  <div role="alert">
+    <p>Överblicken kunde inte hämtas. Uppgifterna är inte samma sak som noll.</p>
+    <button type="button" (click)="refresh()">Försök igen</button>
+  </div>
+}
+<p class="home-about"><a routerLink="/om">Om Rikskollen, källorna och hur tjänsten byggs →</a></p>
