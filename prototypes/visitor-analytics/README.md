@@ -33,3 +33,7 @@ These observations are partial source review, not a completed privacy audit. No 
 Inspect pinned event/session schemas and available expiry mechanisms before installing a disposable CE stack. The operator-selected **90-day retention** must cover associated event/session data, copies and restore behavior. No retention mechanism is implemented or claimed here. If a substantial fork would be required, reconsider the candidate before adding infrastructure.
 
 Actual browser header/body capture, Angular hydration/navigation deduplication, proxy identity, backend-derived fields, public-dashboard API exposure, daily identifier/session semantics, expiry/restore tests and production rollout all remain NOT RUN. See [the evaluation](../../docs/visitor-analytics-evaluation.md).
+
+## Storage/retention follow-up
+
+[Source inspection and next runtime experiment](retention-inspection.md) records the nine-file audit, native-reset visibility behavior, retained event/session dimensions and previous-salt continuity. A 90-day date filter/reset is not physical retention enforcement. The next small runtime step is a disposable ClickHouse-only fixture; no full analytics stack is installed.

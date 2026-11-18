@@ -107,3 +107,7 @@ Next authorized development step after this proposal: inspect the pinned CE sour
 ## First small prototype — November 18
 
 [Offline collection contract](../prototypes/visitor-analytics/README.md): five synthetic Node tests pass for route/referrer minimization, DNT/GPC, request-envelope options and a strict simulated collector boundary. This is a partial prototype only: no application integration, browser transport, Plausible process, network transmission or storage. Partial pinned CE source inspection found geolocation/UA/session processing; retention and stored-schema review are the next small step. The earlier full-prototype NOT RUN and expiry BLOCKED gates remain accurate. Production is unchanged.
+
+## Storage/identity inspection follow-up
+
+[The pinned-source retention inspection](../prototypes/visitor-analytics/retention-inspection.md) found no ready 90-day expiry in the checked schema/config, native reset changes visibility, and CE current/previous-salt session matching can cross daily rotation. Thus the strict no-cross-day criterion remains unpassed. An external ClickHouse retention mechanism is the next small experiment, with physical deletion lag and versioned-session consistency tested explicitly. No runtime collection or retention guarantee is established.
