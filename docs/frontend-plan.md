@@ -34,7 +34,7 @@ Feature candidates are improved vote/report discovery (search, filters or sortin
 
 Acceptance: reviewed before/after desktop/mobile views; chosen features have explicit behaviour and meaningful Playwright coverage; SSR, browser navigation and source/count semantics remain correct; keyboard/manual review and CI pass. Update the frontend acceptance record for the changed journeys.
 
-[Issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4) is implemented in a separate technical slice before M4.2: Angular 22.2.1, signal-based member list/profile state and explicit member request states. The E2E baseline validates the upgrade; visual design remains separately scoped. See [upgrade notes](angular-upgrade.md).
+[Issue #4](https://github.com/DarkmodeTools/rikskollen.se/issues/4) is implemented in a separate technical slice before M4.2: Angular 22.2.1, signal-based member list/profile state and explicit member request states. The E2E baseline validates the upgrade; visual design remains separately scoped. See [upgrade notes](angular-upgrade.md).
 
 ### M4.2 first agreed slice — members
 

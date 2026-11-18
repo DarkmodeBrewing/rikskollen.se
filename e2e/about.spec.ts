@@ -16,7 +16,7 @@ test('transparency is server rendered, indexable and available without the data 
   expect(html).toContain('content="index, follow"');
   expect(html).toContain('AI-assisterade kodverktyg');
   expect(html).toContain('Frånvarande betyder registrerad som frånvarande');
-  expect(html).toContain('DarkmodeBrewing');
+  expect(html).toContain('DarkmodeTools');
   expect(html).toContain(
     'Verifierade uppgifter om driftloggarnas lagringstider',
   );
@@ -71,7 +71,7 @@ test('about navigation, privacy anchors and source links work on keyboard and na
     }),
   ).toHaveAttribute(
     'href',
-    'https://github.com/DarkmodeBrewing/rikskollen.se/issues',
+    'https://github.com/DarkmodeTools/rikskollen.se/issues',
   );
   await expect(
     page.getByRole('link', {
@@ -79,7 +79,7 @@ test('about navigation, privacy anchors and source links work on keyboard and na
     }),
   ).toHaveAttribute(
     'href',
-    'https://github.com/DarkmodeBrewing/rikskollen.se/blob/main/docs/data-methodology.md',
+    'https://github.com/DarkmodeTools/rikskollen.se/blob/main/docs/data-methodology.md',
   );
   const sourceLink = page.getByRole('link', {
     name: 'riksdagens användningsvillkor',

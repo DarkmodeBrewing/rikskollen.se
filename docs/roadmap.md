@@ -63,7 +63,7 @@ Prepare API and Angular SSR runtime images, a compiled migration job, explicit m
 
 The [frontend slice plan](frontend-plan.md) defines M4.1/M4.2 scope and test cases. M4.0 host acceptance passed on 2026-10-05. M4.1 and the Angular signals upgrade are merged. M4.2 design and page identity/sharing are merged through PR #17; deployed sharing verification remains separate. M4.3 begins with the worker-to-UI import status slice. Mocked browser tests complement the real-data deployment protocol and PostgreSQL tests.
 
-[Issue #4](https://github.com/DarkmodeBrewing/rikskollen.se/issues/4) upgrades Angular to 22.2.1 and converts the remaining member templates to signals in a separate technical slice before M4.2; see [upgrade notes](angular-upgrade.md). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
+[Issue #4](https://github.com/DarkmodeTools/rikskollen.se/issues/4) upgrades Angular to 22.2.1 and converts the remaining member templates to signals in a separate technical slice before M4.2; see [upgrade notes](angular-upgrade.md). Historical backfill, wider parliamentary activity and member participation metrics require their own validated scope and denominators.
 
 M4.1 commands, coverage and known page-state limitations are recorded in [the E2E runbook](e2e.md). Framework upgrade/signal conversion remains separate from this baseline.
 
