@@ -4,7 +4,7 @@ Scope: `/om`, core navigation and footer links, static source/method/privacy exp
 
 ## Public content and decisions
 
-- Operator/contact: DarkmodeBrewing with GitHub Issues, explicitly selected by Lars on November 17. Issues are public and require a GitHub account; the page asks visitors not to publish sensitive personal details.
+- Operator/contact: DarkmodeTools with GitHub Issues. GitHub Issues was explicitly selected by Lars on November 17; the account was renamed from DarkmodeBrewing to DarkmodeTools on November 18. Issues are public and require a GitHub account; the page asks visitors not to publish sensitive personal details.
 - Scope: current imported member roster, recorded votes and decided-report catalog/statuses for 2025/26. No hardcoded live counts; link to Datastatus for changing coverage and freshness.
 - Source facts versus derived counts: person-row and imported proposal-point denominators, filter behaviour, unknown/missing records and vote-specific absence wording. Link to the authoritative methodology and worked examples.
 - Provenance: IDs, source URLs, hashes and import times; hashes do not archive/reproduce older source responses. Unchanged checks and failed attempts are distinct from publication times.
@@ -34,3 +34,7 @@ Deployment/host acceptance remains **NOT RUN** for this slice. No VPS changes or
 ### Local verification — 2026-11-17
 
 Web build and E2E TypeScript check: PASS. Frontend unit tests: seven passed. Full Chromium desktop/Pixel 7 suite: 52 passed, including four new about-page cases and a 320-pixel overflow check. Desktop/mobile previews and privacy sections were visually inspected. The API-outage case performed no data-API requests. Hosted/production verification is still NOT RUN.
+
+### GitHub account rename — 2026-11-18
+
+Public operator/profile, repository, Issues and methodology links now use `DarkmodeTools`. The footer, homepage, Datastatus and older roadmap issue links are updated alongside `/om`. The local development remote now points to `https://github.com/DarkmodeTools/rikskollen.se.git`. No account-qualified image registry, workflow or deployment references were found in `.github`, `deploy` or the README. The VPS checkout remote still needs verification during the next approved rollout; this change does not modify the host or deploy the site. Existing code-licence and infrastructure log-retention decisions above remain open.

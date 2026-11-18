@@ -345,7 +345,7 @@ const jobs: Record<ImportJob, string> = {
         >
         ·
         <a
-          href="https://github.com/DarkmodeBrewing/rikskollen.se/blob/main/docs/data-methodology.md"
+          href="https://github.com/DarkmodeTools/rikskollen.se/blob/main/docs/data-methodology.md"
           target="_blank"
           rel="noopener"
           >Rikskollens metodbeskrivning ↗</a
