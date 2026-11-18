@@ -103,3 +103,7 @@ Next authorized development step after this proposal: inspect the pinned CE sour
 - U4: [Umami public share views](https://docs.umami.is/docs/enable-share-url).
 - U5: [Umami tracker configuration](https://docs.umami.is/docs/tracker-configuration).
 - U6: [Umami installation](https://docs.umami.is/docs/install).
+
+## First small prototype — November 18
+
+[Offline collection contract](../prototypes/visitor-analytics/README.md): five synthetic Node tests pass for route/referrer minimization, DNT/GPC, request-envelope options and a strict simulated collector boundary. This is a partial prototype only: no application integration, browser transport, Plausible process, network transmission or storage. Partial pinned CE source inspection found geolocation/UA/session processing; retention and stored-schema review are the next small step. The earlier full-prototype NOT RUN and expiry BLOCKED gates remain accurate. Production is unchanged.
